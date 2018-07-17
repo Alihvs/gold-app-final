@@ -422,12 +422,6 @@ const menusSecondaryItems = [
     key: "login"
   },
   {
-    id: 519,
-    title: "ثبت نام",
-    icon: "ios-person-add",
-    key: "signup"
-  },
-  {
     id: 19,
     title: "علاقه مندی ها",
     icon: "heart",
@@ -439,12 +433,5 @@ const menusSecondaryItems = [
     title: "با ما تماس بگیرید",
     icon: "md-phone-portrait",
     key: "contact"
-  },
-  {
-    id: 21,
-    key: "newsletter",
-    title: "اخبار",
-    icon: "md-paper",
-    key: "newsletter"
   }
 ];

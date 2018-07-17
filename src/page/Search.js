@@ -35,6 +35,7 @@ import Navbar from "../component/Navbar";
 import SideMenu from "../component/SideMenu";
 import SideMenuDrawer from "../component/SideMenuDrawer";
 import CategoryBlock from "../component/CategoryBlock";
+import Colors from "../Colors";
 
 //Newley added libraries
 
@@ -316,7 +317,7 @@ export default class Search extends Component {
     );
     return (
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
-        <Container>
+        <Container style={{ backgroundColor: Colors.statusBarColor }}>
           <Navbar left={left} right={right} title={this.props.pageTitle} />
           <Content>
             <Form style={{ padding: 5 }}>
@@ -375,7 +376,7 @@ export default class Search extends Component {
                     </Item>
                   </Col>
                   <Col style={{ width: 50 }}>
-                    <Text style={{ padding: 5 }}>گرم تا</Text>
+                    <Text style={{ padding: 5 }}>الی</Text>
                   </Col>
 
                   <Col>
@@ -404,7 +405,7 @@ export default class Search extends Component {
                     </Item>
                   </Col>
                   <Col style={{ width: 50 }}>
-                    <Text style={{ padding: 5 }}>درصد تا</Text>
+                    <Text style={{ padding: 5 }}>الی</Text>
                   </Col>
 
                   <Col>
@@ -433,7 +434,7 @@ export default class Search extends Component {
                     </Item>
                   </Col>
                   <Col style={{ width: 50 }}>
-                    <Text style={{ padding: 5 }}>تومان تا</Text>
+                    <Text style={{ padding: 5 }}>تا</Text>
                   </Col>
 
                   <Col>
@@ -557,7 +558,7 @@ export default class Search extends Component {
               <Button
                 full
                 primary
-                onPress={() => console.log(this.state.selectedSubCat)}
+                onPress={() => Actions.category({ id: "12", title: "زنانه" })}
               >
                 <Text style={{ color: "#fff" }}>جستجو</Text>
               </Button>

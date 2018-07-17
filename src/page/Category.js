@@ -4,7 +4,12 @@
 
 // React native and others libraries imports
 import React, { Component } from "react";
-import { Image, TouchableOpacity, TouchableHighlight } from "react-native";
+import {
+  Image,
+  TouchableOpacity,
+  TouchableHighlight,
+  StyleSheet
+} from "react-native";
 import {
   Container,
   Content,
@@ -17,10 +22,10 @@ import {
   Card,
   CardItem,
   Thumbnail,
-  Grid,
-  Col,
   Spinner
 } from "native-base";
+import { Col, Row, Grid } from "react-native-easy-grid";
+
 import { Actions } from "react-native-router-flux";
 
 // Our custom files and classes import
@@ -32,7 +37,7 @@ import SideMenu from "../component/SideMenu";
 import SideMenuDrawer from "../component/SideMenuDrawer";
 import Product from "../component/Product";
 
-const BASE_REQUEST_URL = "http://goldapp.mypressonline.com/wp-json/wp/v2/";
+const BASE_REQUEST_URL = "http://app.idamas.ir/wp-json/wp/v2/";
 
 export default class Category extends Component {
   constructor(props) {
@@ -93,12 +98,6 @@ export default class Category extends Component {
     );
     var right = (
       <Right style={{ flex: 1 }}>
-        <Button
-          onPress={() => Actions.search({ pageTitle: this.props.title })}
-          transparent
-        >
-          <Icon name="ios-search-outline" />
-        </Button>
         <Button onPress={() => Actions.cart()} transparent>
           <Icon name="ios-cart" />
         </Button>
@@ -107,9 +106,22 @@ export default class Category extends Component {
 
     return (
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
-        <Container style={{ backgroundColor: "#fdfdfd" }}>
+        <Container style={{ backgroundColor: Colors.statusBarColor }}>
           <Navbar left={left} right={right} title={this.props.title} />
-
+          <View
+            style={{
+              backgroundColor: "#2d2d2d",
+              padding: 5,
+              paddingRight: 15,
+              height: 30
+            }}
+          >
+            <Text style={[styles.mainText, { textAlign: "right" }]}>
+              {`${this.state.newItems.length} کالا در دسته ${
+                this.props.title
+              } یافت شد`}
+            </Text>
+          </View>
           <Content padder>
             {this.state.isLoaded ? (
               this.renderProducts()
@@ -139,14 +151,21 @@ export default class Category extends Component {
       let availability = stateItems[i].acf.availability;
       let negindar = stateItems[i].acf.negindar;
       let added_attributes = stateItems[i].acf.added_attributes;
-
+      let title = stateItems[i].title.rendered;
       let image = stateItems[i].acf.images[0].image.url;
+      let images = stateItems[i].acf.images;
 
-      let prevImage =
-        "http://res.cloudinary.com/atf19/image/upload/c_scale,w_460/v1500284237/pexels-photo-324030_wakzz4.jpg";
+      let prevImage = image;
 
       items.push(
-        <Card key={stateItems[i].id}>
+        <View
+          key={stateItems[i].id}
+          style={{
+            borderBottomWidth: 0.5,
+            borderBottomColor: Colors.gold,
+            padding: 10
+          }}
+        >
           <TouchableHighlight
             onPress={() =>
               Actions.product({
@@ -160,39 +179,139 @@ export default class Category extends Component {
                   size: size,
                   availability: availability,
                   negindar: negindar,
-                  added_attributes: added_attributes
+                  added_attributes: added_attributes,
+                  image: image,
+                  images: images,
+                  title: title
                 }
               })
             }
           >
-            <CardItem style={{ backgroundColor: "#eee" }}>
-              <Left style={{ flexBasis: "30%" }}>
-                <Image
-                  source={{
-                    uri: prevImage
+            <View>
+              <Grid style={{}}>
+                <Col
+                  size={1}
+                  style={{
+                    // backgroundColor: "green",
+                    paddingTop: 31
                   }}
-                  style={{ height: 70, width: 70 }}
-                />
-              </Left>
-              <Right style={{ flexBasis: "70%" }}>
-                <Body>
-                  <Text style={{ fontSize: 19 }}>{`${stateItems[i].acf.type} ${
-                    stateItems[i].acf.brand
-                  } ${stateItems[i].acf.weight} گرمی`}</Text>
+                >
+                  <Grid style={{}}>
+                    {this.renderIndiAddedAttributes(added_attributes)}
+                  </Grid>
+                </Col>
+                <Col size={1.5} style={{ paddingRight: 25 }}>
                   <Text
-                    style={{
-                      alignSelf: "flex-end",
-                      paddingTop: 10
+                    style={styles.mainText}
+                  >{`${type} ${brand} ${ojrat_percent} %`}</Text>
+                  <Text style={styles.subText}>{`کد کالا: ${title}`}</Text>
+                  <Text style={styles.subText}>{`وزن: ${weight} گرم`}</Text>
+                  <Text style={styles.subText}>{`رنگ: ${color}`}</Text>
+                  <Text style={styles.subText}>{`سایز: ${size}`}</Text>
+                </Col>
+                <Col size={1}>
+                  <Image
+                    source={{
+                      uri: prevImage
                     }}
-                  >{`شناسه: ${stateItems[i].id}`}</Text>
-                </Body>
-              </Right>
-            </CardItem>
+                    style={{
+                      height: "100%",
+                      width: "100%",
+
+                      alignSelf: "flex-end"
+                    }}
+                  />
+                </Col>
+              </Grid>
+            </View>
           </TouchableHighlight>
-        </Card>
+        </View>
+        // <Card transparent key={stateItems[i].id}>
+        //   <TouchableHighlight
+        //     onPress={() =>
+        //       Actions.product({
+        //         product: {
+        //           brand: brand,
+        //           type: type,
+        //           weight: weight,
+        //           ojrat_percent: ojrat_percent,
+        //           ojrat_toman: ojrat_toman,
+        //           color: color,
+        //           size: size,
+        //           availability: availability,
+        //           negindar: negindar,
+        //           added_attributes: added_attributes,
+        //           image: image,
+        //           images: images,
+        //           title: title
+        //         }
+        //       })
+        //     }
+        //   >
+        //     <CardItem
+        //       style={{
+        //         backgroundColor: Colors.statusBarColor,
+        //         height: 110
+        //       }}
+        //     >
+        //       <Left style={{ flexBasis: "60%" }}>
+        //         <Body>
+        //           <Text style={{ fontSize: 12, color: Colors.white }}>{`${
+        //             stateItems[i].acf.type
+        //           } ${stateItems[i].acf.brand} ${
+        //             stateItems[i].acf.weight
+        //           } گرمی`}</Text>
+        //           <Text
+        //             style={{
+        //               alignSelf: "flex-end",
+        //               paddingTop: 10
+        //             }}
+        //           >{`شناسه: ${stateItems[i].id}`}</Text>
+        //         </Body>
+        //       </Left>
+        //       <Right style={{ flexBasis: "40%" }}>
+        //         <Image
+        //           source={{
+        //             uri: prevImage
+        //           }}
+        //           style={{ height: 110, width: 160, marginRight: -17 }}
+        //         />
+        //       </Right>
+        //     </CardItem>
+        //   </TouchableHighlight>
+        // </Card>
       );
     }
 
     return items;
   }
+  renderIndiAddedAttributes(attribs) {
+    res = [];
+    attribs.map((attr, i) => {
+      res.push(
+        <Row key={i} style={{ height: 16 }}>
+          <Col>
+            <Text style={styles.subText}>{attr.value}</Text>
+          </Col>
+          <Col>
+            <Text style={styles.subText}>{attr.item_name}</Text>
+          </Col>
+        </Row>
+      );
+    });
+    return res;
+  }
 }
+
+const styles = StyleSheet.create({
+  mainText: {
+    paddingBottom: 5,
+    color: Colors.white,
+    fontSize: 13,
+    paddingBottom: 15
+  },
+  subText: {
+    color: Colors.grey,
+    fontSize: 11
+  }
+});

@@ -12,20 +12,39 @@ import {
   Button,
   Icon,
   Item,
-  Input
+  Input,
+  Toast
 } from "native-base";
-import { Content, Form, Label } from "react-native";
+import {
+  Content,
+  Form,
+  Label,
+  ActivityIndicator,
+  StyleSheet
+} from "react-native";
 import { Actions } from "react-native-router-flux";
 
 // Our custom files and classes import
 import Colors from "../Colors";
 import Text from "../component/Text";
 import Navbar from "../component/Navbar";
+import Home from "./Home";
+
+// Loading indicator
+const LoadingIndicator = ({ size }) => {
+  return (
+    <View style={StyleSheet.spinnerContainer}>
+      <ActivityIndicator />
+    </View>
+  );
+};
 
 export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      jwt: "",
+
       validating: false,
       username: "",
       password: "",
@@ -36,134 +55,208 @@ export default class Login extends Component {
   }
 
   render() {
-    var left = (
-      <Left style={{ flex: 1 }}>
-        <Button onPress={() => Actions.pop()} transparent>
-          <Icon name="ios-arrow-back" />
-        </Button>
-      </Left>
-    );
-    var right = (
-      <Right style={{ flex: 1 }}>
-        <Button onPress={() => Actions.search()} transparent>
-          <Icon name="ios-search-outline" />
-        </Button>
-        <Button onPress={() => Actions.cart()} transparent>
-          <Icon name="ios-cart" />
-        </Button>
-      </Right>
-    );
-    return (
-      <Container style={{ backgroundColor: "#fdfdfd" }}>
-        <Navbar left={left} right={right} title="ورود" />
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-            paddingLeft: 50,
-            paddingRight: 50
-          }}
-        >
-          <View style={{ marginBottom: 35, width: "100%" }}>
-            <Text
-              style={{
-                fontSize: 24,
-                fontWeight: "bold",
-                textAlign: "right",
-                width: "100%",
-                marginBottom: 20,
-                color: Colors.navbarBackgroundColor
-              }}
-            >
-              خوش آمدید{" "}
-            </Text>
-            <Text
-              style={{
-                fontSize: 18,
-                textAlign: "right",
-                width: "100%",
-                color: "#687373"
-              }}
-            >
-              برای ادامه استفاده از برنامه، باید ابتدا وارد شوید{" "}
-            </Text>
-          </View>
-          <Item>
-            <Icon active name="ios-person" style={{ color: "#687373" }} />
-            <Input
-              placeholder="ایمیل"
-              onChangeText={text => this.setState({ email: text })}
-              placeholderTextColor="#687373"
-            />
-          </Item>
-          <Item>
-            <Icon active name="ios-lock" style={{ color: "#687373" }} />
-            <Input
-              placeholder="کلمه عبور"
-              onChangeText={text => this.setState({ password: text })}
-              secureTextEntry={true}
-              placeholderTextColor="#687373"
-            />
-          </Item>
-          {this.state.hasError ? (
-            <Text
-              style={{ color: "#c0392b", textAlign: "center", marginTop: 10 }}
-            >
-              {this.state.errorText}
-            </Text>
-          ) : null}
-          <View style={{ alignItems: "center" }}>
-            <Button
-              onPress={() => {
-                if (this.state.email && this.state.password) {
-                  this.validate();
-                }
-              }}
-              style={{
-                backgroundColor: Colors.navbarBackgroundColor,
-                marginTop: 20
-              }}
-            >
+    if (!this.state.jwt) {
+      return (
+        <Container style={{ backgroundColor: "#fdfdfd" }}>
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              paddingLeft: 50,
+              paddingRight: 50
+            }}
+          >
+            <View style={{ marginBottom: 35, width: "100%" }}>
               <Text
-                style={{ color: "#fdfdfd", width: 150, textAlign: "center" }}
+                style={{
+                  fontSize: 24,
+                  fontWeight: "bold",
+                  textAlign: "right",
+                  width: "100%",
+                  marginBottom: 20,
+                  color: Colors.navbarBackgroundColor
+                }}
               >
-                ورود
+                خوش آمدید{" "}
               </Text>
-            </Button>
-          </View>
-        </View>
-        {/* Started my login thing here */}
-        {/* <Content>
-          <Form>
-            <Item floatingLabel>
-              <Label>Email</Label>
-              <Input onChangeText={text => this.setState({ email: text })} />
-            </Item>
-            <Item floatingLabel last>
-              <Label>Password</Label>
+              <Text
+                style={{
+                  fontSize: 18,
+                  textAlign: "right",
+                  width: "100%",
+                  color: "#687373"
+                }}
+              >
+                برای ادامه استفاده از برنامه، باید وارد شوید{" "}
+              </Text>
+            </View>
+            <Item>
+              <Icon active name="ios-person" style={{ color: "#687373" }} />
               <Input
-                secureTextEntry
-                onChangeText={text => this.setState({ password: text })}
+                placeholder="نام کاربری"
+                onChangeText={text => this.setState({ username: text })}
+                placeholderTextColor="#687373"
               />
             </Item>
-            <Button
-              block
-              success
-              style={{ marginTop: 50 }}
-              onPress={() => {
-                if (this.state.email && this.state.password) {
-                  this.validate();
-                }
-              }}
-            >
-              <Text>Authenticate</Text>
-            </Button>
-          </Form>
-        </Content> */}
-        {/* Finished my login thing here */}
-      </Container>
-    );
+            <Item>
+              <Icon active name="ios-lock" style={{ color: "#687373" }} />
+              <Input
+                placeholder="کلمه عبور"
+                onChangeText={text => this.setState({ password: text })}
+                secureTextEntry={true}
+                placeholderTextColor="#687373"
+              />
+            </Item>
+            {this.state.hasError ? (
+              <Text
+                style={{ color: "#c0392b", textAlign: "center", marginTop: 10 }}
+              >
+                {this.state.errorText}
+              </Text>
+            ) : null}
+            <View style={{ alignItems: "center" }}>
+              <Button
+                onPress={() => {
+                  if (this.state.username && this.state.password) {
+                    fetch("http://app.idamas.ir/wp-json/jwt-auth/v1/token", {
+                      method: "post",
+                      headers: {
+                        Accept: "application/json",
+                        "Content-Type": "application/json"
+                      },
+                      body: JSON.stringify({
+                        username: this.state.username,
+                        password: this.state.password
+                      })
+                    })
+                      .then(response => response.json())
+                      .then(data => {
+                        // console.table(data);
+                        // alert(data.token);
+                        if (data.token) {
+                          Actions.home();
+                        } else {
+                          alert("اشتباه!");
+                        }
+                      });
+
+                    // Actions.home();
+                    // Toast.show({
+                    //   text: "نام کاربری نمی تواند خالی باشد",
+                    //   position: "bottom",
+                    //   type: "danger",
+                    //   buttonText: "",
+                    //   duration: 2000
+                    // });
+                  }
+                }}
+                style={{
+                  backgroundColor: Colors.navbarBackgroundColor,
+                  marginTop: 20
+                }}
+              >
+                <Text
+                  style={{ color: "#fdfdfd", width: 150, textAlign: "center" }}
+                >
+                  ورود
+                </Text>
+              </Button>
+            </View>
+          </View>
+        </Container>
+      );
+    } else if (this.state.jwt) {
+      return <Text>Logged in</Text>;
+    }
+    // return (
+    //   <Container style={{ backgroundColor: "#fdfdfd" }}>
+    //     <View
+    //       style={{
+    //         flex: 1,
+    //         justifyContent: "center",
+    //         alignItems: "center",
+    //         paddingLeft: 50,
+    //         paddingRight: 50
+    //       }}
+    //     >
+    //       <View style={{ marginBottom: 35, width: "100%" }}>
+    //         <Text
+    //           style={{
+    //             fontSize: 24,
+    //             fontWeight: "bold",
+    //             textAlign: "right",
+    //             width: "100%",
+    //             marginBottom: 20,
+    //             color: Colors.navbarBackgroundColor
+    //           }}
+    //         >
+    //           خوش آمدید{" "}
+    //         </Text>
+    //         <Text
+    //           style={{
+    //             fontSize: 18,
+    //             textAlign: "right",
+    //             width: "100%",
+    //             color: "#687373"
+    //           }}
+    //         >
+    //           برای ادامه استفاده از برنامه، باید وارد شوید{" "}
+    //         </Text>
+    //       </View>
+    //       <Item>
+    //         <Icon active name="ios-person" style={{ color: "#687373" }} />
+    //         <Input
+    //           placeholder="نام کاربری"
+    //           onChangeText={text => this.setState({ email: text })}
+    //           placeholderTextColor="#687373"
+    //         />
+    //       </Item>
+    //       <Item>
+    //         <Icon active name="ios-lock" style={{ color: "#687373" }} />
+    //         <Input
+    //           placeholder="کلمه عبور"
+    //           onChangeText={text => this.setState({ password: text })}
+    //           secureTextEntry={true}
+    //           placeholderTextColor="#687373"
+    //         />
+    //       </Item>
+    //       {this.state.hasError ? (
+    //         <Text
+    //           style={{ color: "#c0392b", textAlign: "center", marginTop: 10 }}
+    //         >
+    //           {this.state.errorText}
+    //         </Text>
+    //       ) : null}
+    //       <View style={{ alignItems: "center" }}>
+    //         <Button
+    //           onPress={() => {
+    //             if (this.state.email && this.state.password) {
+    //               // Actions.home();
+    //               Toast.show({
+    //                 text: "نام کاربری نمی تواند خالی باشد",
+    //                 position: "bottom",
+    //                 type: "danger",
+    //                 buttonText: "",
+    //                 duration: 2000
+    //               });
+    //             }
+    //           }}
+    //           style={{
+    //             backgroundColor: Colors.navbarBackgroundColor,
+    //             marginTop: 20
+    //           }}
+    //         >
+    //           <Text
+    //             style={{ color: "#fdfdfd", width: 150, textAlign: "center" }}
+    //           >
+    //             ورود
+    //           </Text>
+    //         </Button>
+    //       </View>
+    //     </View>
+    //   </Container>
+    // );
   }
 
   login() {
@@ -226,3 +319,11 @@ export default class Login extends Component {
     return false;
   }
 }
+
+const styles = StyleSheet.create({
+  spinnerContainer: {
+    flex: -1,
+    marginTop: 12,
+    marginBottom: 12
+  }
+});

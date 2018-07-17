@@ -67,18 +67,21 @@ export default class Product extends Component {
         type: this.props.product.type,
         weight: this.props.product.weight,
         added_attributes: this.props.product.added_attributes,
-        image:
-          "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/woman_ndqhui.jpg",
+        image: this.props.product.image,
         images: [
-          "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/woman_ndqhui.jpg",
-          "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/woman_ndqhui.jpg",
-          "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/woman_ndqhui.jpg",
-          "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/woman_ndqhui.jpg"
+          this.props.product.images[0].image.url,
+          this.props.product.images[1].image.url,
+          this.props.product.images[2].image.url,
+          this.props.product.images[3].image.url
         ],
+        title: this.props.product.title,
+        quantity: 1,
         similarItems: []
       }
     });
   }
+
+  // componentWillMount() {}
 
   componentDidMount() {
     /* Select the default color and size (first ones) */
@@ -370,13 +373,13 @@ export default class Product extends Component {
   //   return colors;
   // }
 
-  renderSize() {
-    let size = [];
-    this.state.product.sizes.map((s, i) => {
-      size.push(<Item key={i} label={s} value={s} />);
-    });
-    return size;
-  }
+  // renderSize() {
+  //   let size = [];
+  //   this.state.product.sizes.map((s, i) => {
+  //     size.push(<Item key={i} label={s} value={s} />);
+  //   });
+  //   return size;
+  // }
 
   renderSimilairs() {
     let items = [];
@@ -416,6 +419,7 @@ export default class Product extends Component {
     // console.table(this.state.currentProduct);
 
     var product = this.state.currentProduct;
+    var success = true;
     // product["color"] = "تک رنگ";
     // product["size"] = "متوسط";
     // product["quantity"] = "12";
@@ -426,16 +430,30 @@ export default class Product extends Component {
       if (!res) AsyncStorage.setItem("CART", JSON.stringify([product]));
       else {
         var items = JSON.parse(res);
-        items.push(product);
-        AsyncStorage.setItem("CART", JSON.stringify(items));
+        if (this.search(items, product)) {
+          success = false;
+        } else {
+          items.push(product);
+          AsyncStorage.setItem("CART", JSON.stringify(items));
+        }
       }
-      Toast.show({
-        text: "محصول به فاکتور شما اضافه شد",
-        position: "bottom",
-        type: "success",
-        buttonText: "بستن",
-        duration: 3000
-      });
+      if (success) {
+        Toast.show({
+          text: "محصول به فاکتور اضافه شد",
+          position: "bottom",
+          type: "success",
+          buttonText: "بستن",
+          duration: 3000
+        });
+      } else {
+        Toast.show({
+          text: "این محصول در فاکتور کنونی وجود دارد",
+          position: "bottom",
+          type: "danger",
+          buttonText: "بستن",
+          duration: 3000
+        });
+      }
     });
   }
 
@@ -480,22 +498,22 @@ export default class Product extends Component {
   }
 }
 
-const dummyProduct = {
-  id: 2,
-  title: "دستبند خیلی باحال",
-  description:
-    "تاریخ استفاده از زیورها و سنگ‌های گران‌بها به اندازه تاریخ پیدایش بشر است و پیشینه‌ای هفت هزار ساله دارد. در زمان‌های دیرین و بسیار پیش از آنکه بشر وسائلی آماده کند یا مهارتی به دست آورد که بتواند سنگ‌های سخت را تراش داده و حک کند، سنگ‌های گرانمایه افزون بر ارزش مادی بیشتر جنبه سحر و جادو داشته و به عنوان طلسم برای دارندگان شان به‌شمار می‌رفته و به علت برخی باورها و اندیشه‌های راز آلود که نسبت به تأثیرات نهفته سنگ‌های رنگین داشتند، آن‌ها را ستایش کرده و به کار می‌بردند.",
-  image:
-    "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/woman_ndqhui.jpg",
-  images: [
-    "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/bracelet_x00lpq.jpg",
-    "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/jewel_dh8dft.jpg",
-    "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/man_uz95u5.jpg",
-    "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/alangoo_kjqh6z.jpg"
-  ],
-  price: "تومان 25000",
-  colors: ["سفید", "زرد", "زر گلد"],
-  sizes: ["کوچک", "متوسط", "بزرگ", "خیلی بزرگ", "بسیار بزرگ"],
-  category: "MAN",
-  similarItems: []
-};
+// const dummyProduct = {
+//   id: 2,
+//   title: "دستبند خیلی باحال",
+//   description:
+//     "تاریخ استفاده از زیورها و سنگ‌های گران‌بها به اندازه تاریخ پیدایش بشر است و پیشینه‌ای هفت هزار ساله دارد. در زمان‌های دیرین و بسیار پیش از آنکه بشر وسائلی آماده کند یا مهارتی به دست آورد که بتواند سنگ‌های سخت را تراش داده و حک کند، سنگ‌های گرانمایه افزون بر ارزش مادی بیشتر جنبه سحر و جادو داشته و به عنوان طلسم برای دارندگان شان به‌شمار می‌رفته و به علت برخی باورها و اندیشه‌های راز آلود که نسبت به تأثیرات نهفته سنگ‌های رنگین داشتند، آن‌ها را ستایش کرده و به کار می‌بردند.",
+//   image:
+//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/woman_ndqhui.jpg",
+//   images: [
+//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/bracelet_x00lpq.jpg",
+//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/jewel_dh8dft.jpg",
+//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/man_uz95u5.jpg",
+//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/alangoo_kjqh6z.jpg"
+//   ],
+//   price: "تومان 25000",
+//   colors: ["سفید", "زرد", "زر گلد"],
+//   sizes: ["کوچک", "متوسط", "بزرگ", "خیلی بزرگ", "بسیار بزرگ"],
+//   category: "MAN",
+//   similarItems: []
+// };

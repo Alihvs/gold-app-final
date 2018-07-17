@@ -7,6 +7,7 @@ import React, { Component } from "react";
 import { Image, Dimensions, TouchableOpacity } from "react-native";
 import { View } from "native-base";
 import { Actions } from "react-native-router-flux";
+import Colors from "../Colors";
 
 // Our custom files and classes import
 import Text from "./Text";
@@ -14,17 +15,65 @@ import Text from "./Text";
 export default class CategoryBlock extends Component {
   render() {
     return (
+      //Trying my thing
       <View style={{ flex: 1 }}>
         <TouchableOpacity
           onPress={this._onPress.bind(this)}
           activeOpacity={0.9}
         >
-          <View>
-            <Image style={styles.image} source={{ uri: this.props.image }} />
-            <View style={styles.overlay} />
-            <View style={styles.border} />
-            <View style={styles.text}>
-              <Text style={styles.title}>{this.props.title}</Text>
+          <View
+            style={{
+              height: 170,
+              backgroundColor: Colors.statusBarColor
+            }}
+          >
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: "#ecc643",
+                margin: 10,
+                flex: 1,
+                backgroundColor: "#000",
+                flexDirection: "row-reverse"
+              }}
+            >
+              <View
+                style={{
+                  flexBasis: "50%",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                <Text style={{ color: "#ecc643", fontSize: 32 }}>
+                  {this.props.title}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexBasis: "50%",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+              >
+                {this.props.title === "زنانه" ||
+                this.props.title === "مردانه" ? (
+                  <Image
+                    style={{
+                      width: 55,
+                      height: undefined,
+                      flex: 1
+                    }}
+                    resizeMode="contain"
+                    source={{ uri: this.props.image }}
+                  />
+                ) : (
+                  <Image
+                    style={{ width: 115, height: undefined, flex: 1 }}
+                    resizeMode="contain"
+                    source={{ uri: this.props.image }}
+                  />
+                )}
+              </View>
             </View>
           </View>
         </TouchableOpacity>
@@ -36,47 +85,3 @@ export default class CategoryBlock extends Component {
     Actions.category({ id: this.props.id, title: this.props.title });
   }
 }
-
-const styles = {
-  text: {
-    width: Dimensions.get("window").width,
-    height: 200,
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center"
-  },
-  title: {
-    textAlign: "center",
-    color: "#fdfdfd",
-    fontSize: 32
-  },
-  subtitle: {
-    textAlign: "center",
-    color: "#fdfdfd",
-    fontSize: 16,
-    fontWeight: "100",
-    fontStyle: "italic"
-  },
-  overlay: {
-    position: "absolute",
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: "rgba(30, 42, 54, 0.4)"
-  },
-  border: {
-    position: "absolute",
-    top: 10,
-    left: 10,
-    right: 10,
-    bottom: 10,
-    borderWidth: 1,
-    borderColor: "rgba(253, 253, 253, 0.2)"
-  },
-  image: {
-    height: 200,
-    width: null,
-    flex: 1
-  }
-};

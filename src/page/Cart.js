@@ -4,7 +4,13 @@
 
 // React native and others libraries imports
 import React, { Component } from "react";
-import { Alert, AsyncStorage, StyleSheet, ScrollView } from "react-native";
+import {
+  Alert,
+  AsyncStorage,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity
+} from "react-native";
 import {
   Container,
   Content,
@@ -19,20 +25,13 @@ import {
   List,
   ListItem,
   Thumbnail,
-  Footer
+  Footer,
+  Input,
+  Card,
+  CardItem
 } from "native-base";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { Actions } from "react-native-router-flux";
-
-import {
-  Table,
-  TableWrapper,
-  Row as NewRow,
-  Rows,
-  Col as NewCol,
-  Cols,
-  Cell
-} from "react-native-table-component";
 
 // Our custom files and classes import
 import Colors from "../Colors";
@@ -43,46 +42,8 @@ export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cartItems: [],
-      defaultWidth: 90,
-      tableData: [
-        ["ردیف", "کالا", "شرح", "وزن", "وزن", "اجرت", "تعداد", "وزن", "مبلغ"],
-        [
-          "1",
-          "انگشتر رینگ ساده 10 %",
-          "-",
-          "1.581",
-          "1.7391",
-          "-",
-          "100",
-          "173.91",
-          "-"
-        ],
-        [
-          "2",
-          "نیم ست عقیق 12 %",
-          "پول سنگ 40 هزار تومان",
-          "10.25",
-          "11.48",
-          "-",
-          "2",
-          "22.96",
-          "80000"
-        ],
-        [
-          "3",
-          "دستبند چرم 23 %",
-          "پول سنگ 1 هزار تومان - پول چرم 12 هزار تومان",
-          "2.016",
-          "2.4797",
-          "10000",
-          "25",
-          "61.992",
-          "829000"
-        ]
-      ],
-      widthArr: [50],
-      heightArr: [50, 50, 50, 50, 50, 50, 50, 50, 50]
+      cartItems: []
+      // defaultWidth: 90
     };
   }
 
@@ -91,28 +52,7 @@ export default class Cart extends Component {
       if (!res) this.setState({ cartItems: [] });
       else {
         this.setState({ cartItems: JSON.parse(res) });
-        console.table(this.state.cartItems);
-        // let counter = 0;
-        // for (let i = 0; i < this.state.cartItems.length; i++) {
-        //   let newElement = [
-        //     ++counter,
-        //     this.state.cartItems[i].brand,
-        //     this.state.cartItems[i].brand,
-        //     this.state.cartItems[i].brand,
-        //     this.state.cartItems[i].brand,
-        //     this.state.cartItems[i].brand,
-        //     this.state.cartItems[i].brand,
-        //     this.state.cartItems[i].brand,
-        //     this.state.cartItems[i].brand
-        //   ];
-
-        //   this.setState(prevState => ({
-        //     tableData: [...prevState.tableData, newElement]
-        //   }));
-        //   this.setState(prevState => ({
-        //     widthArr: [...prevState.widthArr, this.state.defaultWidth]
-        //   }));
-        // }
+        // console.table(this.state.cartItems);
       }
     });
   }
@@ -131,7 +71,11 @@ export default class Cart extends Component {
         <Navbar left={left} title="فاکتور" />
         {this.state.cartItems.length <= 0 ? (
           <View
-            style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center"
+            }}
           >
             <Icon
               name="ios-cart"
@@ -142,77 +86,93 @@ export default class Cart extends Component {
           </View>
         ) : (
           <Content
-            style={{}}
-            contentContainerStyle={{ justifyContent: "space-around" }}
+            contentContainerStyle={{
+              // alignSelf: "flex-end",
+              padding: 5
+              // flex: 1
+            }}
           >
-            <Button
-              onPress={() => {
-                this.setState({ cartItems: [] });
-                AsyncStorage.setItem("CART", JSON.stringify([]));
+            <Text
+              style={{
+                borderBottomWidth: 1,
+                paddingBottom: 15,
+                paddingTop: 15
               }}
             >
-              <Text>Remove All</Text>
-            </Button>
-
+              شرح کالا
+            </Text>
             {/* New Table Start, oh god... */}
-            <ScrollView>
-              <Grid style={{ flexDirection: "row-reverse" }}>
-                <Col style={{ width: 70, alignItems: "center" }}>
-                  <Row style={myStyles.tableRow}>
-                    <Text>1کالا</Text>
-                  </Row>
-                  <Row style={myStyles.tableRow}>
-                    <Text>شرح کالا</Text>
-                  </Row>
-                  <Row style={myStyles.tableRow}>
-                    <Text>وزن</Text>
-                  </Row>
-                  <Row style={myStyles.tableRow}>
-                    <Text>رنگ</Text>
-                  </Row>
-                  <Row style={myStyles.tableRow}>
-                    <Text>وزن</Text>
-                  </Row>
-                  <Row style={myStyles.tableRow}>
-                    <Text>اجرت</Text>
-                  </Row>
-                  <Row style={myStyles.tableRow}>
-                    <Text>تعداد</Text>
-                  </Row>
-                  <Row style={myStyles.tableRow}>
-                    <Text>مبلغ</Text>
-                  </Row>
-                </Col>
-                {this.renderCartItems()}
-              </Grid>
-            </ScrollView>
-            {/* New Table FINISH, oh god... */}
-
-            {/* Table Start */}
-            {/* <View style={myStyles.container}>
-              <ScrollView horizontal={true}>
-                <View>
-                  <ScrollView style={myStyles.dataWrapper}>
-                    <Table style={{ flexDirection: "row-reverse" }}>
-                      <Cols
-                        data={this.state.tableData}
-                        heightArr={this.state.heightArr}
-                        widthArr={this.state.widthArr}
-                        textStyle={myStyles.text}
-                      />
-                    </Table>
-                  </ScrollView>
-                </View>
+            <View style={{}}>
+              <ScrollView
+                horizontal
+                contentContainerStyle={{
+                  // backgroundColor: "red",
+                  height: 500
+                }}
+              >
+                <Grid
+                  style={{
+                    flexDirection: "row"
+                  }}
+                >
+                  {this.renderCartItems()}
+                </Grid>
               </ScrollView>
-            </View> */}
-            {/* Table End */}
-
-            {/* <List>{this.renderItems()}</List> */}
-
-            {/* <Grid style={{ marginTop: 20, marginBottom: 10 }}>
+              {/* New Table FINISH, oh god... */}
+            </View>
+            <Grid style={{ flexDirection: "column", padding: 10 }}>
+              <Row style={{}}>
+                <Col style={{ backgroundColor: "#eee", alignItems: "center" }}>
+                  <Text>تعداد کل</Text>
+                  <Text>{this.sumQuantity()}</Text>
+                </Col>
+                <Col style={{ backgroundColor: "#eee", alignItems: "center" }}>
+                  <Text>جمع وزن</Text>
+                  <Text>{this.sumWeight()}</Text>
+                </Col>
+                <Col style={{ backgroundColor: "#eee", alignItems: "center" }}>
+                  <Text>جمع مبلغ</Text>
+                  <Text>{this.sumPrice()}</Text>
+                </Col>
+              </Row>
+            </Grid>
+            <Grid style={{ flexDirection: "column", padding: 10 }}>
+              <Text
+                style={{
+                  borderBottomWidth: 1,
+                  paddingBottom: 15,
+                  paddingTop: 15
+                }}
+              >
+                آیتم های موجود در فاکتور
+              </Text>
+              <List style={{ borderBottomWidth: 1 }}>
+                {this.renderIndivudualCartItems()}
+              </List>
+            </Grid>
+            <Grid style={{ marginTop: 20, marginBottom: 10 }}>
               <Col style={{ paddingLeft: 10, paddingRight: 5 }}>
                 <Button
-                  onPress={() => this.removeAllPressed()}
+                  onPress={() => {
+                    Alert.alert(
+                      "خالی کردن فاکتور",
+                      "آیا اطمینان دارید که می خواهید فاکتور خرید خود را خالی کنید؟",
+                      [
+                        {
+                          text: "خیر",
+                          onPress: () => console.log("No Pressed"),
+                          style: "cancel"
+                        },
+                        {
+                          text: "بله",
+                          onPress: () => {
+                            this.setState({ cartItems: [] });
+                            AsyncStorage.setItem("CART", JSON.stringify([]));
+                          }
+                        }
+                      ]
+                    );
+                  }}
                   style={{
                     borderWidth: 1,
                     borderColor: Colors.navbarBackgroundColor
@@ -236,218 +196,383 @@ export default class Cart extends Component {
                   <Text style={{ color: "#fdfdfd" }}>ارسال نهایی فاکتور</Text>
                 </Button>
               </Col>
-            </Grid> */}
+            </Grid>
           </Content>
         )}
       </Container>
     );
   }
 
-  // renderItems() {
-  //   let items = [];
-  //   this.state.cartItems.map((item, i) => {
-  //     items.push(
-  //       <ListItem
-  //         key={i}
-  //         last={this.state.cartItems.length === i + 1}
-  //         onPress={() => this.itemClicked(item)}
-  //       >
-  //         <Thumbnail
-  //           square
-  //           style={{ width: 110, height: 90 }}
-  //           source={{ uri: item.image }}
-  //         />
-  //         <Body style={{ paddingLeft: 10 }}>
-  //           <Text style={{ fontSize: 18 }}>
-  //             {item.quantity > 1 ? item.quantity + "x " : null}
-  //             {item.title}
-  //           </Text>
-  //           <Text
-  //             style={{ fontSize: 16, fontWeight: "bold", marginBottom: 10 }}
-  //           >
-  //             {item.price}
-  //           </Text>
-  //         </Body>
-  //         <Right>
-  //           <Button
-  //             style={{ marginLeft: -25 }}
-  //             transparent
-  //             onPress={() => this.removeItemPressed(item)}
-  //           >
-  //             <Icon
-  //               size={30}
-  //               style={{ fontSize: 30, color: "#95a5a6" }}
-  //               name="ios-remove-circle-outline"
-  //             />
-  //           </Button>
-  //         </Right>
-  //       </ListItem>
-  //     );
-  //   });
-  //   return items;
-  // }
-
-  // removeItemPressed(item) {
-  //   Alert.alert(
-  //     "پاک کردن " + item.title,
-  //     "آیا اطمینان دارید که می خواهید این محصول را از فاکتور خرید حذف کنید؟",
-  //     [
-  //       {
-  //         text: "خیر",
-  //         onPress: () => console.log("No Pressed"),
-  //         style: "cancel"
-  //       },
-  //       { text: "بله", onPress: () => this.removeItem(item) }
-  //     ]
-  //   );
-  // }
-
-  // removeItem(itemToRemove) {
-  //   let items = [];
-  //   this.state.cartItems.map(item => {
-  //     if (JSON.stringify(item) !== JSON.stringify(itemToRemove))
-  //       items.push(item);
-  //   });
-  //   this.setState({ cartItems: items });
-  //   AsyncStorage.setItem("CART", JSON.stringify(items));
-  // }
-
-  // removeAllPressed() {
-  //   this.setState({ cartItems: [] });
-  //   AsyncStorage.setItem("CART", JSON.stringify([]));
-  // Alert.alert(
-  //   "خالی کردن فاکتور",
-  //   "آیا اطمینان دارید که می خواهید فاکتور خرید خود را خالی کنید؟",
-  //   [
-  //     {
-  //       text: "خیر",
-  //       onPress: () => console.log("No Pressed"),
-  //       style: "cancel"
-  //     },
-  //     {
-  //       text: "بله",
-  //       onPress: () => {
-  //         // this.setState({ cartItems: [] });
-  //         // AsyncStorage.setItem("CART", JSON.stringify([]));
-  //         // alert(1);
-
-  //       }
-  //     }
-  //   ]
-  // );
-  // }
-
-  // removeAll() {
-  //   this.setState({ cartItems: [] });
-  //   AsyncStorage.setItem("CART", JSON.stringify([]));
-  // }
-
-  // checkout() {
-  //   Actions.checkout({ cartItems: this.state.cartItems });
-  // }
-
-  // itemClicked(item) {
-  //   Actions.product({ product: item });
-  // }
-
   renderCartItems() {
     itemsToRender = [];
+    itemsToRender.push(
+      <Col
+        style={{
+          width: 60,
+          alignItems: "center",
+          borderWidth: 0.4,
+          backgroundColor: "#eee"
+        }}
+      >
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>ردیف</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>کد کالا</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>کالا</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>ملحقات کالا (تومان)</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>وزن کالا (گرم)</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>وزن کالا + درصد کالا (گرم)</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>اجرت کالا (تومان)</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>تعداد</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>وزن نهایی(گرم)</Text>
+        </Row>
+        <Row style={myStyles.tableRow}>
+          <Text style={myStyles.tableText}>مبلغ کل</Text>
+        </Row>
+      </Col>
+    );
     this.state.cartItems.map((item, i) => {
       itemsToRender.push(
-        <Col style={{ width: 70, alignItems: "center" }}>
-          <Row style={[myStyles.tableRow]}>
-            <Text>2کالا</Text>
+        <Col
+          style={{
+            width: 100,
+            alignItems: "center",
+            borderWidth: 0.4
+          }}
+          key={i}
+        >
+          <Row style={myStyles.tableRow}>
+            <Text style={myStyles.tableText}>{i + 1}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text>{item.brand}</Text>
+            <Text style={myStyles.tableText}>{item.title}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text>{item.weight}</Text>
+            <Text style={myStyles.tableText}>{`${item.type} ${
+              item.ojrat_percent
+            } ٪`}</Text>
+          </Row>
+          <Row
+            style={[
+              myStyles.tableRow,
+              { alignSelf: "flex-end", paddingRight: 5 }
+            ]}
+          >
+            <View>{this.renderAddedAttributes(item)}</View>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text>{item.color}</Text>
+            <Text style={myStyles.tableText}>{item.weight}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text>{item.weight}</Text>
+            {/* <Text style={myStyles.tableText}>
+              {Number(
+                (item.weight * item.ojrat_percent) / 100 + Number(item.weight)
+              )}
+            </Text> */}
+
+            <Text style={myStyles.tableText}>
+              {this.calcWeightPlusPercernt(item)}
+            </Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text>{item.ojrat_percent}</Text>
+            <Text style={myStyles.tableText}>{`${
+              item.ojrat_toman
+            } تومان`}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text>تعداد</Text>
+            <Grid
+              style={{
+                alignItems: "center",
+                flexDirection: "row"
+              }}
+            >
+              <Col>
+                <TouchableOpacity
+                  style={{ alignItems: "center" }}
+                  onPress={() => {
+                    //Increaase quantity
+                    this.increaseQuantity(item, i);
+                  }}
+                >
+                  <Icon name="add" />
+                </TouchableOpacity>
+              </Col>
+              <Col style={{ alignItems: "center" }}>
+                <Text style={{ fontSize: 14 }}>
+                  {this.state.cartItems[i].quantity}
+                </Text>
+              </Col>
+              <Col>
+                <TouchableOpacity
+                  style={{ alignItems: "center", marginRight: -10 }}
+                  onPress={() => {
+                    //Decreaase quantity
+                    this.decreaseQuantity(item, i);
+                  }}
+                >
+                  <Icon name="remove" />
+                </TouchableOpacity>
+              </Col>
+            </Grid>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text>مبلغ</Text>
+            <Text style={myStyles.tableText}>
+              {(this.calcWeightPlusPercernt(item) * item.quantity).toFixed(3)}
+            </Text>
+          </Row>
+
+          <Row style={myStyles.tableRow}>
+            {/* <Text style={myStyles.tableText}>
+              {(Number(item.weight * item.ojrat_percent) / 100 +
+                Number(item.weight)) *
+                item.quantity *
+                item.ojrat_toman}
+            </Text> */}
+            <Text>{this.calcFinalPrice(item)}</Text>
           </Row>
         </Col>
       );
     });
     return itemsToRender;
   }
+
+  increaseQuantity(item, index) {
+    const obj = this.state.cartItems[index];
+    obj.quantity = item.quantity + 1;
+    this.setState({
+      obj
+    });
+  }
+
+  decreaseQuantity(item, index) {
+    const obj = this.state.cartItems[index];
+    if (obj.quantity <= 1) {
+      Alert.alert("تعداد نمی تواند کمتر از 1 باشد");
+      obj.quantity = 1;
+      return;
+    }
+    obj.quantity = item.quantity - 1;
+    this.setState({
+      obj
+    });
+  }
+
+  renderAddedAttributes(item) {
+    let toRender = [];
+    item.added_attributes.map((attr, i) => {
+      toRender.push(
+        <Text style={myStyles.tableText} key={i}>{`${attr.item_name}: ${
+          attr.value
+        }`}</Text>
+      );
+    });
+    toRender.push(
+      <Text
+        style={[myStyles.tableText, { borderTopWidth: 0.5 }]}
+      >{`مجموع: ${this.sumAddedAttributes(item)}`}</Text>
+    );
+    return toRender;
+  }
+
+  renderIndivudualCartItems() {
+    let itemsToRender = [];
+    let counter = 1;
+    this.state.cartItems.map((item, i) => {
+      itemsToRender.push(
+        <ListItem thumbnail key={i}>
+          <Left>
+            <Thumbnail square small source={{ uri: item.image }} />
+            <Button
+              transparent
+              onPress={() => {
+                Alert.alert(
+                  "پاک کردن " + item.title,
+                  "آیا اطمینان دارید که می خواهید این محصول را از فاکتور خرید حذف کنید؟",
+                  [
+                    {
+                      text: "خیر",
+                      onPress: () => console.log("No Pressed"),
+                      style: "cancel"
+                    },
+                    { text: "بله", onPress: () => this.removeItem(item) }
+                  ]
+                );
+              }}
+            >
+              <Icon style={{ color: "red" }} name="close" />
+            </Button>
+          </Left>
+          <Body style={{ paddingRight: 20 }}>
+            <Text style={{ fontSize: 10 }}>{`کد ${item.title} - ${item.type} ${
+              item.weight
+            } گرمی ${item.brand}`}</Text>
+            <Text style={{ fontSize: 10 }}>{`رنگ: ${item.color} - سایز: ${
+              item.size
+            }`}</Text>
+          </Body>
+          <Right style={{ borderLeftWidth: 1 }}>
+            <Text style={{ paddingLeft: 20 }}>{counter++}</Text>
+          </Right>
+        </ListItem>
+      );
+    });
+    return itemsToRender;
+  }
+
+  // Functional functions
+  removeItem(itemToRemove) {
+    let items = [];
+    this.state.cartItems.map(item => {
+      if (JSON.stringify(item) !== JSON.stringify(itemToRemove))
+        items.push(item);
+    });
+    this.setState({ cartItems: items });
+    AsyncStorage.setItem("CART", JSON.stringify(items));
+  }
+
+  // Math functions
+  sumQuantity() {
+    let obj = this.state.cartItems;
+    sum = 0;
+    obj.map((item, i) => {
+      sum += item.quantity;
+    });
+    return `${sum} عدد`;
+  }
+
+  sumWeight() {
+    let obj = this.state.cartItems;
+    sum = 0;
+    obj.map((item, i) => {
+      sum += Number(
+        (item.weight * item.ojrat_percent) / 100 +
+          Number(item.weight) * Number(item.quantity)
+      );
+    });
+    return `${sum.toFixed(3)} گرم`;
+  }
+
+  sumPrice() {
+    let obj = this.state.cartItems;
+    sum = 0;
+    obj.map((item, i) => {
+      sum += this.calcFinalPrice(item);
+    });
+    return `${sum.toFixed(0)} تومان`;
+  }
+
+  sumAddedAttributes(item) {
+    let sum = 0;
+    item.added_attributes.map((item, i) => {
+      sum += Number(item.value);
+    });
+    return sum;
+  }
+
+  calcWeightPlusPercernt(item) {
+    let res =
+      Number(item.weight * item.ojrat_percent) / 100 + Number(item.weight);
+    return res.toFixed(3);
+  }
+
+  calcFinalPrice(item) {
+    let res =
+      Number(this.sumAddedAttributes(item) * Number(item.quantity)) +
+      Number(
+        Number(item.weight) * Number(item.ojrat_toman) * Number(item.quantity)
+      );
+    return res;
+  }
 }
 
-const styles = {
-  title: {
-    fontFamily: "Roboto",
-    fontWeight: "100"
-  }
-};
-
-const items = [
-  {
-    id: 1,
-    quantity: 1,
-    title: "Black Hat",
-    categoryId: 5,
-    categoryTitle: "MEN",
-    price: "22$",
-    image:
-      "http://res.cloudinary.com/atf19/image/upload/c_crop,h_250,w_358,x_150/v1500465309/pexels-photo-206470_nwtgor.jpg",
-    description: "Hello there, i'm a cool product with a heart of gold."
-  },
-  {
-    id: 2,
-    quantity: 3,
-    title: "V Neck T-Shirt",
-    categoryId: 2,
-    categoryTitle: "WOMEN",
-    price: "12$",
-    image:
-      "http://res.cloudinary.com/atf19/image/upload/c_crop,h_250,x_226,y_54/v1500465309/pexels-photo-521197_hg8kak.jpg",
-    description: "Hello there, i'm a cool product with a heart of gold."
-  },
-  {
-    id: 10,
-    quantity: 1,
-    title: "Black Leather Hat",
-    categoryId: 1,
-    categoryTitle: "KIDS",
-    price: "2$",
-    image:
-      "http://res.cloudinary.com/atf19/image/upload/c_crop,g_face,h_250,x_248/v1500465308/fashion-men-s-individuality-black-and-white-157675_wnctss.jpg",
-    description: "Hello there, i'm a cool product with a heart of gold."
-  }
-];
-
 // Styles
-
 const myStyles = StyleSheet.create({
   tableRow: {
     height: 50,
-    backgroundColor: "red"
+    alignItems: "center"
+  },
+  tableText: {
+    fontSize: 10,
+    textAlign: "center"
+  },
+  pickerButtons: {
+    backgroundColor: "#eee",
+    width: 20,
+    height: 30
   }
-  // container: {
-  //   flex: 1,
-  //   flexDirection: "row-reverse",
-  //   padding: 0,
-  //   paddingTop: 0,
-  //   backgroundColor: "#fff"
-  // },
-  // header: { height: 50, backgroundColor: "#537791" },
-  // text: { textAlign: "center", fontWeight: "100" },
-  // dataWrapper: { marginTop: -1 },
-  // row: {
-  //   height: 40,
-  //   backgroundColor: "#E7E6E1"
-  // }
 });
+
+// const styles = {
+//   title: {
+//     fontFamily: "Roboto",
+//     fontWeight: "100"
+//   }
+// };
+
+// removeItemPressed(item) {
+//   Alert.alert(
+//     "پاک کردن " + item.title,
+//     "آیا اطمینان دارید که می خواهید این محصول را از فاکتور خرید حذف کنید؟",
+//     [
+//       {
+//         text: "خیر",
+//         onPress: () => console.log("No Pressed"),
+//         style: "cancel"
+//       },
+//       { text: "بله", onPress: () => this.removeItem(item) }
+//     ]
+//   );
+// }
+
+// removeAllPressed() {
+//   this.setState({ cartItems: [] });
+//   AsyncStorage.setItem("CART", JSON.stringify([]));
+// Alert.alert(
+//   "خالی کردن فاکتور",
+//   "آیا اطمینان دارید که می خواهید فاکتور خرید خود را خالی کنید؟",
+//   [
+//     {
+//       text: "خیر",
+//       onPress: () => console.log("No Pressed"),
+//       style: "cancel"
+//     },
+//     {
+//       text: "بله",
+//       onPress: () => {
+//         // this.setState({ cartItems: [] });
+//         // AsyncStorage.setItem("CART", JSON.stringify([]));
+//         // alert(1);
+
+//       }
+//     }
+//   ]
+// );
+// }
+
+// removeAll() {
+//   this.setState({ cartItems: [] });
+//   AsyncStorage.setItem("CART", JSON.stringify([]));
+// }
+
+// checkout() {
+//   Actions.checkout({ cartItems: this.state.cartItems });
+// }
+
+// itemClicked(item) {
+//   Actions.product({ product: item });
+// }
