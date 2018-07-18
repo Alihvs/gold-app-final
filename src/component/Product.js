@@ -3,14 +3,14 @@
  **/
 
 // React native and others libraries imports
-import React, { Component } from "react";
-import { Image } from "react-native";
-import { View, Col, Card, CardItem, Body, Button } from "native-base";
-import { Actions } from "react-native-router-flux";
+import React, { Component } from 'react';
+import { Image } from 'react-native';
+import { View, Col, Card, CardItem, Body, Button } from 'native-base';
+import { Actions } from 'react-native-router-flux';
 
 // Our custom files and classes import
-import Colors from "../Colors";
-import Text from "./Text";
+// import Colors from "../Colors";
+import Text from './Text';
 
 export default class product extends Component {
   render() {
@@ -18,14 +18,10 @@ export default class product extends Component {
       <Col style={this.props.isRight ? style.leftMargin : style.rightMargin}>
         <Card transparent>
           <CardItem cardBody>
-            <Button
-              transparent
-              style={style.button}
-              onPress={() => this.pressed()}
-            >
+            <Button transparent style={style.button} onPress={() => this.pressed()}>
               <Image
                 source={
-                  "http://res.cloudinary.com/atf19/image/upload/c_crop,g_face,h_250/v1500465307/pexels-photo-488541_s0si3h.jpg"
+                  'http://res.cloudinary.com/atf19/image/upload/c_crop,g_face,h_250/v1500465307/pexels-photo-488541_s0si3h.jpg'
                 }
                 style={style.image}
               />
@@ -48,7 +44,7 @@ export default class product extends Component {
                 <Text style={{ fontSize: 16 }} numberOfLines={1}>
                   {this.props.product.title.rendered}
                 </Text>
-                <View style={{ flex: 1, width: "100%", alignItems: "center" }}>
+                <View style={{ flex: 1, width: '100%', alignItems: 'center' }}>
                   <View style={style.line} />
                   <Text style={style.price}>{this.props.product.id}</Text>
                   <View style={style.line} />
@@ -80,26 +76,26 @@ const style = {
     marginBottom: 7
   },
   border: {
-    position: "absolute",
+    position: 'absolute',
     top: 10,
     left: 10,
     right: 10,
     bottom: 10,
     borderWidth: 1,
-    borderColor: "rgba(253, 253, 253, 0.2)"
+    borderColor: 'rgba(253, 253, 253, 0.2)'
   },
   price: {
     fontSize: 16,
     paddingLeft: 5,
     paddingRight: 5,
     zIndex: 1000,
-    backgroundColor: "#fdfdfd"
+    backgroundColor: '#fdfdfd'
   },
   line: {
-    width: "100%",
+    width: '100%',
     height: 1,
-    backgroundColor: "#7f8c8d",
-    position: "absolute",
-    top: "52%"
+    backgroundColor: '#7f8c8d',
+    position: 'absolute',
+    top: '52%'
   }
 };

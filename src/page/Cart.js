@@ -3,233 +3,118 @@
  **/
 
 // React native and others libraries imports
-import React, { Component } from "react";
-import {
-  Alert,
-  AsyncStorage,
-  StyleSheet,
-  ScrollView,
-  TouchableOpacity
-} from "react-native";
+import React, { Component } from 'react';
+import { Alert, AsyncStorage, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import {
   Container,
   Content,
   View,
-  Header,
   Icon,
   Button,
   Left,
   Right,
   Body,
-  Title,
   List,
   ListItem,
   Thumbnail,
-  Footer,
-  Input,
-  Card,
-  CardItem,
   Toast
-} from "native-base";
-import { Col, Row, Grid } from "react-native-easy-grid";
-import { Actions } from "react-native-router-flux";
+} from 'native-base';
+import { Col, Row, Grid } from 'react-native-easy-grid';
+import { Actions } from 'react-native-router-flux';
 
 // Our custom files and classes import
-import Colors from "../Colors";
-import Text from "../component/Text";
-import Navbar from "../component/Navbar";
-import product from "../component/Product";
+import Colors from '../Colors';
+import Text from '../component/Text';
+import Navbar from '../component/Navbar';
+// import product from '../component/Product';
 
 export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
       cartItems: [],
-      token: "",
-      customerName: "",
+      token: '',
+      customerName: '',
       sentFactor: false
     };
   }
 
   componentWillMount() {
-    AsyncStorage.getItem("CART", (err, res) => {
+    AsyncStorage.getItem('CART', (err, res) => {
       if (!res) this.setState({ cartItems: [] });
       else {
         this.setState({ cartItems: JSON.parse(res) });
       }
     });
-
-    // AsyncStorage.getItem("FACTOR", (err, res) => {
-    //   if (res) {
-    //     this.setState({
-    //       sentFactor: true
-    //     });
-    //     Actions.factorResult();
-    //   }
-    // });
   }
 
-  render() {
-    var leftFoResult = (
-      <Left style={{ flex: 1 }}>
-        <Button transparent onPress={() => Actions.home()}>
-          <Icon name="ios-close" size={38} style={{ fontSize: 38 }} />
-        </Button>
-      </Left>
-    );
-
-    var left = (
-      <Left style={{ flex: 1 }}>
-        <Button transparent onPress={() => Actions.pop()}>
-          <Icon name="ios-close" size={38} style={{ fontSize: 38 }} />
-        </Button>
-      </Left>
-    );
-
-    return (
-      <Container style={{ backgroundColor: "#fdfdfd" }}>
-        <Navbar left={left} title="فاکتور" />
-        {this.state.cartItems.length <= 0 ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: "center",
-              alignItems: "center"
-            }}
-          >
-            <Icon
-              name="ios-cart"
-              size={38}
-              style={{ fontSize: 38, color: "#95a5a6", marginBottom: 7 }}
-            />
-            <Text style={{ color: "#95a5a6" }}>فاکتور شما خالی است</Text>
-          </View>
-        ) : (
-          <Content
-            contentContainerStyle={{
-              padding: 5
-            }}
-          >
-            <Text
-              style={{
-                borderBottomWidth: 1,
-                paddingBottom: 15,
-                paddingTop: 15
+  renderIndivudualCartItems() {
+    const itemsToRender = [];
+    let counter = 1;
+    this.state.cartItems.map((item, i) => {
+      itemsToRender.push(
+        <ListItem thumbnail key={i}>
+          <Left>
+            <Thumbnail square small source={{ uri: item.image }} />
+            <Button
+              transparent
+              onPress={() => {
+                Alert.alert(
+                  `پاک کردن ${item.title}`,
+                  'آیا اطمینان دارید که می خواهید این محصول را از فاکتور خرید حذف کنید؟',
+                  [
+                    {
+                      text: 'خیر',
+                      onPress: () => console.log('No Pressed'),
+                      style: 'cancel'
+                    },
+                    { text: 'بله', onPress: () => this.removeItem(item) }
+                  ]
+                );
               }}
             >
-              شرح کالا
-            </Text>
-            {/* New Table Start, oh god... */}
-            <View style={{}}>
-              <ScrollView
-                horizontal
-                contentContainerStyle={{
-                  // backgroundColor: "red",
-                  height: 500
-                }}
-              >
-                <Grid
-                  style={{
-                    flexDirection: "row"
-                  }}
-                >
-                  {this.renderCartItems()}
-                </Grid>
-              </ScrollView>
-              {/* New Table FINISH, oh god... */}
-            </View>
-            <Grid style={{ flexDirection: "column", padding: 10 }}>
-              <Row style={{}}>
-                <Col style={{ backgroundColor: "#eee", alignItems: "center" }}>
-                  <Text>تعداد کل</Text>
-                  <Text>{this.sumQuantity()}</Text>
-                </Col>
-                <Col style={{ backgroundColor: "#eee", alignItems: "center" }}>
-                  <Text>جمع وزن</Text>
-                  <Text>{this.sumWeight()}</Text>
-                </Col>
-                <Col style={{ backgroundColor: "#eee", alignItems: "center" }}>
-                  <Text>جمع مبلغ</Text>
-                  <Text>{this.sumPrice()}</Text>
-                </Col>
-              </Row>
-            </Grid>
-            <Grid style={{ flexDirection: "column", padding: 10 }}>
-              <Text
-                style={{
-                  borderBottomWidth: 1,
-                  paddingBottom: 15,
-                  paddingTop: 15
-                }}
-              >
-                آیتم های موجود در فاکتور
-              </Text>
-              <List style={{ borderBottomWidth: 1 }}>
-                {this.renderIndivudualCartItems()}
-              </List>
-            </Grid>
-            <Grid style={{ marginTop: 20, marginBottom: 10 }}>
-              <Col style={{ paddingLeft: 10, paddingRight: 5 }}>
-                <Button
-                  onPress={() => {
-                    Alert.alert(
-                      "خالی کردن فاکتور",
-                      "آیا اطمینان دارید که می خواهید فاکتور خرید خود را خالی کنید؟",
-                      [
-                        {
-                          text: "خیر",
-                          onPress: () => console.log("No Pressed"),
-                          style: "cancel"
-                        },
-                        {
-                          text: "بله",
-                          onPress: () => {
-                            this.setState({ cartItems: [] });
-                            AsyncStorage.setItem("CART", JSON.stringify([]));
-                          }
-                        }
-                      ]
-                    );
-                  }}
-                  style={{
-                    borderWidth: 1,
-                    borderColor: Colors.navbarBackgroundColor
-                  }}
-                  block
-                  iconRight
-                  transparent
-                >
-                  <Text style={{ color: Colors.navbarBackgroundColor }}>
-                    پاک کردن فاکتور
-                  </Text>
-                </Button>
-              </Col>
-              <Col style={{ paddingLeft: 5, paddingRight: 10 }}>
-                <Button
-                  onPress={() => this.checkout()}
-                  style={{ backgroundColor: Colors.navbarBackgroundColor }}
-                  block
-                  iconLeft
-                >
-                  <Text style={{ color: "#fdfdfd" }}>ارسال نهایی فاکتور</Text>
-                </Button>
-              </Col>
-            </Grid>
-          </Content>
-        )}
-      </Container>
+              <Icon style={{ color: 'red' }} name="close" />
+            </Button>
+          </Left>
+          <Body style={{ paddingRight: 20 }}>
+            <Text style={{ fontSize: 10 }}>{`کد ${item.title} - ${item.type} ${item.weight} گرمی ${
+              item.brand
+            }`}</Text>
+            <Text style={{ fontSize: 10 }}>{`رنگ: ${item.color} - سایز: ${item.size}`}</Text>
+          </Body>
+          <Right style={{ borderLeftWidth: 1 }}>
+            <Text style={{ paddingLeft: 20 }}>{counter++}</Text>
+          </Right>
+        </ListItem>
+      );
+    });
+    return itemsToRender;
+  }
+
+  renderAddedAttributes(item) {
+    const toRender = [];
+    item.addedAttributes.map((attr, i) => {
+      toRender.push(
+        <Text style={myStyles.tableText} key={i}>{`${attr.item_name}: ${attr.value}`}</Text>
+      );
+    });
+    toRender.push(
+      <Text
+        style={[myStyles.tableText, { borderTopWidth: 0.5 }]}
+      >{`مجموع: ${this.sumAddedAttributes(item)}`}</Text>
     );
+    return toRender;
   }
 
   renderCartItems() {
-    itemsToRender = [];
+    const itemsToRender = [];
     itemsToRender.push(
       <Col
         style={{
           width: 60,
-          alignItems: "center",
+          alignItems: 'center',
           borderWidth: 0.4,
-          backgroundColor: "#eee"
+          backgroundColor: '#eee'
         }}
       >
         <Row style={myStyles.tableRow}>
@@ -265,11 +150,12 @@ export default class Cart extends Component {
       </Col>
     );
     this.state.cartItems.map((item, i) => {
+      // const toRender = [];
       itemsToRender.push(
         <Col
           style={{
             width: 100,
-            alignItems: "center",
+            alignItems: 'center',
             borderWidth: 0.4
           }}
           key={i}
@@ -281,41 +167,30 @@ export default class Cart extends Component {
             <Text style={myStyles.tableText}>{item.title}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text style={myStyles.tableText}>{`${item.type} ${
-              item.ojrat_percent
-            } ٪`}</Text>
+            <Text style={myStyles.tableText}>{`${item.type} ${item.ojratPercent} ٪`}</Text>
           </Row>
-          <Row
-            style={[
-              myStyles.tableRow,
-              { alignSelf: "flex-end", paddingRight: 5 }
-            ]}
-          >
+          <Row style={[myStyles.tableRow, { alignSelf: 'flex-end', paddingRight: 5 }]}>
             <View>{this.renderAddedAttributes(item)}</View>
           </Row>
           <Row style={myStyles.tableRow}>
             <Text style={myStyles.tableText}>{item.weight}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text style={myStyles.tableText}>
-              {this.calcWeightPlusPercernt(item)}
-            </Text>
+            <Text style={myStyles.tableText}>{this.calcWeightPlusPercernt(item)}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text style={myStyles.tableText}>{`${
-              item.ojrat_toman
-            } تومان`}</Text>
+            <Text style={myStyles.tableText}>{`${item.ojratToman} تومان`}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
             <Grid
               style={{
-                alignItems: "center",
-                flexDirection: "row"
+                alignItems: 'center',
+                flexDirection: 'row'
               }}
             >
-              <Col>
+              {/* <Col>
                 <TouchableOpacity
-                  style={{ alignItems: "center" }}
+                  style={{ alignItems: 'center' }}
                   onPress={() => {
                     //Increaase quantity
                     this.increaseQuantity(item, i);
@@ -323,21 +198,30 @@ export default class Cart extends Component {
                 >
                   <Icon name="add" />
                 </TouchableOpacity>
-              </Col>
-              <Col style={{ alignItems: "center" }}>
-                <Text style={{ fontSize: 14 }}>
-                  {this.state.cartItems[i].quantity}
-                </Text>
-              </Col>
+              </Col> */}
               <Col>
                 <TouchableOpacity
-                  style={{ alignItems: "center", marginRight: -10 }}
+                  style={{ alignItems: 'center', marginRight: -10 }}
                   onPress={() => {
                     //Decreaase quantity
                     this.decreaseQuantity(item, i);
                   }}
                 >
                   <Icon name="remove" />
+                </TouchableOpacity>
+              </Col>
+              <Col style={{ alignItems: 'center' }}>
+                <Text style={{ fontSize: 14 }}>{this.state.cartItems[i].quantity}</Text>
+              </Col>
+              <Col>
+                <TouchableOpacity
+                  style={{ alignItems: 'center' }}
+                  onPress={() => {
+                    //Increaase quantity
+                    this.increaseQuantity(item, i);
+                  }}
+                >
+                  <Icon name="add" />
                 </TouchableOpacity>
               </Col>
             </Grid>
@@ -357,6 +241,146 @@ export default class Cart extends Component {
     return itemsToRender;
   }
 
+  render() {
+    const left = (
+      <Left style={{ flex: 1 }}>
+        <Button transparent onPress={() => Actions.pop()}>
+          <Icon name="ios-close" size={38} style={{ fontSize: 38 }} />
+        </Button>
+      </Left>
+    );
+
+    return (
+      <Container style={{ backgroundColor: '#fdfdfd' }}>
+        <Navbar left={left} title="فاکتور" />
+        {this.state.cartItems.length <= 0 ? (
+          <View
+            style={{
+              flex: 1,
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Icon
+              name="ios-cart"
+              size={38}
+              style={{ fontSize: 38, color: '#95a5a6', marginBottom: 7 }}
+            />
+            <Text style={{ color: '#95a5a6' }}>فاکتور شما خالی است</Text>
+          </View>
+        ) : (
+          <Content
+            contentContainerStyle={{
+              padding: 5
+            }}
+          >
+            <Text
+              style={{
+                borderBottomWidth: 1,
+                paddingBottom: 15,
+                paddingTop: 15
+              }}
+            >
+              شرح کالا
+            </Text>
+            {/* New Table Start, oh god... */}
+            <View style={{}}>
+              <ScrollView
+                horizontal
+                contentContainerStyle={{
+                  // backgroundColor: "red",
+                  height: 500
+                }}
+              >
+                <Grid
+                  style={{
+                    flexDirection: 'row'
+                  }}
+                >
+                  {this.renderCartItems()}
+                </Grid>
+              </ScrollView>
+              {/* New Table FINISH, oh god... */}
+            </View>
+            <Grid style={{ flexDirection: 'column', padding: 10 }}>
+              <Row style={{}}>
+                <Col style={{ backgroundColor: '#eee', alignItems: 'center' }}>
+                  <Text>تعداد کل</Text>
+                  <Text>{this.sumQuantity()}</Text>
+                </Col>
+                <Col style={{ backgroundColor: '#eee', alignItems: 'center' }}>
+                  <Text>جمع وزن</Text>
+                  <Text>{this.sumWeight()}</Text>
+                </Col>
+                <Col style={{ backgroundColor: '#eee', alignItems: 'center' }}>
+                  <Text>جمع مبلغ</Text>
+                  <Text>{this.sumPrice()}</Text>
+                </Col>
+              </Row>
+            </Grid>
+            <Grid style={{ flexDirection: 'column', padding: 10 }}>
+              <Text
+                style={{
+                  borderBottomWidth: 1,
+                  paddingBottom: 15,
+                  paddingTop: 15
+                }}
+              >
+                آیتم های موجود در فاکتور
+              </Text>
+              <List style={{ borderBottomWidth: 1 }}>{this.renderIndivudualCartItems()}</List>
+            </Grid>
+            <Grid style={{ marginTop: 20, marginBottom: 10 }}>
+              <Col style={{ paddingLeft: 10, paddingRight: 5 }}>
+                <Button
+                  onPress={() => {
+                    Alert.alert(
+                      'خالی کردن فاکتور',
+                      'آیا اطمینان دارید که می خواهید فاکتور خرید خود را خالی کنید؟',
+                      [
+                        {
+                          text: 'خیر',
+                          onPress: () => console.log('No Pressed'),
+                          style: 'cancel'
+                        },
+                        {
+                          text: 'بله',
+                          onPress: () => {
+                            this.setState({ cartItems: [] });
+                            AsyncStorage.setItem('CART', JSON.stringify([]));
+                          }
+                        }
+                      ]
+                    );
+                  }}
+                  style={{
+                    borderWidth: 1,
+                    borderColor: Colors.navbarBackgroundColor
+                  }}
+                  block
+                  iconRight
+                  transparent
+                >
+                  <Text style={{ color: Colors.navbarBackgroundColor }}>پاک کردن فاکتور</Text>
+                </Button>
+              </Col>
+              <Col style={{ paddingLeft: 5, paddingRight: 10 }}>
+                <Button
+                  onPress={() => this.checkout()}
+                  style={{ backgroundColor: Colors.navbarBackgroundColor }}
+                  block
+                  iconLeft
+                >
+                  <Text style={{ color: '#fdfdfd' }}>ارسال نهایی فاکتور</Text>
+                </Button>
+              </Col>
+            </Grid>
+          </Content>
+        )}
+      </Container>
+    );
+  }
+
   increaseQuantity(item, index) {
     const obj = this.state.cartItems[index];
     obj.quantity = item.quantity + 1;
@@ -368,7 +392,7 @@ export default class Cart extends Component {
   decreaseQuantity(item, index) {
     const obj = this.state.cartItems[index];
     if (obj.quantity <= 1) {
-      Alert.alert("تعداد نمی تواند کمتر از 1 باشد");
+      Alert.alert('تعداد نمی تواند کمتر از 1 باشد');
       obj.quantity = 1;
       return;
     }
@@ -378,105 +402,41 @@ export default class Cart extends Component {
     });
   }
 
-  renderAddedAttributes(item) {
-    let toRender = [];
-    item.added_attributes.map((attr, i) => {
-      toRender.push(
-        <Text style={myStyles.tableText} key={i}>{`${attr.item_name}: ${
-          attr.value
-        }`}</Text>
-      );
-    });
-    toRender.push(
-      <Text
-        style={[myStyles.tableText, { borderTopWidth: 0.5 }]}
-      >{`مجموع: ${this.sumAddedAttributes(item)}`}</Text>
-    );
-    return toRender;
-  }
-
-  renderIndivudualCartItems() {
-    let itemsToRender = [];
-    let counter = 1;
-    this.state.cartItems.map((item, i) => {
-      itemsToRender.push(
-        <ListItem thumbnail key={i}>
-          <Left>
-            <Thumbnail square small source={{ uri: item.image }} />
-            <Button
-              transparent
-              onPress={() => {
-                Alert.alert(
-                  "پاک کردن " + item.title,
-                  "آیا اطمینان دارید که می خواهید این محصول را از فاکتور خرید حذف کنید؟",
-                  [
-                    {
-                      text: "خیر",
-                      onPress: () => console.log("No Pressed"),
-                      style: "cancel"
-                    },
-                    { text: "بله", onPress: () => this.removeItem(item) }
-                  ]
-                );
-              }}
-            >
-              <Icon style={{ color: "red" }} name="close" />
-            </Button>
-          </Left>
-          <Body style={{ paddingRight: 20 }}>
-            <Text style={{ fontSize: 10 }}>{`کد ${item.title} - ${item.type} ${
-              item.weight
-            } گرمی ${item.brand}`}</Text>
-            <Text style={{ fontSize: 10 }}>{`رنگ: ${item.color} - سایز: ${
-              item.size
-            }`}</Text>
-          </Body>
-          <Right style={{ borderLeftWidth: 1 }}>
-            <Text style={{ paddingLeft: 20 }}>{counter++}</Text>
-          </Right>
-        </ListItem>
-      );
-    });
-    return itemsToRender;
-  }
-
   // Functional functions
   removeItem(itemToRemove) {
-    let items = [];
+    const items = [];
     this.state.cartItems.map(item => {
-      if (JSON.stringify(item) !== JSON.stringify(itemToRemove))
-        items.push(item);
+      if (JSON.stringify(item) !== JSON.stringify(itemToRemove)) items.push(item);
     });
     this.setState({ cartItems: items });
-    AsyncStorage.setItem("CART", JSON.stringify(items));
+    AsyncStorage.setItem('CART', JSON.stringify(items));
   }
 
   // Math functions
   sumQuantity() {
-    let obj = this.state.cartItems;
-    sum = 0;
-    obj.map((item, i) => {
+    const obj = this.state.cartItems;
+    let sum = 0;
+    obj.map(item => {
       sum += item.quantity;
     });
     return `${sum} عدد`;
   }
 
   sumWeight() {
-    let obj = this.state.cartItems;
-    sum = 0;
-    obj.map((item, i) => {
+    const obj = this.state.cartItems;
+    let sum = 0;
+    obj.map(item => {
       sum += Number(
-        (item.weight * item.ojrat_percent) / 100 +
-          Number(item.weight) * Number(item.quantity)
+        (item.weight * item.ojratPercent) / 100 + Number(item.weight) * Number(item.quantity)
       );
     });
     return `${sum.toFixed(3)} گرم`;
   }
 
   sumPrice() {
-    let obj = this.state.cartItems;
-    sum = 0;
-    obj.map((item, i) => {
+    const obj = this.state.cartItems;
+    let sum = 0;
+    obj.map(item => {
       sum += this.calcFinalPrice(item);
     });
     return `${sum.toFixed(0)} تومان`;
@@ -484,30 +444,27 @@ export default class Cart extends Component {
 
   sumAddedAttributes(item) {
     let sum = 0;
-    item.added_attributes.map((item, i) => {
+    item.addedAttributes.map(item => {
       sum += Number(item.value);
     });
     return sum;
   }
 
   calcWeightPlusPercernt(item) {
-    let res =
-      Number(item.weight * item.ojrat_percent) / 100 + Number(item.weight);
+    const res = Number(item.weight * item.ojratPercent) / 100 + Number(item.weight);
     return res.toFixed(3);
   }
 
   calcFinalPrice(item) {
-    let res =
+    const res =
       Number(this.sumAddedAttributes(item) * Number(item.quantity)) +
-      Number(
-        Number(item.weight) * Number(item.ojrat_toman) * Number(item.quantity)
-      );
+      Number(Number(item.weight) * Number(item.ojratToman) * Number(item.quantity));
     return res;
   }
 
   constructTable() {
-    let res = "";
-    let items = this.state.cartItems;
+    let res = '';
+    const items = this.state.cartItems;
 
     items.map((product, i) => {
       res += `
@@ -543,16 +500,16 @@ export default class Cart extends Component {
   }
 
   checkout() {
-    AsyncStorage.getItem("user", (err, res) => {
-      var data = JSON.parse(res);
-      let factorNumber = Math.floor(Math.random() * 100000);
-      let customerName = data.displayName;
-      let customerPhone = data.username;
+    AsyncStorage.getItem('user', (err, res) => {
+      const data = JSON.parse(res);
+      const factorNumber = Math.floor(Math.random() * 100000);
+      const customerName = data.displayName;
+      const customerPhone = data.username;
       this.setState({
         token: data.token
       });
 
-      let content = `
+      const content = `
       <h2 style="text-align: right;">فاکتور شماره : ${factorNumber}</h2>
       <table style="width:100%; text-align: right;">
         <tr>
@@ -570,28 +527,28 @@ export default class Cart extends Component {
       
       `;
 
-      fetch("http://app.idamas.ir/wp-json/wp/v2/factors", {
-        method: "post",
-        credentials: "include",
+      fetch('http://app.idamas.ir/wp-json/wp/v2/factors', {
+        method: 'post',
+        credentials: 'include',
         withCredentials: true,
         headers: {
           Authorization: `Bearer ${this.state.token}`,
-          Accept: "application/json",
-          "Content-Type": "application/json"
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           title: `فاکتور شماره ${factorNumber} - ${customerName} - ${customerPhone}`,
-          content: content
+          content
         })
       })
-        .then((response, err) => response.json())
-        .then(data => {
-          if (data) {
+        .then(response => response.json())
+        .then(resData => {
+          if (resData) {
             Toast.show({
-              text: "فاکتور شما با موفقیت ارسال شد",
-              position: "top",
-              type: "success",
-              buttonText: "",
+              text: 'فاکتور شما با موفقیت ارسال شد',
+              position: 'top',
+              type: 'success',
+              buttonText: '',
               duration: 2000
             });
             this.setState({
@@ -600,21 +557,21 @@ export default class Cart extends Component {
             //Set AsyncStorage for the current Factor
 
             AsyncStorage.setItem(
-              "FACTOR",
+              'FACTOR',
               JSON.stringify({
-                factorNumber: factorNumber
+                factorNumber
               })
             );
 
             Actions.factorResult();
           }
         })
-        .catch(err => {
+        .catch(() => {
           Toast.show({
-            text: "اتصال خود به شبکه را بررسی کنید",
-            position: "top",
-            type: "danger",
-            buttonText: "",
+            text: 'اتصال خود به شبکه را بررسی کنید',
+            position: 'top',
+            type: 'danger',
+            buttonText: '',
             duration: 3000
           });
           this.setState({
@@ -629,14 +586,14 @@ export default class Cart extends Component {
 const myStyles = StyleSheet.create({
   tableRow: {
     height: 50,
-    alignItems: "center"
+    alignItems: 'center'
   },
   tableText: {
     fontSize: 10,
-    textAlign: "center"
+    textAlign: 'center'
   },
   pickerButtons: {
-    backgroundColor: "#eee",
+    backgroundColor: '#eee',
     width: 20,
     height: 30
   }

@@ -3,42 +3,35 @@
  **/
 
 // React native and others libraries imports
-import React, { Component } from "react";
-import { Image, Dimensions, StyleSheet, AsyncStorage } from "react-native";
-import {
-  Container,
-  Content,
-  View,
-  Button,
-  Left,
-  Right,
-  Icon,
-  Card,
-  CardItem,
-  cardBody
-} from "native-base";
-import { Actions } from "react-native-router-flux";
+import React, { Component } from 'react';
+import { Image, AsyncStorage } from 'react-native';
+import { Container, Content, View, Button, Left, Right, Icon } from 'native-base';
+import { Actions } from 'react-native-router-flux';
 
 // Our custom files and classes import
-import Text from "../component/Text";
-import Navbar from "../component/Navbar";
-import SideMenu from "../component/SideMenu";
-import SideMenuDrawer from "../component/SideMenuDrawer";
-import CategoryBlock from "../component/CategoryBlock";
-import Colors from "../Colors";
-import newLogo from "../assets/logo.png";
+// import Text from '../component/Text';
+import Navbar from '../component/Navbar';
+// import SideMenu from '../component/SideMenu';
+import SideMenuDrawer from '../component/SideMenuDrawer';
+import CategoryBlock from '../component/CategoryBlock';
+import Colors from '../Colors';
+import newLogo from '../assets/logo.png';
+import womanLogo from '../assets/woman.png';
+import manLogo from '../assets/man.png';
+import kidLogo from '../assets/kid.png';
+import accLogo from '../assets/pin.png';
 
 export default class Home extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      page: "second",
+      page: 'second',
       hasFactor: false
     };
   }
 
   componentWillMount() {
-    AsyncStorage.getItem("FACTOR", (err, res) => {
+    AsyncStorage.getItem('FACTOR', (err, res) => {
       if (res) {
         this.setState({
           hasFactor: true
@@ -48,14 +41,14 @@ export default class Home extends Component {
   }
 
   render() {
-    var left = (
+    const left = (
       <Left style={{ flex: 1 }}>
         <Button onPress={() => this._sideMenuDrawer.open()} transparent>
           <Icon name="ios-menu-outline" />
         </Button>
       </Left>
     );
-    var right = (
+    const right = (
       <Right style={{ flex: 1 }}>
         <Button onPress={this.rightButtonPressed} transparent>
           <Icon name="ios-cart" />
@@ -67,15 +60,13 @@ export default class Home extends Component {
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
         <Container>
           <Navbar left={left} right={right} title="صفحه اصلی" />
-          <View
-            style={{ backgroundColor: Colors.statusBarColor, width: "100%" }}
-          >
+          <View style={{ backgroundColor: Colors.statusBarColor, width: '100%' }}>
             <Image
               resizeMode="contain"
               style={{
                 height: 100,
                 // backgroundColor: "rgba(24, 24, 25, 0.9)",
-                width: "100%",
+                width: '100%',
                 margin: 5
               }}
               source={newLogo}
@@ -88,7 +79,7 @@ export default class Home extends Component {
   }
 
   rightButtonPressed() {
-    AsyncStorage.getItem("FACTOR", (err, res) => {
+    AsyncStorage.getItem('FACTOR', (err, res) => {
       if (res) {
         Actions.factorResult();
       } else {
@@ -98,8 +89,8 @@ export default class Home extends Component {
   }
 
   renderCategories() {
-    let cat = [];
-    for (var i = 0; i < categories.length; i++) {
+    const cat = [];
+    for (let i = 0; i < categories.length; i++) {
       cat.push(
         <CategoryBlock
           key={categories[i].id}
@@ -113,29 +104,25 @@ export default class Home extends Component {
   }
 }
 
-var categories = [
+const categories = [
   {
     id: 1,
-    title: "زنانه",
-    image:
-      "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1531628438/gold-app/woman02.png"
+    title: 'زنانه',
+    image: womanLogo
   },
   {
     id: 2,
-    title: "مردانه",
-    image:
-      "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1531628438/gold-app/man02.png"
+    title: 'مردانه',
+    image: manLogo
   },
   {
     id: 3,
-    title: "بچه گانه",
-    image:
-      "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1531628438/gold-app/BABY02.png"
+    title: 'بچه گانه',
+    image: kidLogo
   },
   {
     id: 4,
-    title: "اکسسوری",
-    image:
-      "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1531628438/gold-app/pin02.png"
+    title: 'اکسسوری',
+    image: accLogo
   }
 ];

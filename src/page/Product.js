@@ -3,13 +3,8 @@
  **/
 
 // React native and others libraries imports
-import React, { Component } from "react";
-import {
-  Image,
-  Dimensions,
-  TouchableWithoutFeedback,
-  AsyncStorage
-} from "react-native";
+import React, { Component } from 'react';
+import { Image, Dimensions, TouchableWithoutFeedback, AsyncStorage } from 'react-native';
 import {
   View,
   Container,
@@ -18,25 +13,22 @@ import {
   Left,
   Right,
   Icon,
-  Picker,
-  Item,
   Grid,
   Col,
   Toast,
   Text as NBText,
   Card,
-  CardItem,
-  Body
-} from "native-base";
-import { Actions } from "react-native-router-flux";
-import Carousel, { Pagination } from "react-native-snap-carousel";
+  CardItem
+} from 'native-base';
+import { Actions } from 'react-native-router-flux';
+import Carousel, { Pagination } from 'react-native-snap-carousel';
 
 // Our custom files and classes import
-import Colors from "../Colors";
-import Text from "../component/Text";
+import Colors from '../Colors';
+import Text from '../component/Text';
 
-import Navbar from "../component/Navbar";
-import { default as ProductComponent } from "../component/Product";
+import Navbar from '../component/Navbar';
+import { default as ProductComponent } from '../component/Product';
 
 export default class Product extends Component {
   constructor(props) {
@@ -46,8 +38,8 @@ export default class Product extends Component {
       activeSlide: 0,
       wishListAvailability: undefined,
       quantity: 1,
-      selectedColor: "",
-      selectedSize: "",
+      selectedColor: '',
+      selectedSize: '',
       brand: this.props.product.brand,
       hasFactor: false
     };
@@ -60,11 +52,11 @@ export default class Product extends Component {
         brand: this.props.product.brand,
         color: this.props.product.color,
         size: this.props.product.size,
-        ojrat_percent: this.props.product.ojrat_percent,
-        ojrat_toman: this.props.product.ojrat_toman,
+        ojratPercent: this.props.product.ojratPercent,
+        ojratToman: this.props.product.ojratToman,
         type: this.props.product.type,
         weight: this.props.product.weight,
-        added_attributes: this.props.product.added_attributes,
+        addedAttributes: this.props.product.addedAttributes,
         image: this.props.product.image,
         images: [
           this.props.product.images[0].image.url,
@@ -82,7 +74,7 @@ export default class Product extends Component {
   // componentWillMount() {}
 
   componentDidMount() {
-    AsyncStorage.getItem("FACTOR", (err, res) => {
+    AsyncStorage.getItem('FACTOR', (err, res) => {
       if (res) {
         this.setState({ hasFactor: true });
       }
@@ -90,14 +82,14 @@ export default class Product extends Component {
   }
 
   render() {
-    var left = (
+    const left = (
       <Left style={{ flex: 1 }}>
         <Button onPress={() => Actions.pop()} transparent>
           <Icon name="ios-arrow-back" />
         </Button>
       </Left>
     );
-    var right = (
+    const right = (
       <Right style={{ flex: 1 }}>
         <Button onPress={() => Actions.search()} transparent>
           <Icon name="ios-search-outline" />
@@ -108,7 +100,7 @@ export default class Product extends Component {
       </Right>
     );
     return (
-      <Container style={{ backgroundColor: "#fdfdfd" }}>
+      <Container style={{ backgroundColor: '#fdfdfd' }}>
         <Navbar
           left={left}
           right={right}
@@ -119,10 +111,10 @@ export default class Product extends Component {
             ref={carousel => {
               this._carousel = carousel;
             }}
-            sliderWidth={Dimensions.get("window").width}
-            itemWidth={Dimensions.get("window").width}
+            sliderWidth={Dimensions.get('window').width}
+            itemWidth={Dimensions.get('window').width}
             onSnapToItem={index => this.setState({ activeSlide: index })}
-            enableSnap={true}
+            enableSnap
           >
             {this.renderImages()}
           </Carousel>
@@ -130,7 +122,7 @@ export default class Product extends Component {
             dotsLength={this.state.currentProduct.images.length}
             activeDotIndex={this.state.activeSlide}
             containerStyle={{
-              backgroundColor: "transparent",
+              backgroundColor: 'transparent',
               paddingTop: 0,
               paddingBottom: 0,
               marginTop: -15
@@ -140,7 +132,7 @@ export default class Product extends Component {
               height: 10,
               borderRadius: 5,
               marginHorizontal: 2,
-              backgroundColor: "rgba(255, 255, 255, 0.92)"
+              backgroundColor: 'rgba(255, 255, 255, 0.92)'
             }}
             inactiveDotOpacity={0.4}
             inactiveDotScale={0.6}
@@ -148,7 +140,7 @@ export default class Product extends Component {
 
           <View
             style={{
-              backgroundColor: "#fdfdfd",
+              backgroundColor: '#fdfdfd',
               paddingTop: 10,
               paddingBottom: 10
             }}
@@ -156,85 +148,73 @@ export default class Product extends Component {
             <Content padder>
               <NBText>مشخصات عمومی</NBText>
 
-              <Card style={{ alignItems: "flex-end" }}>
+              <Card style={{ alignItems: 'flex-end' }}>
                 {/* Brand */}
                 <CardItem bordered>
                   <Col size={60}>
-                    <Text style={{ textAlign: "right" }}>
-                      {this.props.product.brand}
-                    </Text>
+                    <Text style={{ textAlign: 'right' }}>{this.props.product.brand}</Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: "right" }}>برند</Text>
+                    <Text style={{ textAlign: 'right' }}>برند</Text>
                   </Col>
                 </CardItem>
                 {/* Weight */}
                 <CardItem bordered>
                   <Col size={60}>
-                    <Text style={{ textAlign: "right" }}>
-                      {`${this.props.product.weight} گرم`}
-                    </Text>
+                    <Text style={{ textAlign: 'right' }}>{`${this.props.product.weight} گرم`}</Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: "right" }}>وزن</Text>
+                    <Text style={{ textAlign: 'right' }}>وزن</Text>
                   </Col>
                 </CardItem>
                 {/* ojrat_percent */}
                 <CardItem bordered>
                   <Col size={60}>
-                    <Text style={{ textAlign: "right" }}>
-                      {`${this.props.product.ojrat_percent} درصد`}
+                    <Text style={{ textAlign: 'right' }}>
+                      {`${this.props.product.ojratPercent} درصد`}
                     </Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: "right" }}>اجرت به درصد</Text>
+                    <Text style={{ textAlign: 'right' }}>اجرت به درصد</Text>
                   </Col>
                 </CardItem>
                 {/* ojrat_toman */}
                 <CardItem bordered>
                   <Col size={60}>
-                    <Text style={{ textAlign: "right" }}>
-                      {`${this.props.product.ojrat_toman} تومان`}
+                    <Text style={{ textAlign: 'right' }}>
+                      {`${this.props.product.ojratToman} تومان`}
                     </Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: "right" }}>اجرت به تومان</Text>
+                    <Text style={{ textAlign: 'right' }}>اجرت به تومان</Text>
                   </Col>
                 </CardItem>
                 {/* Color */}
                 <CardItem bordered>
                   <Col size={60}>
-                    <Text style={{ textAlign: "right" }}>
-                      {this.props.product.color}
-                    </Text>
+                    <Text style={{ textAlign: 'right' }}>{this.props.product.color}</Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: "right" }}>رنگ</Text>
+                    <Text style={{ textAlign: 'right' }}>رنگ</Text>
                   </Col>
                 </CardItem>
                 {/* Color */}
                 <CardItem bordered>
                   <Col size={60}>
-                    <Text style={{ textAlign: "right" }}>
-                      {this.props.product.size}
-                    </Text>
+                    <Text style={{ textAlign: 'right' }}>{this.props.product.size}</Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: "right" }}>سایز</Text>
+                    <Text style={{ textAlign: 'right' }}>سایز</Text>
                   </Col>
                 </CardItem>
                 {/* availability */}
                 <CardItem bordered>
                   <Col>
-                    <Text style={{ textAlign: "right" }}>
+                    <Text style={{ textAlign: 'right' }}>
                       {this.props.product.availability ? (
-                        <Text style={{ color: "#00ad4b" }}>
-                          این آیتم موجود است
-                        </Text>
+                        <Text style={{ color: '#00ad4b' }}>این آیتم موجود است</Text>
                       ) : (
-                        <Text style={{ color: "#aa204c" }}>
-                          این آیتم موجود نیست
-                        </Text>
+                        <Text style={{ color: '#aa204c' }}>این آیتم موجود نیست</Text>
                       )}
                     </Text>
                   </Col>
@@ -242,15 +222,11 @@ export default class Product extends Component {
                 {/* negindar */}
                 <CardItem bordered>
                   <Col>
-                    <Text style={{ textAlign: "right" }}>
+                    <Text style={{ textAlign: 'right' }}>
                       {this.props.product.negindar ? (
-                        <Text style={{ color: "#00ad4b" }}>
-                          قابلیت سفارش مجدد دارد
-                        </Text>
+                        <Text style={{ color: '#00ad4b' }}>قابلیت سفارش مجدد دارد</Text>
                       ) : (
-                        <Text style={{ color: "#aa204c" }}>
-                          قابلیت سفارش مجدد ندارد
-                        </Text>
+                        <Text style={{ color: '#aa204c' }}>قابلیت سفارش مجدد ندارد</Text>
                       )}
                     </Text>
                   </Col>
@@ -262,7 +238,7 @@ export default class Product extends Component {
               <Card bordered>{this.renderAddedAttrs()}</Card>
 
               <Card>
-                <Grid style={{ flexDirection: "row-reverse" }}>
+                <Grid style={{ flexDirection: 'row-reverse' }}>
                   <Col size={15}>
                     <Button
                       onPress={this.addToWishlist.bind(this)}
@@ -271,7 +247,7 @@ export default class Product extends Component {
                       // iconLeft
                       // transparent
                       style={{
-                        backgroundColor: "#fdfdfd",
+                        backgroundColor: '#fdfdfd',
                         padding: 0,
                         margin: 0
                       }}
@@ -281,16 +257,14 @@ export default class Product extends Component {
                           color: Colors.navbarBackgroundColor,
                           paddingRight: -1
                         }}
-                        name={"ios-heart"}
+                        name={'ios-heart'}
                       />
                     </Button>
                   </Col>
 
                   <Col size={78}>
                     <Button full success onPress={this.addToCart.bind(this)}>
-                      <Text style={{ color: "#fff" }}>
-                        اضافه کردن به فاکتور
-                      </Text>
+                      <Text style={{ color: '#fff' }}>اضافه کردن به فاکتور</Text>
                     </Button>
                   </Col>
                 </Grid>
@@ -305,12 +279,12 @@ export default class Product extends Component {
               paddingRight: 12
             }}
           >
-            <Text style={{ marginBottom: 5 }}> </Text>
+            <Text style={{ marginBottom: 5 }} />
             <View
               style={{
                 width: 50,
                 height: 1,
-                backgroundColor: "transparent",
+                backgroundColor: 'transparent',
                 marginLeft: 7,
                 marginBottom: 10
               }}
@@ -323,8 +297,8 @@ export default class Product extends Component {
   }
 
   renderAddedAttrs() {
-    let res = [];
-    let addedAttrs = this.props.product.added_attributes;
+    const res = [];
+    const addedAttrs = this.props.product.addedAttributes;
 
     if (addedAttrs.length === 0) {
       return <Text>ندارد</Text>;
@@ -334,10 +308,10 @@ export default class Product extends Component {
       res.push(
         <CardItem bordered key={i}>
           <Col size={60}>
-            <Text style={{ textAlign: "right" }}> {`${item.value} تومان`}</Text>
+            <Text style={{ textAlign: 'right' }}> {`${item.value} تومان`}</Text>
           </Col>
           <Col size={40}>
-            <Text style={{ textAlign: "right" }}>{item.item_name}</Text>
+            <Text style={{ textAlign: 'right' }}>{item.item_name}</Text>
           </Col>
         </CardItem>
       );
@@ -346,13 +320,13 @@ export default class Product extends Component {
   }
 
   renderImages() {
-    let images = [];
+    const images = [];
     this.state.currentProduct.images.map((img, i) => {
       images.push(
         <TouchableWithoutFeedback key={i} onPress={() => this.openGallery(i)}>
           <Image
             source={{ uri: img }}
-            style={{ width: Dimensions.get("window").width, height: 350 }}
+            style={{ width: Dimensions.get('window').width, height: 350 }}
             resizeMode="cover"
           />
         </TouchableWithoutFeedback>
@@ -362,18 +336,14 @@ export default class Product extends Component {
   }
 
   renderSimilairs() {
-    let items = [];
-    let stateItems = this.state.currentProduct.similarItems;
-    for (var i = 0; i < stateItems.length; i += 2) {
+    const items = [];
+    const stateItems = this.state.currentProduct.similarItems;
+    for (let i = 0; i < stateItems.length; i += 2) {
       if (stateItems[i + 1]) {
         items.push(
           <Grid key={i}>
             <ProductComponent key={stateItems[i].id} product={stateItems[i]} />
-            <ProductComponent
-              key={stateItems[i + 1].id}
-              product={stateItems[i + 1]}
-              isRight
-            />
+            <ProductComponent key={stateItems[i + 1].id} product={stateItems[i + 1]} isRight />
           </Grid>
         );
       } else {
@@ -399,41 +369,41 @@ export default class Product extends Component {
     if (this.state.hasFactor) {
       Toast.show({
         text:
-          "فاکتور کنونی شما در حال بررسی است، تا مشخص شدن وضعیت این فاکتور نمی توانید آیتم جدیدی اضافه کنید",
-        position: "top",
-        type: "danger",
-        buttonText: "",
+          'فاکتور کنونی شما در حال بررسی است، تا مشخص شدن وضعیت این فاکتور نمی توانید آیتم جدیدی اضافه کنید',
+        position: 'top',
+        type: 'danger',
+        buttonText: '',
         duration: 4500
       });
     } else {
-      var product = this.state.currentProduct;
-      var success = true;
+      const product = this.state.currentProduct;
+      let success = true;
 
-      AsyncStorage.getItem("CART", (err, res) => {
-        if (!res) AsyncStorage.setItem("CART", JSON.stringify([product]));
+      AsyncStorage.getItem('CART', (err, res) => {
+        if (!res) AsyncStorage.setItem('CART', JSON.stringify([product]));
         else {
-          var items = JSON.parse(res);
+          const items = JSON.parse(res);
           if (this.search(items, product)) {
             success = false;
           } else {
             items.push(product);
-            AsyncStorage.setItem("CART", JSON.stringify(items));
+            AsyncStorage.setItem('CART', JSON.stringify(items));
           }
         }
         if (success) {
           Toast.show({
-            text: "محصول به فاکتور اضافه شد",
-            position: "bottom",
-            type: "success",
-            buttonText: "بستن",
+            text: 'محصول به فاکتور اضافه شد',
+            position: 'bottom',
+            type: 'success',
+            buttonText: 'بستن',
             duration: 3000
           });
         } else {
           Toast.show({
-            text: "این محصول در فاکتور کنونی وجود دارد",
-            position: "bottom",
-            type: "danger",
-            buttonText: "بستن",
+            text: 'این محصول در فاکتور کنونی وجود دارد',
+            position: 'bottom',
+            type: 'danger',
+            buttonText: 'بستن',
             duration: 3000
           });
         }
@@ -442,7 +412,7 @@ export default class Product extends Component {
   }
 
   rightButtonPressed() {
-    AsyncStorage.getItem("FACTOR", (err, res) => {
+    AsyncStorage.getItem('FACTOR', (err, res) => {
       if (res) {
         Actions.factorResult();
       } else {
@@ -452,33 +422,33 @@ export default class Product extends Component {
   }
 
   addToWishlist() {
-    var product = this.state.product;
-    var success = true;
-    AsyncStorage.getItem("WISHLIST", (err, res) => {
-      if (!res) AsyncStorage.setItem("WISHLIST", JSON.stringify([product]));
+    const product = this.state.product;
+    let success = true;
+    AsyncStorage.getItem('WISHLIST', (err, res) => {
+      if (!res) AsyncStorage.setItem('WISHLIST', JSON.stringify([product]));
       else {
-        var items = JSON.parse(res);
+        const items = JSON.parse(res);
         if (this.search(items, product)) {
           success = false;
         } else {
           items.push(product);
-          AsyncStorage.setItem("WISHLIST", JSON.stringify(items));
+          AsyncStorage.setItem('WISHLIST', JSON.stringify(items));
         }
       }
       if (success) {
         Toast.show({
-          text: "محصول به قسمت علاقه مندی ها اضافه شد",
-          position: "bottom",
-          type: "success",
-          buttonText: "بستن",
+          text: 'محصول به قسمت علاقه مندی ها اضافه شد',
+          position: 'bottom',
+          type: 'success',
+          buttonText: 'بستن',
           duration: 3000
         });
       } else {
         Toast.show({
-          text: "این محصول در قسمت علاقه مندی ها وجود دارد",
-          position: "bottom",
-          type: "danger",
-          buttonText: "بستن",
+          text: 'این محصول در قسمت علاقه مندی ها وجود دارد',
+          position: 'bottom',
+          type: 'danger',
+          buttonText: 'بستن',
           duration: 3000
         });
       }
@@ -486,8 +456,9 @@ export default class Product extends Component {
   }
 
   search(array, object) {
-    for (var i = 0; i < array.length; i++)
+    for (let i = 0; i < array.length; i++) {
       if (JSON.stringify(array[i]) === JSON.stringify(object)) return true;
+    }
     return false;
   }
 }
