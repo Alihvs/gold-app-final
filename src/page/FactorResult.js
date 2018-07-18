@@ -4,7 +4,7 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import { Alert, AsyncStorage } from 'react-native';
+import { Alert, AsyncStorage, BackHandler } from 'react-native';
 import { Container, View, Icon, Button, Left, Toast } from 'native-base';
 import { Col, Grid } from 'react-native-easy-grid';
 import { Actions } from 'react-native-router-flux';
@@ -21,6 +21,19 @@ export default class Cart extends Component {
       working: true,
       factorNumber: undefined
     };
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', () => this.backAndroid());
+  }
+
+  backAndroid() {
+    Actions.home();
+    return true;
   }
 
   componentWillMount() {

@@ -4,7 +4,7 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import { Image, AsyncStorage } from 'react-native';
+import { Image, AsyncStorage, BackHandler, BackAndroid, Alert, Platform } from 'react-native';
 import { Container, Content, View, Button, Left, Right, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -28,6 +28,28 @@ export default class Home extends Component {
       page: 'second',
       hasFactor: false
     };
+  }
+
+  componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
+  }
+
+  componentWillUnmount() {
+    BackHandler.removeEventListener('hardwareBackPress', () => this.backAndroid());
+  }
+
+  backAndroid() {
+    if (Platform.OS === 'android') {
+      Alert.alert('', 'خروج از برنامه؟', [
+        {
+          text: 'خیر',
+          onPress: () => console.log('No Pressed'),
+          style: 'cancel'
+        },
+        { text: 'بله', onPress: () => BackAndroid.exitApp() }
+      ]);
+      return true;
+    }
   }
 
   componentWillMount() {
