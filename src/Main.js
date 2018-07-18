@@ -21,6 +21,7 @@ import ImageGallery from "./page/ImageGallery";
 import Login from "./page/Login";
 import SearchResult from "./page/SearchResult";
 import Checkout from "./page/Checkout";
+import FactorResult from "./page/FactorResult";
 
 export default class Main extends Component {
   componentWillMount = () => {
@@ -52,7 +53,7 @@ export default class Main extends Component {
               modal
               hideNavBar
             />
-            <Scene key="checkout" component={Checkout} hideNavBar />
+            <Scene key="factorResult" component={FactorResult} hideNavBar />
           </Scene>
         </Router>
       </Root>

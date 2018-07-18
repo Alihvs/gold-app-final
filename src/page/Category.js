@@ -8,7 +8,8 @@ import {
   Image,
   TouchableOpacity,
   TouchableHighlight,
-  StyleSheet
+  StyleSheet,
+  AsyncStorage
 } from "react-native";
 import {
   Container,
@@ -98,7 +99,7 @@ export default class Category extends Component {
     );
     var right = (
       <Right style={{ flex: 1 }}>
-        <Button onPress={() => Actions.cart()} transparent>
+        <Button onPress={this.rightButtonPressed} transparent>
           <Icon name="ios-cart" />
         </Button>
       </Right>
@@ -133,6 +134,16 @@ export default class Category extends Component {
         </Container>
       </SideMenuDrawer>
     );
+  }
+
+  rightButtonPressed() {
+    AsyncStorage.getItem("FACTOR", (err, res) => {
+      if (res) {
+        Actions.factorResult();
+      } else {
+        Actions.cart();
+      }
+    });
   }
 
   renderProducts() {

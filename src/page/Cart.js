@@ -28,7 +28,8 @@ import {
   Footer,
   Input,
   Card,
-  CardItem
+  CardItem,
+  Toast
 } from "native-base";
 import { Col, Row, Grid } from "react-native-easy-grid";
 import { Actions } from "react-native-router-flux";
@@ -37,13 +38,16 @@ import { Actions } from "react-native-router-flux";
 import Colors from "../Colors";
 import Text from "../component/Text";
 import Navbar from "../component/Navbar";
+import product from "../component/Product";
 
 export default class Cart extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      cartItems: []
-      // defaultWidth: 90
+      cartItems: [],
+      token: "",
+      customerName: "",
+      sentFactor: false
     };
   }
 
@@ -52,12 +56,28 @@ export default class Cart extends Component {
       if (!res) this.setState({ cartItems: [] });
       else {
         this.setState({ cartItems: JSON.parse(res) });
-        // console.table(this.state.cartItems);
       }
     });
+
+    // AsyncStorage.getItem("FACTOR", (err, res) => {
+    //   if (res) {
+    //     this.setState({
+    //       sentFactor: true
+    //     });
+    //     Actions.factorResult();
+    //   }
+    // });
   }
 
   render() {
+    var leftFoResult = (
+      <Left style={{ flex: 1 }}>
+        <Button transparent onPress={() => Actions.home()}>
+          <Icon name="ios-close" size={38} style={{ fontSize: 38 }} />
+        </Button>
+      </Left>
+    );
+
     var left = (
       <Left style={{ flex: 1 }}>
         <Button transparent onPress={() => Actions.pop()}>
@@ -87,9 +107,7 @@ export default class Cart extends Component {
         ) : (
           <Content
             contentContainerStyle={{
-              // alignSelf: "flex-end",
               padding: 5
-              // flex: 1
             }}
           >
             <Text
@@ -279,12 +297,6 @@ export default class Cart extends Component {
             <Text style={myStyles.tableText}>{item.weight}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            {/* <Text style={myStyles.tableText}>
-              {Number(
-                (item.weight * item.ojrat_percent) / 100 + Number(item.weight)
-              )}
-            </Text> */}
-
             <Text style={myStyles.tableText}>
               {this.calcWeightPlusPercernt(item)}
             </Text>
@@ -337,12 +349,6 @@ export default class Cart extends Component {
           </Row>
 
           <Row style={myStyles.tableRow}>
-            {/* <Text style={myStyles.tableText}>
-              {(Number(item.weight * item.ojrat_percent) / 100 +
-                Number(item.weight)) *
-                item.quantity *
-                item.ojrat_toman}
-            </Text> */}
             <Text>{this.calcFinalPrice(item)}</Text>
           </Row>
         </Col>
@@ -498,6 +504,125 @@ export default class Cart extends Component {
       );
     return res;
   }
+
+  constructTable() {
+    let res = "";
+    let items = this.state.cartItems;
+
+    items.map((product, i) => {
+      res += `
+      <tr>
+        <td>${++i}</td>
+        <td>${product.title}</td>
+        <td>${product.type} ${product.ojrat_percent}</td>
+        <td>${this.sumAddedAttributes(product)}</td>
+        <td>${product.weight}</td>
+        <td>${product.ojrat_toman}</td>
+        <td>${product.quantity}</td>
+        <td>${this.calcWeightPlusPercernt(product)}</td>
+        <td>${this.calcFinalPrice(product)}</td>
+      </tr>
+      `;
+    });
+    res += `
+    </table>
+    <table style="width:100%; text-align: right;">
+      <tr>
+        <th>تعداد کل</th>
+        <th>جمع وزن</th>
+        <th>جمع مبلغ</th>
+      </tr>
+      <tr>
+        <td>${this.sumQuantity()}</td>
+        <td>${this.sumWeight()}</td>
+        <td>${this.sumPrice()}</td>
+      </tr>
+    </table>
+    `;
+    return res;
+  }
+
+  checkout() {
+    AsyncStorage.getItem("user", (err, res) => {
+      var data = JSON.parse(res);
+      let factorNumber = Math.floor(Math.random() * 100000);
+      let customerName = data.displayName;
+      let customerPhone = data.username;
+      this.setState({
+        token: data.token
+      });
+
+      let content = `
+      <h2 style="text-align: right;">فاکتور شماره : ${factorNumber}</h2>
+      <table style="width:100%; text-align: right;">
+        <tr>
+          <th>ردیف</th>
+          <th>کد کالا</th>
+          <th>کالا</th>
+          <th>مجموع ملحقات</th>
+          <th>وزن</th>
+          <th>اجرت</th>
+          <th>تعداد</th>
+          <th>وزن نهایی</th>
+          <th>مبلغ</th>
+        </tr>
+        ${this.constructTable()}
+      
+      `;
+
+      fetch("http://app.idamas.ir/wp-json/wp/v2/factors", {
+        method: "post",
+        credentials: "include",
+        withCredentials: true,
+        headers: {
+          Authorization: `Bearer ${this.state.token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          title: `فاکتور شماره ${factorNumber} - ${customerName} - ${customerPhone}`,
+          content: content
+        })
+      })
+        .then((response, err) => response.json())
+        .then(data => {
+          if (data) {
+            Toast.show({
+              text: "فاکتور شما با موفقیت ارسال شد",
+              position: "top",
+              type: "success",
+              buttonText: "",
+              duration: 2000
+            });
+            this.setState({
+              sentFactor: true
+            });
+            //Set AsyncStorage for the current Factor
+
+            AsyncStorage.setItem(
+              "FACTOR",
+              JSON.stringify({
+                factorNumber: factorNumber
+              })
+            );
+
+            Actions.factorResult();
+          }
+        })
+        .catch(err => {
+          Toast.show({
+            text: "اتصال خود به شبکه را بررسی کنید",
+            position: "top",
+            type: "danger",
+            buttonText: "",
+            duration: 3000
+          });
+          this.setState({
+            sentFactor: false
+          });
+        });
+    });
+  }
 }
 
 // Styles
@@ -567,10 +692,6 @@ const myStyles = StyleSheet.create({
 // removeAll() {
 //   this.setState({ cartItems: [] });
 //   AsyncStorage.setItem("CART", JSON.stringify([]));
-// }
-
-// checkout() {
-//   Actions.checkout({ cartItems: this.state.cartItems });
 // }
 
 // itemClicked(item) {

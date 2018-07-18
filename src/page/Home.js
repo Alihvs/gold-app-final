@@ -4,7 +4,7 @@
 
 // React native and others libraries imports
 import React, { Component } from "react";
-import { Image, Dimensions, StyleSheet } from "react-native";
+import { Image, Dimensions, StyleSheet, AsyncStorage } from "react-native";
 import {
   Container,
   Content,
@@ -31,8 +31,22 @@ import newLogo from "../assets/logo.png";
 export default class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = { page: "second" };
+    this.state = {
+      page: "second",
+      hasFactor: false
+    };
   }
+
+  componentWillMount() {
+    AsyncStorage.getItem("FACTOR", (err, res) => {
+      if (res) {
+        this.setState({
+          hasFactor: true
+        });
+      }
+    });
+  }
+
   render() {
     var left = (
       <Left style={{ flex: 1 }}>
@@ -43,11 +57,12 @@ export default class Home extends Component {
     );
     var right = (
       <Right style={{ flex: 1 }}>
-        <Button onPress={() => Actions.cart()} transparent>
+        <Button onPress={this.rightButtonPressed} transparent>
           <Icon name="ios-cart" />
         </Button>
       </Right>
     );
+
     return (
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
         <Container>
@@ -70,6 +85,16 @@ export default class Home extends Component {
         </Container>
       </SideMenuDrawer>
     );
+  }
+
+  rightButtonPressed() {
+    AsyncStorage.getItem("FACTOR", (err, res) => {
+      if (res) {
+        Actions.factorResult();
+      } else {
+        Actions.cart();
+      }
+    });
   }
 
   renderCategories() {

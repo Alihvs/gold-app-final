@@ -48,14 +48,12 @@ export default class Product extends Component {
       quantity: 1,
       selectedColor: "",
       selectedSize: "",
-      brand: this.props.product.brand
+      brand: this.props.product.brand,
+      hasFactor: false
     };
   }
 
   componentWillMount() {
-    //get the product with id of this.props.product.id from your server
-    // this.setState({ product: dummyProduct });
-    //Setting the state for current product - Effectiley mapping the feaking thing
     this.setState({
       currentProduct: {
         id: this.props.product.id,
@@ -84,13 +82,11 @@ export default class Product extends Component {
   // componentWillMount() {}
 
   componentDidMount() {
-    /* Select the default color and size (first ones) */
-    // let defColor = this.state.product.colors[0];
-    // let defSize = this.state.product.sizes[0];
-    // this.setState({
-    //   selectedColor: defColor,
-    //   selectedSize: defSize
-    // });
+    AsyncStorage.getItem("FACTOR", (err, res) => {
+      if (res) {
+        this.setState({ hasFactor: true });
+      }
+    });
   }
 
   render() {
@@ -106,7 +102,7 @@ export default class Product extends Component {
         <Button onPress={() => Actions.search()} transparent>
           <Icon name="ios-search-outline" />
         </Button>
-        <Button onPress={() => Actions.cart()} transparent>
+        <Button onPress={this.rightButtonPressed} transparent>
           <Icon name="ios-cart" />
         </Button>
       </Right>
@@ -365,22 +361,6 @@ export default class Product extends Component {
     return images;
   }
 
-  // renderColors() {
-  //   let colors = [];
-  //   this.state.product.colors.map((color, i) => {
-  //     colors.push(<Item key={i} label={color} value={color} />);
-  //   });
-  //   return colors;
-  // }
-
-  // renderSize() {
-  //   let size = [];
-  //   this.state.product.sizes.map((s, i) => {
-  //     size.push(<Item key={i} label={s} value={s} />);
-  //   });
-  //   return size;
-  // }
-
   renderSimilairs() {
     let items = [];
     let stateItems = this.state.currentProduct.similarItems;
@@ -416,43 +396,57 @@ export default class Product extends Component {
   }
 
   addToCart() {
-    // console.table(this.state.currentProduct);
+    if (this.state.hasFactor) {
+      Toast.show({
+        text:
+          "فاکتور کنونی شما در حال بررسی است، تا مشخص شدن وضعیت این فاکتور نمی توانید آیتم جدیدی اضافه کنید",
+        position: "top",
+        type: "danger",
+        buttonText: "",
+        duration: 4500
+      });
+    } else {
+      var product = this.state.currentProduct;
+      var success = true;
 
-    var product = this.state.currentProduct;
-    var success = true;
-    // product["color"] = "تک رنگ";
-    // product["size"] = "متوسط";
-    // product["quantity"] = "12";
-    // product["color"] = this.state.selectedColor;
-    // product["size"] = this.state.selectedSize;
-    // product["quantity"] = this.state.quantity;
-    AsyncStorage.getItem("CART", (err, res) => {
-      if (!res) AsyncStorage.setItem("CART", JSON.stringify([product]));
-      else {
-        var items = JSON.parse(res);
-        if (this.search(items, product)) {
-          success = false;
-        } else {
-          items.push(product);
-          AsyncStorage.setItem("CART", JSON.stringify(items));
+      AsyncStorage.getItem("CART", (err, res) => {
+        if (!res) AsyncStorage.setItem("CART", JSON.stringify([product]));
+        else {
+          var items = JSON.parse(res);
+          if (this.search(items, product)) {
+            success = false;
+          } else {
+            items.push(product);
+            AsyncStorage.setItem("CART", JSON.stringify(items));
+          }
         }
-      }
-      if (success) {
-        Toast.show({
-          text: "محصول به فاکتور اضافه شد",
-          position: "bottom",
-          type: "success",
-          buttonText: "بستن",
-          duration: 3000
-        });
+        if (success) {
+          Toast.show({
+            text: "محصول به فاکتور اضافه شد",
+            position: "bottom",
+            type: "success",
+            buttonText: "بستن",
+            duration: 3000
+          });
+        } else {
+          Toast.show({
+            text: "این محصول در فاکتور کنونی وجود دارد",
+            position: "bottom",
+            type: "danger",
+            buttonText: "بستن",
+            duration: 3000
+          });
+        }
+      });
+    }
+  }
+
+  rightButtonPressed() {
+    AsyncStorage.getItem("FACTOR", (err, res) => {
+      if (res) {
+        Actions.factorResult();
       } else {
-        Toast.show({
-          text: "این محصول در فاکتور کنونی وجود دارد",
-          position: "bottom",
-          type: "danger",
-          buttonText: "بستن",
-          duration: 3000
-        });
+        Actions.cart();
       }
     });
   }

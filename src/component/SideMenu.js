@@ -4,7 +4,13 @@
 
 // React native and others libraries imports
 import React, { Component } from "react";
-import { ScrollView, LayoutAnimation, UIManager, Linking } from "react-native";
+import {
+  ScrollView,
+  LayoutAnimation,
+  UIManager,
+  Linking,
+  AsyncStorage
+} from "react-native";
 import {
   View,
   List,
@@ -13,17 +19,16 @@ import {
   Left,
   Right,
   Icon,
-  Item,
-  Input,
-  Button,
   Grid,
-  Col
+  Col,
+  Toast
 } from "native-base";
 import { Actions } from "react-native-router-flux";
 
 // Our custom files and classes import
 import SideMenuSecondLevel from "./SideMenuSecondLevel";
 import Text from "./Text";
+// import Login from "../page/Login";
 
 export default class SideMenu extends Component {
   constructor(props) {
@@ -50,22 +55,7 @@ export default class SideMenu extends Component {
     if (!this.state.subMenu) {
       return (
         <View>
-          <View style={{ paddingLeft: 15, paddingRight: 15 }}>
-            <Item error={this.state.searchError}>
-              <Input
-                placeholder="جستجو"
-                onChangeText={text =>
-                  this.setState({ search: text, searchError: false })
-                }
-                onSubmitEditing={() => this.search()}
-              />
-              <Icon
-                active
-                name="ios-search-outline"
-                onPress={() => this.search()}
-              />
-            </Item>
-          </View>
+          <View style={{ paddingLeft: 15, paddingRight: 15 }} />
           <View style={{ paddingRight: 15 }}>
             <List>
               <ListItem
@@ -229,27 +219,67 @@ export default class SideMenu extends Component {
     else Actions.search({ searchText: this.state.search });
   }
 
+  logOut() {
+    AsyncStorage.removeItem("user");
+    Toast.show({
+      text: "از حساب کاربری خود خارج شدید",
+      position: "bottom",
+      type: "success",
+      buttonText: "بستن",
+      duration: 3000
+    });
+    Actions.login();
+  }
+
   renderSecondaryList() {
-    let secondaryItems = [];
-    menusSecondaryItems.map((item, i) => {
-      secondaryItems.push(
+    return (
+      <View>
         <ListItem
           last
           icon
-          key={item.id}
           button={true}
-          onPress={Actions[item.key]}
+          onPress={() => {
+            Actions.wishlist();
+          }}
         >
           <Left>
-            <Icon style={{ fontSize: 18 }} name={item.icon} />
+            <Icon style={{ fontSize: 18 }} name="heart" />
           </Left>
           <Body style={{ marginLeft: -15 }}>
-            <Text style={{ fontSize: 16 }}>{item.title}</Text>
+            <Text style={{ fontSize: 16 }}>علاقه مندی ها</Text>
           </Body>
         </ListItem>
-      );
-    });
-    return secondaryItems;
+        <ListItem last icon button={true} onPress={this.logOut}>
+          <Left>
+            <Icon style={{ fontSize: 18 }} name="ios-person" />
+          </Left>
+          <Body style={{ marginLeft: -15 }}>
+            <Text style={{ fontSize: 16 }}>خروج از حساب کاربری</Text>
+          </Body>
+        </ListItem>
+      </View>
+    );
+
+    // let secondaryItems = [];
+    // menusSecondaryItems.map((item, i) => {
+    //   secondaryItems.push(
+    //     <ListItem
+    //       last
+    //       icon
+    //       key={item.id}
+    //       button={true}
+    //       onPress={Actions[item.key]}
+    //     >
+    //       <Left>
+    //         <Icon style={{ fontSize: 18 }} name={item.icon} />
+    //       </Left>
+    //       <Body style={{ marginLeft: -15 }}>
+    //         <Text style={{ fontSize: 16 }}>{item.title}</Text>
+    //       </Body>
+    //     </ListItem>
+    //   );
+    // });
+    // return secondaryItems;
   }
 }
 
@@ -414,24 +444,18 @@ var menuItems = [
   }
 ];
 
-const menusSecondaryItems = [
-  {
-    id: 190,
-    title: "ورود",
-    icon: "ios-person",
-    key: "login"
-  },
-  {
-    id: 19,
-    title: "علاقه مندی ها",
-    icon: "heart",
-    key: "wishlist"
-  },
-  {
-    id: 20,
-    key: "Contact Us",
-    title: "با ما تماس بگیرید",
-    icon: "md-phone-portrait",
-    key: "contact"
-  }
-];
+// const menusSecondaryItems = [
+//   {
+//     id: 19,
+//     title: "علاقه مندی ها",
+//     icon: "heart",
+//     key: "wishlist"
+//   },
+//   {
+//     id: 190,
+//     title: "خروج",
+//     icon: "ios-person",
+//     key: "logout",
+//     click: this.logOut
+//   }
+// ];
