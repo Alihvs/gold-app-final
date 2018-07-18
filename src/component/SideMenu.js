@@ -221,9 +221,12 @@ export default class SideMenu extends Component {
 
   logOut() {
     AsyncStorage.removeItem("user");
+    AsyncStorage.removeItem("FACTOR");
+    AsyncStorage.removeItem("CART");
+
     Toast.show({
       text: "از حساب کاربری خود خارج شدید",
-      position: "bottom",
+      position: "top",
       type: "success",
       buttonText: "بستن",
       duration: 3000
