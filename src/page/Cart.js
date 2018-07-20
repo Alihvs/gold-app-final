@@ -426,9 +426,12 @@ export default class Cart extends Component {
     const obj = this.state.cartItems;
     let sum = 0;
     obj.map(item => {
-      sum += Number(
-        (item.weight * item.ojratPercent) / 100 + Number(item.weight) * Number(item.quantity)
-      );
+      sum += this.calcWeightPlusPercernt(item) * item.quantity;
+
+      // Number(
+      //   Number((item.weight * item.ojratPercent) / 100 + Number(item.weight)) *
+      //     Number(item.quantity)
+      // );
     });
     return `${sum.toFixed(3)} گرم`;
   }

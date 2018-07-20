@@ -1,14 +1,14 @@
-import React, { Component } from "react";
-import { Container, View, Icon, Fab } from "native-base";
+import React, { Component } from 'react';
+import { Container, View, Icon, Fab } from 'native-base';
 
-import { Actions } from "react-native-router-flux";
-import Colors from "../Colors";
+import { Actions } from 'react-native-router-flux';
+import Colors from '../Colors';
 
 export default class FAB extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      active: "true"
+      active: 'true'
     };
   }
   render() {
@@ -19,7 +19,7 @@ export default class FAB extends Component {
         containerStyle={{}}
         style={{ backgroundColor: Colors.navbarBackgroundColor }}
         position="bottomLeft"
-        onPress={() => Actions.search({ pageTitle: this.props.pageTitle })}
+        onPress={() => Actions.search({ pageTitle: this.props.pageTitle, data: this.props.data })}
       >
         <Icon name="search" />
       </Fab>

@@ -31,28 +31,14 @@ export default class Home extends Component {
   }
 
   componentDidMount() {
-    BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
+    // this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
+    // BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
+    // console.log(this.props);
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', () => this.backAndroid());
-  }
-
-  backAndroid() {
-    if (Platform.OS === 'android') {
-      Alert.alert('', 'خروج از برنامه؟', [
-        {
-          text: 'خیر',
-          onPress: () => console.log('No Pressed'),
-          style: 'cancel'
-        },
-        { text: 'بله', onPress: () => BackAndroid.exitApp() }
-      ]);
-      return true;
-    }
-  }
-
-  componentWillMount() {
+    // BackHandler.removeEventListener('hardwareBackPress', () => this.backAndroid());
+    // this.backHandler.remove();
     AsyncStorage.getItem('FACTOR', (err, res) => {
       if (res) {
         this.setState({
@@ -61,6 +47,20 @@ export default class Home extends Component {
       }
     });
   }
+
+  // backAndroid() {
+  //   if (this.props.name === 'home') {
+  //     Alert.alert('', 'خروج از برنامه؟', [
+  //       {
+  //         text: 'خیر',
+  //         onPress: () => console.log('No Pressed'),
+  //         style: 'cancel'
+  //       },
+  //       { text: 'بله', onPress: () => BackAndroid.exitApp() }
+  //     ]);
+  //     return true;
+  //   }
+  // }
 
   render() {
     const left = (

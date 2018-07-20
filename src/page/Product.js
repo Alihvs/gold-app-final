@@ -4,12 +4,17 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import { Image, Dimensions, TouchableWithoutFeedback, AsyncStorage } from 'react-native';
+import {
+  Image,
+  Dimensions,
+  TouchableWithoutFeedback,
+  AsyncStorage,
+  StyleSheet
+} from 'react-native';
 import {
   View,
   Container,
   Content,
-  Button,
   Left,
   Right,
   Icon,
@@ -18,7 +23,8 @@ import {
   Toast,
   Text as NBText,
   Card,
-  CardItem
+  CardItem,
+  Button
 } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -91,22 +97,21 @@ export default class Product extends Component {
     );
     const right = (
       <Right style={{ flex: 1 }}>
-        <Button onPress={() => Actions.search()} transparent>
-          <Icon name="ios-search-outline" />
-        </Button>
         <Button onPress={this.rightButtonPressed} transparent>
           <Icon name="ios-cart" />
         </Button>
       </Right>
     );
     return (
-      <Container style={{ backgroundColor: '#fdfdfd' }}>
+      <Container style={{ backgroundColor: Colors.statusBarColor }}>
         <Navbar
           left={left}
           right={right}
-          title={`${this.props.product.type} ${this.props.product.brand}`}
+          title={`${this.props.product.type} ${this.props.product.brand} ${
+            this.props.product.ojratPercent
+          }`}
         />
-        <Content>
+        <Content style={{ backgroundColor: Colors.statusBarColor }}>
           <Carousel
             ref={carousel => {
               this._carousel = carousel;
@@ -132,7 +137,7 @@ export default class Product extends Component {
               height: 10,
               borderRadius: 5,
               marginHorizontal: 2,
-              backgroundColor: 'rgba(255, 255, 255, 0.92)'
+              backgroundColor: Colors.gold
             }}
             inactiveDotOpacity={0.4}
             inactiveDotScale={0.6}
@@ -140,77 +145,85 @@ export default class Product extends Component {
 
           <View
             style={{
-              backgroundColor: '#fdfdfd',
+              backgroundColor: Colors.statusBarColor,
               paddingTop: 10,
               paddingBottom: 10
             }}
           >
             <Content padder>
-              <NBText>مشخصات عمومی</NBText>
+              <NBText style={[styles.goldentext, { fontWeight: 'bold' }]}>مشخصات عمومی</NBText>
 
-              <Card style={{ alignItems: 'flex-end' }}>
+              <Card transparent style={{ alignItems: 'flex-end' }}>
                 {/* Brand */}
-                <CardItem bordered>
+                <CardItem style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={{ textAlign: 'right' }}>{this.props.product.brand}</Text>
+                    <Text style={styles.goldentext}>{this.props.product.brand}</Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: 'right' }}>برند</Text>
+                    <Text style={styles.goldentext}>برند</Text>
                   </Col>
                 </CardItem>
                 {/* Weight */}
-                <CardItem bordered>
+                <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={{ textAlign: 'right' }}>{`${this.props.product.weight} گرم`}</Text>
+                    <Text style={styles.goldentext}>{`${this.props.product.weight} گرم`}</Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: 'right' }}>وزن</Text>
+                    <Text style={styles.goldentext}>وزن</Text>
                   </Col>
                 </CardItem>
                 {/* ojrat_percent */}
-                <CardItem bordered>
+                <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={{ textAlign: 'right' }}>
+                    <Text style={styles.goldentext}>
                       {`${this.props.product.ojratPercent} درصد`}
                     </Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: 'right' }}>اجرت به درصد</Text>
+                    <Text style={styles.goldentext}>اجرت به درصد</Text>
                   </Col>
                 </CardItem>
                 {/* ojrat_toman */}
-                <CardItem bordered>
+                <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={{ textAlign: 'right' }}>
+                    <Text style={styles.goldentext}>
                       {`${this.props.product.ojratToman} تومان`}
                     </Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: 'right' }}>اجرت به تومان</Text>
+                    <Text style={styles.goldentext}>اجرت به تومان</Text>
                   </Col>
                 </CardItem>
                 {/* Color */}
-                <CardItem bordered>
+                <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={{ textAlign: 'right' }}>{this.props.product.color}</Text>
+                    <Text style={styles.goldentext}>{this.props.product.color}</Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: 'right' }}>رنگ</Text>
+                    <Text style={styles.goldentext}>رنگ</Text>
                   </Col>
                 </CardItem>
                 {/* Color */}
-                <CardItem bordered>
+                <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={{ textAlign: 'right' }}>{this.props.product.size}</Text>
+                    <Text style={styles.goldentext}>{this.props.product.size}</Text>
                   </Col>
                   <Col size={40}>
-                    <Text style={{ textAlign: 'right' }}>سایز</Text>
+                    <Text style={styles.goldentext}>سایز</Text>
                   </Col>
                 </CardItem>
-                {/* availability */}
-                <CardItem bordered>
+                {/* Availability */}
+              </Card>
+              <NBText style={{ paddingTop: 10, color: Colors.gold, fontWeight: 'bold' }}>
+                ملحقات کالا
+              </NBText>
+
+              {/* Added Attributes */}
+              <Card transparent style={styles.cardItem}>
+                {this.renderAddedAttrs()}
+                <CardItem bordered style={styles.cardItem}>
                   <Col>
-                    <Text style={{ textAlign: 'right' }}>
+                    <Text style={styles.goldentext}>
                       {this.props.product.availability ? (
                         <Text style={{ color: '#00ad4b' }}>این آیتم موجود است</Text>
                       ) : (
@@ -219,8 +232,8 @@ export default class Product extends Component {
                     </Text>
                   </Col>
                 </CardItem>
-                {/* negindar */}
-                <CardItem bordered>
+                {/* Sefaresh Mojadad */}
+                <CardItem bordered style={styles.cardItem}>
                   <Col>
                     <Text style={{ textAlign: 'right' }}>
                       {this.props.product.negindar ? (
@@ -232,29 +245,25 @@ export default class Product extends Component {
                   </Col>
                 </CardItem>
               </Card>
-              <NBText style={{ paddingTop: 10 }}>مشخصات اختصاصی</NBText>
 
-              {/* Added Attributes */}
-              <Card bordered>{this.renderAddedAttrs()}</Card>
-
-              <Card>
+              <Card padder style={{ backgroundColor: 'transparent' }}>
                 <Grid style={{ flexDirection: 'row-reverse' }}>
-                  <Col size={15}>
+                  <Col size={27}>
                     <Button
                       onPress={this.addToWishlist.bind(this)}
                       block
-                      // icon
-                      // iconLeft
-                      // transparent
+                      bordered
                       style={{
-                        backgroundColor: '#fdfdfd',
+                        backgroundColor: 'transparent',
                         padding: 0,
-                        margin: 0
+                        margin: 0,
+                        // borderLeftWidth: 1,
+                        borderColor: 'white'
                       }}
                     >
                       <Icon
                         style={{
-                          color: Colors.navbarBackgroundColor,
+                          color: Colors.gold,
                           paddingRight: -1
                         }}
                         name={'ios-heart'}
@@ -262,9 +271,15 @@ export default class Product extends Component {
                     </Button>
                   </Col>
 
-                  <Col size={78}>
-                    <Button full success onPress={this.addToCart.bind(this)}>
-                      <Text style={{ color: '#fff' }}>اضافه کردن به فاکتور</Text>
+                  <Col size={77}>
+                    <Button
+                      style={{ backgroundColor: 'transparent', borderColor: 'white' }}
+                      full
+                      bordered
+                      transparent
+                      onPress={this.addToCart.bind(this)}
+                    >
+                      <Text style={{ color: Colors.gold }}>اضافه کردن به فاکتور</Text>
                     </Button>
                   </Col>
                 </Grid>
@@ -301,17 +316,17 @@ export default class Product extends Component {
     const addedAttrs = this.props.product.addedAttributes;
 
     if (addedAttrs.length === 0) {
-      return <Text>ندارد</Text>;
+      return <Text style={styles.goldentext}>ندارد</Text>;
     }
 
     addedAttrs.map((item, i) => {
       res.push(
-        <CardItem bordered key={i}>
+        <CardItem bordered key={i} style={styles.cardItem}>
           <Col size={60}>
-            <Text style={{ textAlign: 'right' }}> {`${item.value} تومان`}</Text>
+            <Text style={styles.goldentext}> {`${item.value} تومان`}</Text>
           </Col>
           <Col size={40}>
-            <Text style={{ textAlign: 'right' }}>{item.item_name}</Text>
+            <Text style={styles.goldentext}>{item.item_name}</Text>
           </Col>
         </CardItem>
       );
@@ -395,15 +410,17 @@ export default class Product extends Component {
             text: 'محصول به فاکتور اضافه شد',
             position: 'bottom',
             type: 'success',
-            buttonText: 'بستن',
-            duration: 3000
+            buttonText: '',
+            textStyle: { textAlign: 'center' },
+            duration: 2000
           });
         } else {
           Toast.show({
-            text: 'این محصول در فاکتور کنونی وجود دارد',
+            text: 'این محصول در فاکتور شما وجود دارد',
             position: 'bottom',
             type: 'danger',
-            buttonText: 'بستن',
+            buttonText: '',
+            textStyle: { textAlign: 'center' },
             duration: 3000
           });
         }
@@ -463,22 +480,15 @@ export default class Product extends Component {
   }
 }
 
-// const dummyProduct = {
-//   id: 2,
-//   title: "دستبند خیلی باحال",
-//   description:
-//     "تاریخ استفاده از زیورها و سنگ‌های گران‌بها به اندازه تاریخ پیدایش بشر است و پیشینه‌ای هفت هزار ساله دارد. در زمان‌های دیرین و بسیار پیش از آنکه بشر وسائلی آماده کند یا مهارتی به دست آورد که بتواند سنگ‌های سخت را تراش داده و حک کند، سنگ‌های گرانمایه افزون بر ارزش مادی بیشتر جنبه سحر و جادو داشته و به عنوان طلسم برای دارندگان شان به‌شمار می‌رفته و به علت برخی باورها و اندیشه‌های راز آلود که نسبت به تأثیرات نهفته سنگ‌های رنگین داشتند، آن‌ها را ستایش کرده و به کار می‌بردند.",
-//   image:
-//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/woman_ndqhui.jpg",
-//   images: [
-//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/bracelet_x00lpq.jpg",
-//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380232/gold-app/jewel_dh8dft.jpg",
-//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/man_uz95u5.jpg",
-//     "http://res.cloudinary.com/dsk8e6dhk/image/upload/f_auto,q_auto/v1530380231/gold-app/alangoo_kjqh6z.jpg"
-//   ],
-//   price: "تومان 25000",
-//   colors: ["سفید", "زرد", "زر گلد"],
-//   sizes: ["کوچک", "متوسط", "بزرگ", "خیلی بزرگ", "بسیار بزرگ"],
-//   category: "MAN",
-//   similarItems: []
-// };
+const styles = StyleSheet.create({
+  cardItem: {
+    backgroundColor: Colors.statusBarColor
+  },
+  goldentext: {
+    color: Colors.gold,
+    textAlign: 'right'
+  },
+  addToCartButton: {
+    backgroundColor: 'transparent'
+  }
+});

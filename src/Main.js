@@ -20,7 +20,7 @@ import Product from './page/Product';
 import ImageGallery from './page/ImageGallery';
 import Login from './page/Login';
 import SearchResult from './page/SearchResult';
-// import Checkout from './page/Checkout';
+import Splash from './page/Splash';
 import FactorResult from './page/FactorResult';
 
 export default class Main extends Component {
@@ -33,7 +33,8 @@ export default class Main extends Component {
       <Root>
         <Router>
           <Scene key="root">
-            <Scene initial key="login" component={Login} hideNavBar />
+            <Scene initial key="splash" component={Splash} hideNavBar />
+            <Scene key="login" component={Login} hideNavBar />
             <Scene key="home" component={Home} hideNavBar />
             <Scene key="search" component={Search} modal hideNavBar />
             <Scene key="cart" component={Cart} modal hideNavBar />

@@ -15,9 +15,7 @@ import Colors from '../Colors';
 import Text from '../component/Text';
 import Fab from '../component/Fab';
 import Navbar from '../component/Navbar';
-// import SideMenu from '../component/SideMenu';
 import SideMenuDrawer from '../component/SideMenuDrawer';
-// import Product from '../component/Product';
 
 const BASE_REQUEST_URL = 'http://app.idamas.ir/wp-json/wp/v2/';
 
@@ -230,7 +228,7 @@ export default class Category extends Component {
           <Content padder>
             {this.state.isLoaded ? this.renderProducts() : <Spinner color="black" />}
           </Content>
-          <Fab pageTitle={this.props.title} />
+          <Fab pageTitle={this.props.title} data={this.state.newItems} />
         </Container>
       </SideMenuDrawer>
     );
