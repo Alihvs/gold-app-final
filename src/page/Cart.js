@@ -21,7 +21,6 @@ import { Actions } from 'react-native-router-flux';
 import Colors from '../Colors';
 import Text from '../component/Text';
 import Navbar from '../component/Navbar';
-// import product from '../component/Product';
 
 export default class Cart extends Component {
   constructor(props) {
@@ -30,7 +29,8 @@ export default class Cart extends Component {
       cartItems: [],
       token: '',
       customerName: '',
-      sentFactor: false
+      sentFactor: false,
+      quantities: []
     };
   }
 
@@ -40,11 +40,18 @@ export default class Cart extends Component {
       else {
         this.setState({ cartItems: JSON.parse(res) });
       }
+
+      if (res) {
+        for (let i = 0; i < JSON.parse(res).length; i++) {
+          this.setState(prevState => ({
+            quantities: [...prevState.quantities, 1]
+          }));
+        }
+      }
     });
   }
 
   renderIndivudualCartItems() {
-    console.log(this.state.cartItems.length);
     const itemsToRender = [];
     let counter = 1;
     this.state.cartItems.map((item, i) => {
@@ -148,7 +155,6 @@ export default class Cart extends Component {
       </Col>
     );
     this.state.cartItems.map((item, i) => {
-      // const toRender = [];
       itemsToRender.push(
         <Col
           style={{
@@ -209,7 +215,7 @@ export default class Cart extends Component {
                 </TouchableOpacity>
               </Col>
               <Col style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 14 }}>{this.state.cartItems[i].quantity}</Text>
+                <Text style={{ fontSize: 14 }}>{this.state.quantities[i]}</Text>
               </Col>
               <Col>
                 <TouchableOpacity
@@ -226,12 +232,12 @@ export default class Cart extends Component {
           </Row>
           <Row style={myStyles.tableRow}>
             <Text style={myStyles.tableText}>
-              {(this.calcWeightPlusPercernt(item) * item.quantity).toFixed(3)}
+              {(this.calcWeightPlusPercernt(item) * this.state.quantities[i]).toFixed(3)}
             </Text>
           </Row>
 
           <Row style={myStyles.tableRow}>
-            <Text>{this.calcFinalPrice(item)}</Text>
+            <Text>{this.calcFinalPrice(item, i)}</Text>
           </Row>
         </Col>
       );
@@ -379,24 +385,19 @@ export default class Cart extends Component {
   }
 
   increaseQuantity(item, index) {
-    const obj = this.state.cartItems[index];
-    obj.quantity = item.quantity + 1;
-    this.setState({
-      obj
-    });
+    const obj = this.state.quantities;
+    obj[index]++;
+    this.setState({ quantities: obj });
   }
 
   decreaseQuantity(item, index) {
-    const obj = this.state.cartItems[index];
-    if (obj.quantity <= 1) {
+    const obj = this.state.quantities;
+    if (obj[index] <= 1) {
       Alert.alert('تعداد نمی تواند کمتر از 1 باشد');
-      obj.quantity = 1;
       return;
     }
-    obj.quantity = item.quantity - 1;
-    this.setState({
-      obj
-    });
+    obj[index]--;
+    this.setState({ quantities: obj });
   }
 
   // Functional functions
@@ -413,8 +414,8 @@ export default class Cart extends Component {
   sumQuantity() {
     const obj = this.state.cartItems;
     let sum = 0;
-    obj.map(item => {
-      sum += item.quantity;
+    obj.map((item, i) => {
+      sum += this.state.quantities[i];
     });
     return `${sum} عدد`;
   }
@@ -422,8 +423,8 @@ export default class Cart extends Component {
   sumWeight() {
     const obj = this.state.cartItems;
     let sum = 0;
-    obj.map(item => {
-      sum += this.calcWeightPlusPercernt(item) * item.quantity;
+    obj.map((item, i) => {
+      sum += this.calcWeightPlusPercernt(item) * this.state.quantities[i];
 
       // Number(
       //   Number((item.weight * item.ojratPercent) / 100 + Number(item.weight)) *
@@ -436,8 +437,8 @@ export default class Cart extends Component {
   sumPrice() {
     const obj = this.state.cartItems;
     let sum = 0;
-    obj.map(item => {
-      sum += this.calcFinalPrice(item);
+    obj.map((item, i) => {
+      sum += this.calcFinalPrice(item, i);
     });
     return `${sum.toFixed(0)} تومان`;
   }
@@ -455,29 +456,32 @@ export default class Cart extends Component {
     return res.toFixed(3);
   }
 
-  calcFinalPrice(item) {
+  calcFinalPrice(item, i) {
     const res =
-      Number(this.sumAddedAttributes(item) * Number(item.quantity)) +
-      Number(Number(item.acf.weight) * Number(item.acf.ojrat_toman) * Number(item.quantity));
+      Number(this.sumAddedAttributes(item) * Number(this.state.quantities[i])) +
+      Number(
+        Number(item.acf.weight) * Number(item.acf.ojrat_toman) * Number(this.state.quantities[i])
+      );
     return res;
   }
 
   constructTable() {
     let res = '';
+    let counter = 0;
     const items = this.state.cartItems;
 
-    items.map((product, i) => {
+    items.map((product, index) => {
       res += `
       <tr>
-        <td>${++i}</td>
-        <td>${product.acf.title.rendered}</td>
-        <td>${product.acf.type} ${product.acf.ojrat_percent}</td>
+        <td>${++counter}</td>
+        <td>${product.title.rendered}</td>
+        <td>${product.acf.type} ${product.acf.ojrat_percent} %</td>
         <td>${this.sumAddedAttributes(product)}</td>
         <td>${product.acf.weight}</td>
         <td>${product.acf.ojrat_toman}</td>
-        <td>${product.quantity}</td>
+        <td>${this.state.quantities[index]}</td>
         <td>${this.calcWeightPlusPercernt(product)}</td>
-        <td>${this.calcFinalPrice(product)}</td>
+        <td>${this.calcFinalPrice(product, index)}</td>
       </tr>
       `;
     });

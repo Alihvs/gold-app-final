@@ -11,7 +11,6 @@ import Text from '../component/Text';
 import Fab from '../component/Fab';
 import Navbar from '../component/Navbar';
 import SideMenuDrawer from '../component/SideMenuDrawer';
-import GotoProductButton from '../component/GotoProductBtn';
 
 const BASE_REQUEST_URL = 'http://app.idamas.ir/wp-json/wp/v2/';
 
