@@ -4,8 +4,17 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import { Image, AsyncStorage, BackHandler, BackAndroid, Alert, Platform } from 'react-native';
-import { Container, Content, View, Button, Left, Right, Icon } from 'native-base';
+import {
+  Image,
+  AsyncStorage,
+  BackHandler,
+  BackAndroid,
+  Alert,
+  Platform,
+  TouchableOpacity,
+  Text
+} from 'react-native';
+import { Container, View, Button, Left, Right, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
 // Our custom files and classes import
@@ -13,13 +22,9 @@ import { Actions } from 'react-native-router-flux';
 import Navbar from '../component/Navbar';
 // import SideMenu from '../component/SideMenu';
 import SideMenuDrawer from '../component/SideMenuDrawer';
-import CategoryBlock from '../component/CategoryBlock';
 import Colors from '../Colors';
 import newLogo from '../assets/logo.png';
-import womanLogo from '../assets/woman.png';
-import manLogo from '../assets/man.png';
-import kidLogo from '../assets/kid.png';
-import accLogo from '../assets/pin.png';
+import { Row, Grid } from 'react-native-easy-grid';
 
 export default class Home extends Component {
   constructor(props) {
@@ -30,23 +35,25 @@ export default class Home extends Component {
     };
   }
 
-  componentDidMount() {
-    // this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
-    // BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
-    // console.log(this.props);
-  }
+  // componentDidMount() {
+  //   this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
+  //   BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
+  //   console.log(this.props);
+  // }
 
-  componentWillUnmount() {
-    // BackHandler.removeEventListener('hardwareBackPress', () => this.backAndroid());
-    // this.backHandler.remove();
-    AsyncStorage.getItem('FACTOR', (err, res) => {
-      if (res) {
-        this.setState({
-          hasFactor: true
-        });
-      }
-    });
-  }
+  // componentWillMount = () => {
+  //   BackHandler.addEventListener('hardwareBackPress', () => {
+  //     Alert.alert('', 'خروج از برنامه؟', [
+  //       {
+  //         text: 'خیر',
+  //         onPress: () => console.log('No Pressed'),
+  //         style: 'cancel'
+  //       },
+  //       { text: 'بله', onPress: () => BackAndroid.exitApp() }
+  //     ]);
+  //     return true;
+  //   });
+  // };
 
   // backAndroid() {
   //   if (this.props.name === 'home') {
@@ -80,21 +87,28 @@ export default class Home extends Component {
 
     return (
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
-        <Container>
+        <Container style={{ backgroundColor: 'red' }}>
           <Navbar left={left} right={right} title="صفحه اصلی" />
-          <View style={{ backgroundColor: Colors.statusBarColor, width: '100%' }}>
+          <View
+            style={{
+              backgroundColor: Colors.black,
+              width: '100%',
+              paddingBottom: 10,
+              borderBottomWidth: 0.5,
+              borderColor: Colors.gold
+            }}
+          >
             <Image
               resizeMode="contain"
               style={{
                 height: 100,
-                // backgroundColor: "rgba(24, 24, 25, 0.9)",
                 width: '100%',
                 margin: 5
               }}
               source={newLogo}
             />
           </View>
-          <Content>{this.renderCategories()}</Content>
+          <Grid style={{ backgroundColor: Colors.statusBarColor }}>{this.renderCategories()}</Grid>
         </Container>
       </SideMenuDrawer>
     );
@@ -111,40 +125,59 @@ export default class Home extends Component {
   }
 
   renderCategories() {
-    const cat = [];
-    for (let i = 0; i < categories.length; i++) {
-      cat.push(
-        <CategoryBlock
-          key={categories[i].id}
-          id={categories[i].id}
-          image={categories[i].image}
-          title={categories[i].title}
-        />
+    const res = [];
+    categories.map(item => {
+      res.push(
+        <Row key={item.id}>
+          <TouchableOpacity
+            style={{ flex: 1 }}
+            activeOpacity={0.3}
+            onPress={() => Actions.category({ id: item.id, title: item.title })}
+          >
+            <View
+              style={{
+                borderWidth: 1,
+                borderColor: '#ecc643',
+                flex: 1,
+                margin: 10,
+                backgroundColor: '#000',
+                flexDirection: 'row-reverse',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+            >
+              <Text
+                style={{
+                  color: Colors.gold,
+                  fontSize: 32
+                }}
+              >
+                {item.title}
+              </Text>
+            </View>
+          </TouchableOpacity>
+        </Row>
       );
-    }
-    return cat;
+    });
+    return res;
   }
 }
 
 const categories = [
   {
     id: 1,
-    title: 'زنانه',
-    image: womanLogo
+    title: 'زنانه'
   },
   {
     id: 2,
-    title: 'مردانه',
-    image: manLogo
+    title: 'مردانه'
   },
   {
     id: 3,
-    title: 'بچه گانه',
-    image: kidLogo
+    title: 'بچه گانه'
   },
   {
     id: 4,
-    title: 'اکسسوری',
-    image: accLogo
+    title: 'اکسسوری'
   }
 ];

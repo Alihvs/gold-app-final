@@ -5,7 +5,7 @@
 // React native and others libraries imports
 import React, { Component } from 'react';
 import { Image, TouchableHighlight, StyleSheet, AsyncStorage } from 'react-native';
-import { Container, Content, View, Left, Right, Button, Icon, Spinner } from 'native-base';
+import { Container, Content, View, Left, Right, Button, Icon } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import { Actions } from 'react-native-router-flux';
@@ -23,7 +23,6 @@ export default class SearchResults extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoaded: false,
       newItems: []
     };
   }
@@ -32,7 +31,6 @@ export default class SearchResults extends Component {
     this.setState({
       newItems: this.props.data
     });
-    // console.log(this.props.data);
   }
 
   rightButtonPressed() {
@@ -91,6 +89,7 @@ export default class SearchResults extends Component {
       const color = stateItems[i].acf.color;
       const size = stateItems[i].acf.size;
       const availability = stateItems[i].acf.availability;
+      const canReorder = stateItems[i].acf.canReorder;
       const negindar = stateItems[i].acf.negindar;
       const addedAttributes = stateItems[i].acf.added_attributes;
       const title = stateItems[i].title.rendered;
@@ -124,7 +123,8 @@ export default class SearchResults extends Component {
                   addedAttributes,
                   image,
                   images,
-                  title
+                  title,
+                  canReorder
                 }
               })
             }

@@ -46,38 +46,11 @@ export default class Product extends Component {
       quantity: 1,
       selectedColor: '',
       selectedSize: '',
-      brand: this.props.product.brand,
-      hasFactor: false
+      brand: this.props.product.acf.brand,
+      hasFactor: false,
+      similarItems: []
     };
   }
-
-  componentWillMount() {
-    this.setState({
-      currentProduct: {
-        id: this.props.product.id,
-        brand: this.props.product.brand,
-        color: this.props.product.color,
-        size: this.props.product.size,
-        ojratPercent: this.props.product.ojratPercent,
-        ojratToman: this.props.product.ojratToman,
-        type: this.props.product.type,
-        weight: this.props.product.weight,
-        addedAttributes: this.props.product.addedAttributes,
-        image: this.props.product.image,
-        images: [
-          this.props.product.images[0].image.url,
-          this.props.product.images[1].image.url,
-          this.props.product.images[2].image.url,
-          this.props.product.images[3].image.url
-        ],
-        title: this.props.product.title,
-        quantity: 1,
-        similarItems: []
-      }
-    });
-  }
-
-  // componentWillMount() {}
 
   componentDidMount() {
     AsyncStorage.getItem('FACTOR', (err, res) => {
@@ -107,8 +80,8 @@ export default class Product extends Component {
         <Navbar
           left={left}
           right={right}
-          title={`${this.props.product.type} ${this.props.product.brand} ${
-            this.props.product.ojratPercent
+          title={`${this.props.product.acf.type} ${this.props.product.acf.brand} ${
+            this.props.product.acf.ojrat_percent
           }`}
         />
         <Content style={{ backgroundColor: Colors.statusBarColor }}>
@@ -124,7 +97,7 @@ export default class Product extends Component {
             {this.renderImages()}
           </Carousel>
           <Pagination
-            dotsLength={this.state.currentProduct.images.length}
+            dotsLength={this.props.product.acf.images.length}
             activeDotIndex={this.state.activeSlide}
             containerStyle={{
               backgroundColor: 'transparent',
@@ -157,7 +130,7 @@ export default class Product extends Component {
                 {/* Brand */}
                 <CardItem style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={styles.goldentext}>{this.props.product.brand}</Text>
+                    <Text style={styles.goldentext}>{this.props.product.acf.brand}</Text>
                   </Col>
                   <Col size={40}>
                     <Text style={styles.goldentext}>برند</Text>
@@ -166,7 +139,7 @@ export default class Product extends Component {
                 {/* Weight */}
                 <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={styles.goldentext}>{`${this.props.product.weight} گرم`}</Text>
+                    <Text style={styles.goldentext}>{`${this.props.product.acf.weight} گرم`}</Text>
                   </Col>
                   <Col size={40}>
                     <Text style={styles.goldentext}>وزن</Text>
@@ -176,7 +149,7 @@ export default class Product extends Component {
                 <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
                     <Text style={styles.goldentext}>
-                      {`${this.props.product.ojratPercent} درصد`}
+                      {`${this.props.product.acf.ojrat_percent} درصد`}
                     </Text>
                   </Col>
                   <Col size={40}>
@@ -187,7 +160,7 @@ export default class Product extends Component {
                 <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
                     <Text style={styles.goldentext}>
-                      {`${this.props.product.ojratToman} تومان`}
+                      {`${this.props.product.acf.ojrat_toman} تومان`}
                     </Text>
                   </Col>
                   <Col size={40}>
@@ -197,7 +170,7 @@ export default class Product extends Component {
                 {/* Color */}
                 <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={styles.goldentext}>{this.props.product.color}</Text>
+                    <Text style={styles.goldentext}>{this.props.product.acf.color}</Text>
                   </Col>
                   <Col size={40}>
                     <Text style={styles.goldentext}>رنگ</Text>
@@ -206,7 +179,7 @@ export default class Product extends Component {
                 {/* Color */}
                 <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={styles.goldentext}>{this.props.product.size}</Text>
+                    <Text style={styles.goldentext}>{this.props.product.acf.size}</Text>
                   </Col>
                   <Col size={40}>
                     <Text style={styles.goldentext}>سایز</Text>
@@ -224,7 +197,7 @@ export default class Product extends Component {
                 <CardItem bordered style={styles.cardItem}>
                   <Col>
                     <Text style={styles.goldentext}>
-                      {this.props.product.availability ? (
+                      {this.props.product.acf.availability ? (
                         <Text style={{ color: '#00ad4b' }}>این آیتم موجود است</Text>
                       ) : (
                         <Text style={{ color: '#aa204c' }}>این آیتم موجود نیست</Text>
@@ -236,7 +209,7 @@ export default class Product extends Component {
                 <CardItem bordered style={styles.cardItem}>
                   <Col>
                     <Text style={{ textAlign: 'right' }}>
-                      {this.props.product.negindar ? (
+                      {this.props.product.acf.canReorder ? (
                         <Text style={{ color: '#00ad4b' }}>قابلیت سفارش مجدد دارد</Text>
                       ) : (
                         <Text style={{ color: '#aa204c' }}>قابلیت سفارش مجدد ندارد</Text>
@@ -244,6 +217,21 @@ export default class Product extends Component {
                     </Text>
                   </Col>
                 </CardItem>
+                {/* Description */}
+                {this.props.product.acf.description ? (
+                  <View>
+                    <NBText style={{ paddingTop: 10, color: Colors.gold, fontWeight: 'bold' }}>
+                      توضیحات
+                    </NBText>
+                    <CardItem bordered style={styles.cardItem}>
+                      <Text style={{ textAlign: 'right', color: Colors.white, lineHeight: 30 }}>
+                        {this.props.product.acf.description}
+                      </Text>
+                    </CardItem>
+                  </View>
+                ) : (
+                  <View />
+                )}
               </Card>
 
               <Card padder style={{ backgroundColor: 'transparent' }}>
@@ -313,7 +301,8 @@ export default class Product extends Component {
 
   renderAddedAttrs() {
     const res = [];
-    const addedAttrs = this.props.product.addedAttributes;
+    const addedAttrs = this.props.product.acf.added_attributes;
+    console.log(addedAttrs);
 
     if (addedAttrs.length === 0) {
       return <Text style={styles.goldentext}>ندارد</Text>;
@@ -336,11 +325,12 @@ export default class Product extends Component {
 
   renderImages() {
     const images = [];
-    this.state.currentProduct.images.map((img, i) => {
+    // console.log(this.props.product.images);
+    this.props.product.acf.images.map((img, i) => {
       images.push(
         <TouchableWithoutFeedback key={i} onPress={() => this.openGallery(i)}>
           <Image
-            source={{ uri: img }}
+            source={{ uri: img.image.url }}
             style={{ width: Dimensions.get('window').width, height: 350 }}
             resizeMode="cover"
           />
@@ -351,31 +341,14 @@ export default class Product extends Component {
   }
 
   renderSimilairs() {
-    const items = [];
-    const stateItems = this.state.currentProduct.similarItems;
-    for (let i = 0; i < stateItems.length; i += 2) {
-      if (stateItems[i + 1]) {
-        items.push(
-          <Grid key={i}>
-            <ProductComponent key={stateItems[i].id} product={stateItems[i]} />
-            <ProductComponent key={stateItems[i + 1].id} product={stateItems[i + 1]} isRight />
-          </Grid>
-        );
-      } else {
-        items.push(
-          <Grid key={i}>
-            <ProductComponent key={stateItems[i].id} product={stateItems[i]} />
-            <Col key={i + 1} />
-          </Grid>
-        );
-      }
-    }
-    return items;
+    //A bug, this isn't even required
+    return <View />;
   }
 
   openGallery(pos) {
+    const images = this.props.product.acf.images.map(img => img.image.url);
     Actions.imageGallery({
-      images: this.state.currentProduct.images,
+      images,
       position: pos
     });
   }
@@ -391,7 +364,7 @@ export default class Product extends Component {
         duration: 4500
       });
     } else {
-      const product = this.state.currentProduct;
+      const product = this.props.product;
       let success = true;
 
       AsyncStorage.getItem('CART', (err, res) => {
@@ -439,7 +412,7 @@ export default class Product extends Component {
   }
 
   addToWishlist() {
-    const product = this.state.product;
+    const product = this.props.product;
     let success = true;
     AsyncStorage.getItem('WISHLIST', (err, res) => {
       if (!res) AsyncStorage.setItem('WISHLIST', JSON.stringify([product]));
@@ -457,7 +430,7 @@ export default class Product extends Component {
           text: 'محصول به قسمت علاقه مندی ها اضافه شد',
           position: 'bottom',
           type: 'success',
-          buttonText: 'بستن',
+          buttonText: '',
           duration: 3000
         });
       } else {
@@ -465,7 +438,7 @@ export default class Product extends Component {
           text: 'این محصول در قسمت علاقه مندی ها وجود دارد',
           position: 'bottom',
           type: 'danger',
-          buttonText: 'بستن',
+          buttonText: '',
           duration: 3000
         });
       }

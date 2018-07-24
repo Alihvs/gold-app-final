@@ -1,8 +1,3 @@
-/**
- * This is the Main file
- **/
-
-// React native and others libraries imports
 import React, { Component } from 'react';
 import { Alert, AsyncStorage, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import {
@@ -49,18 +44,19 @@ export default class Cart extends Component {
   }
 
   renderIndivudualCartItems() {
+    console.log(this.state.cartItems.length);
     const itemsToRender = [];
     let counter = 1;
     this.state.cartItems.map((item, i) => {
       itemsToRender.push(
         <ListItem thumbnail key={i}>
           <Left>
-            <Thumbnail square small source={{ uri: item.image }} />
+            <Thumbnail square small source={{ uri: item.acf.images[0].image.sizes.thumbnail }} />
             <Button
               transparent
               onPress={() => {
                 Alert.alert(
-                  `پاک کردن ${item.title}`,
+                  `پاک کردن ${item.title.rendered}`,
                   'آیا اطمینان دارید که می خواهید این محصول را از فاکتور خرید حذف کنید؟',
                   [
                     {
@@ -77,10 +73,12 @@ export default class Cart extends Component {
             </Button>
           </Left>
           <Body style={{ paddingRight: 20 }}>
-            <Text style={{ fontSize: 10 }}>{`کد ${item.title} - ${item.type} ${item.weight} گرمی ${
-              item.brand
+            <Text style={{ fontSize: 10 }}>{`کد ${item.title.rendered} - ${item.acf.type} ${
+              item.acf.weight
+            } گرمی ${item.brand}`}</Text>
+            <Text style={{ fontSize: 10 }}>{`رنگ: ${item.acf.color} - سایز: ${
+              item.acf.size
             }`}</Text>
-            <Text style={{ fontSize: 10 }}>{`رنگ: ${item.color} - سایز: ${item.size}`}</Text>
           </Body>
           <Right style={{ borderLeftWidth: 1 }}>
             <Text style={{ paddingLeft: 20 }}>{counter++}</Text>
@@ -93,7 +91,7 @@ export default class Cart extends Component {
 
   renderAddedAttributes(item) {
     const toRender = [];
-    item.addedAttributes.map((attr, i) => {
+    item.acf.added_attributes.map((attr, i) => {
       toRender.push(
         <Text style={myStyles.tableText} key={i}>{`${attr.item_name}: ${attr.value}`}</Text>
       );
@@ -164,22 +162,22 @@ export default class Cart extends Component {
             <Text style={myStyles.tableText}>{i + 1}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text style={myStyles.tableText}>{item.title}</Text>
+            <Text style={myStyles.tableText}>{item.title.rendered}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text style={myStyles.tableText}>{`${item.type} ${item.ojratPercent} ٪`}</Text>
+            <Text style={myStyles.tableText}>{`${item.acf.type} ${item.acf.ojrat_percent} ٪`}</Text>
           </Row>
           <Row style={[myStyles.tableRow, { alignSelf: 'flex-end', paddingRight: 5 }]}>
             <View>{this.renderAddedAttributes(item)}</View>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text style={myStyles.tableText}>{item.weight}</Text>
+            <Text style={myStyles.tableText}>{item.acf.weight}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
             <Text style={myStyles.tableText}>{this.calcWeightPlusPercernt(item)}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text style={myStyles.tableText}>{`${item.ojratToman} تومان`}</Text>
+            <Text style={myStyles.tableText}>{`${item.acf.ojrat_toman} تومان`}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
             <Grid
@@ -288,7 +286,6 @@ export default class Cart extends Component {
               <ScrollView
                 horizontal
                 contentContainerStyle={{
-                  // backgroundColor: "red",
                   height: 500
                 }}
               >
@@ -447,21 +444,21 @@ export default class Cart extends Component {
 
   sumAddedAttributes(item) {
     let sum = 0;
-    item.addedAttributes.map(item => {
+    item.acf.added_attributes.map(item => {
       sum += Number(item.value);
     });
     return sum;
   }
 
   calcWeightPlusPercernt(item) {
-    const res = Number(item.weight * item.ojratPercent) / 100 + Number(item.weight);
+    const res = Number(item.acf.weight * item.acf.ojrat_percent) / 100 + Number(item.acf.weight);
     return res.toFixed(3);
   }
 
   calcFinalPrice(item) {
     const res =
       Number(this.sumAddedAttributes(item) * Number(item.quantity)) +
-      Number(Number(item.weight) * Number(item.ojratToman) * Number(item.quantity));
+      Number(Number(item.acf.weight) * Number(item.acf.ojrat_toman) * Number(item.quantity));
     return res;
   }
 
@@ -473,11 +470,11 @@ export default class Cart extends Component {
       res += `
       <tr>
         <td>${++i}</td>
-        <td>${product.title}</td>
-        <td>${product.type} ${product.ojrat_percent}</td>
+        <td>${product.acf.title.rendered}</td>
+        <td>${product.acf.type} ${product.acf.ojrat_percent}</td>
         <td>${this.sumAddedAttributes(product)}</td>
-        <td>${product.weight}</td>
-        <td>${product.ojrat_toman}</td>
+        <td>${product.acf.weight}</td>
+        <td>${product.acf.ojrat_toman}</td>
         <td>${product.quantity}</td>
         <td>${this.calcWeightPlusPercernt(product)}</td>
         <td>${this.calcFinalPrice(product)}</td>

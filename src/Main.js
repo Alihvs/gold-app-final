@@ -5,7 +5,7 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler, Text } from 'react-native';
 import { Root } from 'native-base';
 import { Scene, Router, Actions } from 'react-native-router-flux';
 

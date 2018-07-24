@@ -17,11 +17,11 @@ export default class FAB extends Component {
         active={this.state.active}
         direction="up"
         containerStyle={{}}
-        style={{ backgroundColor: Colors.navbarBackgroundColor }}
+        style={{ backgroundColor: Colors.gold }}
         position="bottomLeft"
-        onPress={() => Actions.search({ pageTitle: this.props.pageTitle, data: this.props.data })}
+        onPress={() => Actions.search({ pageTitle: this.props.pageTitle })}
       >
-        <Icon name="search" />
+        <Icon name="search" style={{ color: Colors.black }} />
       </Fab>
     );
   }

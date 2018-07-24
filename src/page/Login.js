@@ -55,46 +55,24 @@ export default class Login extends Component {
               paddingRight: 50
             }}
           >
-            {/* <View style={{ marginBottom: 35, width: '100%' }}>
-              <Text
-                style={{
-                  fontSize: 24,
-                  fontWeight: 'bold',
-                  textAlign: 'right',
-                  width: '100%',
-                  marginBottom: 20,
-                  color: Colors.gold
-                }}
-              >
-                خوش آمدید{' '}
-              </Text>
-              <Text
-                style={{
-                  fontSize: 18,
-                  textAlign: 'right',
-                  width: '100%',
-                  color: Colors.gold
-                }}
-              >
-                برای ادامه استفاده از برنامه، باید وارد شوید{' '}
-              </Text>
-            </View> */}
             <Item>
-              {/* <Icon active name="ios-person" style={{ color: '#687373' }} /> */}
               <Input
                 placeholder="نام کاربری"
                 onChangeText={text => this.setState({ username: text })}
                 placeholderTextColor={Colors.grey}
                 style={{ textAlign: 'center', color: Colors.gold }}
+                blurOnSubmit={false}
               />
             </Item>
             <Item>
-              {/* <Icon active name="ios-lock" style={{ color: '#687373' }} /> */}
               <Input
                 placeholder="کلمه عبور"
                 onChangeText={text => this.setState({ password: text })}
                 secureTextEntry
                 placeholderTextColor={Colors.grey}
+                ref={input => {
+                  this.secondTextInput = input;
+                }}
                 style={{ textAlign: 'center', color: Colors.gold }}
               />
             </Item>

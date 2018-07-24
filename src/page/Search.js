@@ -5,9 +5,6 @@
 // React native and others libraries imports
 import React, { Component } from 'react';
 import {
-  Image,
-  Slider,
-  TouchableOpacity,
   StyleSheet,
   Picker,
   TextInput
@@ -22,30 +19,20 @@ import {
   Icon,
   Button,
   Toast,
-  Card,
-  CardItem,
-  cardBody,
-  Form,
-  Item,
-  Input,
-  // CheckBox,
-  ListItem,
-  Body,
-  Radio,
-  Switch
+  CheckBox,
+  Spinner
 } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 import { Actions } from 'react-native-router-flux';
-import RNPickerSelect from 'react-native-picker-select';
 // import Slider from "react-native-slider";
 
 // Our custom files and classes import
 import Text from '../component/Text';
 import Navbar from '../component/Navbar';
-import SideMenu from '../component/SideMenu';
 import SideMenuDrawer from '../component/SideMenuDrawer';
-import CategoryBlock from '../component/CategoryBlock';
 import Colors from '../Colors';
+
+const BASE_REQUEST_URL = 'http://app.idamas.ir/wp-json/wp/v2/';
 
 //Newley added libraries
 
@@ -53,7 +40,8 @@ export default class Search extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      // mainCatagory: 'woman',
+      isLoading: false,
+      newItems: [],
       // ---------Woman Catagories --------
       womanCatagory: 'all',
       manCatagory: 'all',
@@ -76,16 +64,61 @@ export default class Search extends Component {
       ojratTomanFrom: undefined,
       ojratTomanTo: undefined,
       // ---------availability ------------
-      available: 'all',
+      onlyAvailable: false,
+      // ---------CanReorder-----------
+      canReorder: false,
       // ---------color ------------
       color: 'all',
-      // ---------color ------------
-      neginDar: 'all',
-      // ---------color ------------
-      sangDeducted: 'all',
+      // ---------Negindar ------------
+      neginDar: false,
+      sangDeducted: false,
       //------------Big Search State -------------
       finalSearchItems: []
     };
+  }
+
+  componentDidMount() {
+    let requestCatagory = null;
+    this.setState({ isLoading: true });
+    // Constructing the url
+    switch (this.props.pageTitle) {
+      case 'زنانه': {
+        requestCatagory = 'women';
+        break;
+      }
+      case 'مردانه': {
+        requestCatagory = 'men';
+        break;
+      }
+      case 'بچه گانه': {
+        requestCatagory = 'kid';
+        break;
+      }
+      case 'اکسسوری': {
+        requestCatagory = 'acc';
+        break;
+      }
+      default: {
+        requestCatagory = 'women';
+      }
+    }
+    const REQUEST_URL = BASE_REQUEST_URL + requestCatagory;
+    fetch(REQUEST_URL, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        data.map(recivedData => {
+          this.setState(prevState => ({
+            newItems: [...prevState.newItems, recivedData],
+            isLoading: false
+          }));
+        });
+      });
   }
 
   render() {
@@ -98,8 +131,8 @@ export default class Search extends Component {
     );
     const right = (
       <Right style={{ flex: 1 }}>
-        <Button onPress={() => Actions.cart()} transparent>
-          <Icon name="ios-cart" />
+        <Button onPress={this.refreshData.bind(this)} transparent>
+          {this.state.isLoading ? <Spinner color="white" /> : <Icon name="refresh" />}
         </Button>
       </Right>
     );
@@ -111,7 +144,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ womanCatagory: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -142,7 +175,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ manCatagory: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -169,7 +202,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ accCatagories: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -204,7 +237,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ alangoo: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -229,7 +262,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ alangooCNC: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -258,7 +291,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ alangooRikhtegi: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -287,7 +320,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ zanjir: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -316,7 +349,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ brand: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -347,7 +380,7 @@ export default class Search extends Component {
               transparent
               onPress={() => this.setState({ weightFrom: undefined, weightTo: undefined })}
             >
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
@@ -396,7 +429,7 @@ export default class Search extends Component {
                 this.setState({ ojratPercentFrom: undefined, ojratPercentTo: undefined })
               }
             >
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
@@ -443,7 +476,7 @@ export default class Search extends Component {
               transparent
               onPress={() => this.setState({ ojratTomanFrom: undefined, ojratTomanTo: undefined })}
             >
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
@@ -486,35 +519,52 @@ export default class Search extends Component {
       <View style={styles.searchItem}>
         <Grid style={{ alignItems: 'center' }}>
           <Col>
-            <Button transparent onPress={() => this.setState({ available: 'all' })}>
+            {/* <Button transparent onPress={() => this.setState({ available: 'all' })}>
               <Icon style={{ color: Colors.Gold }} name="close" />
-            </Button>
+            </Button> */}
           </Col>
           <Col size={2}>
-            <Picker
-              selectedValue={this.state.available}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ available: itemValue })}
-            >
-              <Picker.Item label="" value="all" />
-              <Picker.Item label="موجود" value="موجود" />
-              <Picker.Item label="ناموجود" value="ناموجود" />
-              <Picker.Item label="ناموجود اما قابل سفارش" value="ناموجود اما قابل سفارش" />
-            </Picker>
+            <CheckBox
+              checked={this.state.onlyAvailable}
+              color={Colors.gold}
+              onPress={() => this.setState({ onlyAvailable: !this.state.onlyAvailable })}
+            />
           </Col>
           <Col>
-            <Text style={styles.text}>موجود در انبار</Text>
+            <Text style={styles.text}>فقط موجود</Text>
           </Col>
         </Grid>
       </View>
     );
-    // ======== Avaialable products================================
+    // ======== Can Reorder================================
+    const CanReorder = (
+      <View style={styles.searchItem}>
+        <Grid style={{ alignItems: 'center' }}>
+          <Col>
+            {/* <Button transparent onPress={() => this.setState({ available: 'all' })}>
+              <Icon style={{ color: Colors.Gold }} name="close" />
+            </Button> */}
+          </Col>
+          <Col size={2}>
+            <CheckBox
+              checked={this.state.canReorder}
+              color={Colors.gold}
+              onPress={() => this.setState({ canReorder: !this.state.canReorder })}
+            />
+          </Col>
+          <Col>
+            <Text style={styles.text}>قابل سفارش مجدد</Text>
+          </Col>
+        </Grid>
+      </View>
+    );
+    // ======== Colors ================================
     const Color = (
       <View style={styles.searchItem}>
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ color: 'all' })}>
-              <Icon style={{ color: Colors.Gold }} name="close" />
+              <Icon style={{ color: Colors.gold }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -543,49 +593,41 @@ export default class Search extends Component {
       <View style={styles.searchItem}>
         <Grid style={{ alignItems: 'center' }}>
           <Col>
-            <Button transparent onPress={() => this.setState({ neginDar: 'all' })}>
+            {/* <Button transparent onPress={() => this.setState({ available: 'all' })}>
               <Icon style={{ color: Colors.Gold }} name="close" />
-            </Button>
+            </Button> */}
           </Col>
           <Col size={2}>
-            <Picker
-              selectedValue={this.state.neginDar}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ neginDar: itemValue })}
-            >
-              <Picker.Item label="" value="all" />
-              <Picker.Item label="نگین دارد" value="نگین دارد" />
-              <Picker.Item label="نگین ندارد" value="نگین ندارد" />
-            </Picker>
+            <CheckBox
+              checked={this.state.neginDar}
+              color={Colors.gold}
+              onPress={() => this.setState({ neginDar: !this.state.neginDar })}
+            />
           </Col>
           <Col>
-            <Text style={styles.text}>نگین</Text>
+            <Text style={styles.text}>نگین دار</Text>
           </Col>
         </Grid>
       </View>
     );
-    // ======== Negir Dar ================================
+    // ======== SangDeducted ================================
     const SangDeducted = (
       <View style={styles.searchItem}>
         <Grid style={{ alignItems: 'center' }}>
           <Col>
-            <Button transparent onPress={() => this.setState({ sangDeducted: 'all' })}>
+            {/* <Button transparent onPress={() => this.setState({ available: 'all' })}>
               <Icon style={{ color: Colors.Gold }} name="close" />
-            </Button>
+            </Button> */}
           </Col>
           <Col size={2}>
-            <Picker
-              selectedValue={this.state.sangDeducted}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ sangDeducted: itemValue })}
-            >
-              <Picker.Item label="" value="all" />
-              <Picker.Item label="کم شده باشد" value="کم شده باشد" />
-              <Picker.Item label="کم نشده باشد" value="کم نشده باشد" />
-            </Picker>
+            <CheckBox
+              checked={this.state.sangDeducted}
+              color={Colors.gold}
+              onPress={() => this.setState({ sangDeducted: !this.state.sangDeducted })}
+            />
           </Col>
           <Col>
-            <Text style={styles.text}>وزن نگین</Text>
+            <Text style={styles.text}>وزن نگین کم شده باشد</Text>
           </Col>
         </Grid>
       </View>
@@ -594,7 +636,11 @@ export default class Search extends Component {
     return (
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
         <Container style={{ backgroundColor: Colors.statusBarColor }}>
-          <Navbar left={left} right={right} title={this.props.pageTitle} />
+          <Navbar
+            left={left}
+            right={right}
+            title={`${this.props.pageTitle} (${this.state.newItems.length} کالا)`}
+          />
           <Content>
             <View style={styles.container}>
               {/* Rendering Catagories based on main catagory */}
@@ -622,39 +668,173 @@ export default class Search extends Component {
               {Weight}
               {OjratPercent}
               {OjratToman}
-              {Available}
               {Color}
+              {Available}
+              {CanReorder}
               {NeginDar}
-              {this.state.neginDar === 'نگین دارد' ? SangDeducted : <View />}
+              {this.state.neginDar ? SangDeducted : <View />}
             </View>
-            <Button
-              full
-              primary
-              onPress={() => {
-                let itemsToPass = this.props.data;
+            {this.state.isLoading ? (
+              <View />
+            ) : (
+              <Button
+                full
+                transparent
+                bordered
+                style={{
+                  borderColor: Colors.gold,
+                  marginHorizontal: 10,
+                  marginBottom: 5,
+                  width: '93%',
+                  alignSelf: 'center',
+                  borderRadius: 8
+                }}
+                onPress={() => {
+                  let itemsToPass = this.state.newItems;
+                  //Helper Variables for numbers
+                  //========Weight===========================
+                  let weightFrom = this.state.weightFrom;
+                  let weightTo = this.state.weightTo;
+                  if (!this.state.weightFrom) weightFrom = 0;
+                  if (!this.state.weightTo) weightTo = 999;
+                  //========ojrat percent====================
+                  let ojratPercentFrom = this.state.ojratPercentFrom;
+                  let ojratPercentTo = this.state.ojratPercentTo;
+                  if (!this.state.ojratPercentFrom) ojratPercentFrom = 0;
+                  if (!this.state.ojratPercentTo) ojratPercentTo = 99;
+                  //========ojrat percent====================
+                  let ojratTomanFrom = this.state.ojratTomanFrom;
+                  let ojratTomanTo = this.state.ojratTomanTo;
+                  if (!this.state.ojratTomanFrom) ojratTomanFrom = 0;
+                  if (!this.state.ojratTomanTo) ojratTomanTo = 999999;
+                  //=============================================
+                  //======================Validations======================================
+                  if (Number(this.state.weightTo) <= Number(this.state.weightFrom)) {
+                    this.showToast('وزن اولیه نمی تواند از وزن نهایی بیشتر باشد');
+                    return;
+                  }
+                  if (Number(this.state.ojratPercentTo) <= Number(this.state.ojratPercentFrom)) {
+                    this.showToast('اجرت اولیه نمی تواند از اجرت نهایی بیشتر باشد');
+                    return;
+                  }
+                  if (Number(this.state.ojratTomanTo) <= Number(this.state.ojratTomanFrom)) {
+                    this.showToast('اجرت اولیه نمی تواند از اجرت نهایی بیشتر باشد');
+                    return;
+                  }
+                  // ======================================================================
 
-                if (this.state.womanCatagory !== 'all') {
-                  itemsToPass = itemsToPass.filter(
-                    item => item.acf.type === this.state.womanCatagory
+                  if (this.state.womanCatagory !== 'all') {
+                    itemsToPass = itemsToPass.filter(
+                      item => item.acf.type === this.state.womanCatagory
+                    );
+                  }
+
+                  if (this.state.brand !== 'all') {
+                    itemsToPass = itemsToPass.filter(item => item.acf.brand === this.state.brand);
+                  }
+
+                  itemsToPass = itemsToPass.filter(item =>
+                    this.inRange(item.acf.weight, weightFrom, weightTo)
                   );
-                }
 
-                if (this.state.brand !== 'all') {
-                  itemsToPass = itemsToPass.filter(item => item.acf.brand === this.state.brand);
-                }
+                  itemsToPass = itemsToPass.filter(item =>
+                    this.inRange(item.acf.ojrat_percent, ojratPercentFrom, ojratPercentTo)
+                  );
 
-                this.showToast('علی');
+                  itemsToPass = itemsToPass.filter(item =>
+                    this.inRange(item.acf.ojrat_toman, ojratTomanFrom, ojratTomanTo)
+                  );
 
-                console.log(itemsToPass);
-                // Actions.searchResult({ data: itemsToPass, title: this.props.pageTitle });
-              }}
-            >
-              <Text style={{ color: '#fff' }}>جستجو</Text>
-            </Button>
+                  if (this.state.color !== 'all') {
+                    itemsToPass = itemsToPass.filter(item => item.acf.color === this.state.color);
+                  }
+
+                  if (this.state.onlyAvailable) {
+                    itemsToPass = itemsToPass.filter(
+                      item => item.acf.availability === this.state.onlyAvailable
+                    );
+                  }
+
+                  if (this.state.canReorder) {
+                    itemsToPass = itemsToPass.filter(
+                      item => item.acf.canReorder === this.state.canReorder
+                    );
+                  }
+
+                  if (this.state.neginDar) {
+                    itemsToPass = itemsToPass.filter(
+                      item => item.acf.negindar === this.state.neginDar
+                    );
+                  }
+
+                  if (this.state.sangDeducted) {
+                    itemsToPass = itemsToPass.filter(
+                      item => item.acf.hasNeginMoney === this.state.sangDeducted
+                    );
+                  }
+
+                  // console.log(itemsToPass);
+                  Actions.searchResult({ data: itemsToPass, title: this.props.pageTitle });
+                }}
+              >
+                <Text style={{ color: '#fff' }}>جستجو</Text>
+              </Button>
+            )}
           </Content>
         </Container>
       </SideMenuDrawer>
     );
+  }
+
+  refreshData() {
+    this.setState({ newItems: [] });
+    if (!this.state.isLoading) {
+      let requestCatagory = null;
+      this.setState({ isLoading: true });
+      // Constructing the url
+      switch (this.props.title) {
+        case 'زنانه': {
+          requestCatagory = 'women';
+          break;
+        }
+        case 'مردانه': {
+          requestCatagory = 'men';
+          break;
+        }
+        case 'بچه گانه': {
+          requestCatagory = 'kid';
+          break;
+        }
+        case 'اکسسوری': {
+          requestCatagory = 'acc';
+          break;
+        }
+        default: {
+          requestCatagory = 'women';
+        }
+      }
+      const REQUEST_URL = BASE_REQUEST_URL + requestCatagory;
+      fetch(REQUEST_URL, {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+          'Access-Control-Allow-Credentials': 'true'
+        }
+      })
+        .then(response => response.json())
+        .then(data => {
+          data.map(recivedData => {
+            this.setState(prevState => ({
+              newItems: [...prevState.newItems, recivedData],
+              isLoading: false
+            }));
+          });
+        });
+    }
+  }
+
+  inRange(x, min, max) {
+    return (x - min) * (x - max) <= 0;
   }
 
   showToast(text) {
@@ -694,6 +874,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     textAlign: 'center',
-    width: 50
+    width: 60
   }
 });
