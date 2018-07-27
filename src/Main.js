@@ -22,6 +22,7 @@ import Login from './page/Login';
 import SearchResult from './page/SearchResult';
 import Splash from './page/Splash';
 import FactorResult from './page/FactorResult';
+import Profile from './page/Profile';
 
 export default class Main extends Component {
   componentWillMount = () => {
@@ -45,6 +46,7 @@ export default class Main extends Component {
             <Scene key="product" component={Product} hideNavBar />
             <Scene key="imageGallery" component={ImageGallery} modal hideNavBar />
             <Scene key="factorResult" component={FactorResult} hideNavBar />
+            <Scene key="profile" component={Profile} hideNavBar />
           </Scene>
         </Router>
       </Root>

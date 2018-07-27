@@ -30,6 +30,7 @@ export default class Login extends Component {
       await AsyncStorage.setItem(
         'user',
         JSON.stringify({
+          id: userData.id,
           isLoggedIn: true,
           token: userData.token,
           username: this.state.username,
@@ -105,6 +106,20 @@ export default class Login extends Component {
                         .then(data => {
                           if (data.token) {
                             this.saveToStorage(data);
+                            // console.table(data);
+                            // MY THING
+                            // fetch(`http://app.idamas.ir/wp-json/wp/v2/users/${data.id}`, {
+                            //   headers: {
+                            //     Authorization: `Bearer ${data.token}`,
+                            //     credentials: 'include',
+                            //     withCredentials: true,
+                            //     Accept: 'application/json',
+                            //     'Content-Type': 'application/json'
+                            //   }
+                            // })
+                            //   .then(response => response.json())
+                            //   .then(newResponse => console.log(newResponse));
+                            // MY THING END
                             Actions.home();
                           } else {
                             this.setState({

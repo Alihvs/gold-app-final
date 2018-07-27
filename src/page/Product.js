@@ -9,7 +9,8 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   AsyncStorage,
-  StyleSheet
+  StyleSheet,
+  StatusBar
 } from 'react-native';
 import {
   View,
@@ -84,6 +85,8 @@ export default class Product extends Component {
             this.props.product.acf.ojrat_percent
           }`}
         />
+        <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
+
         <Content style={{ backgroundColor: Colors.statusBarColor }}>
           <Carousel
             ref={carousel => {

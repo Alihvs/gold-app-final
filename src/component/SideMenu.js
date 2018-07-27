@@ -213,6 +213,14 @@ export default class SideMenu extends Component {
   renderSecondaryList() {
     return (
       <View>
+        <ListItem last icon button onPress={() => Actions.profile()}>
+          <Left>
+            <Icon style={{ fontSize: 18 }} name="paper" />
+          </Left>
+          <Body style={{ marginLeft: -15 }}>
+            <Text style={{ fontSize: 16 }}>حساب کاربری</Text>
+          </Body>
+        </ListItem>
         <ListItem last icon button onPress={() => Actions.cart()}>
           <Left>
             <Icon style={{ fontSize: 18 }} name="paper" />

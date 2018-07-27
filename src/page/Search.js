@@ -4,12 +4,7 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  Picker,
-  TextInput
-  // CheckBox
-} from 'react-native';
+import { StyleSheet, Picker, TextInput, StatusBar } from 'react-native';
 import {
   Container,
   Content,
@@ -144,7 +139,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ womanCatagory: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -175,7 +170,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ manCatagory: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -202,7 +197,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ accCatagories: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -237,7 +232,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ alangoo: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -262,7 +257,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ alangooCNC: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -291,7 +286,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ alangooRikhtegi: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -320,7 +315,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ zanjir: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -349,7 +344,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ brand: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -380,7 +375,7 @@ export default class Search extends Component {
               transparent
               onPress={() => this.setState({ weightFrom: undefined, weightTo: undefined })}
             >
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
@@ -429,7 +424,7 @@ export default class Search extends Component {
                 this.setState({ ojratPercentFrom: undefined, ojratPercentTo: undefined })
               }
             >
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
@@ -476,7 +471,7 @@ export default class Search extends Component {
               transparent
               onPress={() => this.setState({ ojratTomanFrom: undefined, ojratTomanTo: undefined })}
             >
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
@@ -526,7 +521,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.onlyAvailable}
-              color={Colors.gold}
+              color={Colors.white}
               onPress={() => this.setState({ onlyAvailable: !this.state.onlyAvailable })}
             />
           </Col>
@@ -548,7 +543,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.canReorder}
-              color={Colors.gold}
+              color={Colors.white}
               onPress={() => this.setState({ canReorder: !this.state.canReorder })}
             />
           </Col>
@@ -564,7 +559,7 @@ export default class Search extends Component {
         <Grid style={{ alignItems: 'center' }}>
           <Col>
             <Button transparent onPress={() => this.setState({ color: 'all' })}>
-              <Icon style={{ color: Colors.gold }} name="close" />
+              <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
           <Col size={2}>
@@ -600,7 +595,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.neginDar}
-              color={Colors.gold}
+              color={Colors.white}
               onPress={() => this.setState({ neginDar: !this.state.neginDar })}
             />
           </Col>
@@ -622,7 +617,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.sangDeducted}
-              color={Colors.gold}
+              color={Colors.white}
               onPress={() => this.setState({ sangDeducted: !this.state.sangDeducted })}
             />
           </Col>
@@ -641,6 +636,8 @@ export default class Search extends Component {
             right={right}
             title={`${this.props.pageTitle} (${this.state.newItems.length} کالا)`}
           />
+          <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
+
           <Content>
             <View style={styles.container}>
               {/* Rendering Catagories based on main catagory */}
@@ -850,7 +847,7 @@ export default class Search extends Component {
 
 const styles = StyleSheet.create({
   text: {
-    color: Colors.gold,
+    color: Colors.white,
     fontWeight: 'bold',
     fontSize: 14
   },

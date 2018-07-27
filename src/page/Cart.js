@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Alert, AsyncStorage, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  Alert,
+  AsyncStorage,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+  StatusBar
+} from 'react-native';
 import {
   Container,
   Content,
@@ -192,17 +199,6 @@ export default class Cart extends Component {
                 flexDirection: 'row'
               }}
             >
-              {/* <Col>
-                <TouchableOpacity
-                  style={{ alignItems: 'center' }}
-                  onPress={() => {
-                    //Increaase quantity
-                    this.increaseQuantity(item, i);
-                  }}
-                >
-                  <Icon name="add" />
-                </TouchableOpacity>
-              </Col> */}
               <Col>
                 <TouchableOpacity
                   style={{ alignItems: 'center', marginRight: -10 }}
@@ -257,6 +253,8 @@ export default class Cart extends Component {
     return (
       <Container style={{ backgroundColor: '#fdfdfd' }}>
         <Navbar left={left} title="فاکتور" />
+        <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
+
         {this.state.cartItems.length <= 0 ? (
           <View
             style={{
@@ -425,11 +423,6 @@ export default class Cart extends Component {
     let sum = 0;
     obj.map((item, i) => {
       sum += this.calcWeightPlusPercernt(item) * this.state.quantities[i];
-
-      // Number(
-      //   Number((item.weight * item.ojratPercent) / 100 + Number(item.weight)) *
-      //     Number(item.quantity)
-      // );
     });
     return `${sum.toFixed(3)} گرم`;
   }

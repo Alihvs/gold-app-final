@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { Image, TouchableHighlight, StyleSheet, AsyncStorage, FlatList } from 'react-native';
+import {
+  Image,
+  TouchableHighlight,
+  StyleSheet,
+  AsyncStorage,
+  FlatList,
+  StatusBar
+} from 'react-native';
 import { Container, Content, View, Left, Right, Button, Icon, Spinner } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
@@ -156,6 +163,7 @@ export default class Category extends Component {
       <Right style={{ flex: 1 }}>
         <Button onPress={this.rightButtonPressed} transparent>
           <Icon name="ios-cart" />
+          <Text style={{ color: Colors.white, paddingLeft: 5 }}>فاکتور</Text>
         </Button>
       </Right>
     );
@@ -164,6 +172,7 @@ export default class Category extends Component {
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
         <Container style={{ backgroundColor: Colors.statusBarColor }}>
           <Navbar left={left} right={right} title={this.props.title} />
+          <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
           {this.state.isLoaded ? (
             <View
               style={{

@@ -181,6 +181,7 @@ export default class SearchResults extends Component {
       <Right style={{ flex: 1 }}>
         <Button onPress={this.rightButtonPressed} transparent>
           <Icon name="ios-cart" />
+          <Text style={{ color: Colors.white, paddingLeft: 5 }}>فاکتور</Text>
         </Button>
       </Right>
     );

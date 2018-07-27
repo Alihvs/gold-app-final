@@ -12,7 +12,9 @@ import {
   Alert,
   Platform,
   TouchableOpacity,
-  Text
+  TouchableWithoutFeedback,
+  Text,
+  StatusBar
 } from 'react-native';
 import { Container, View, Button, Left, Right, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -73,6 +75,7 @@ export default class Home extends Component {
     const left = (
       <Left style={{ flex: 1 }}>
         <Button onPress={() => this._sideMenuDrawer.open()} transparent>
+          <Text style={{ color: Colors.white, paddingRight: 5 }}>منو</Text>
           <Icon name="ios-menu-outline" />
         </Button>
       </Left>
@@ -81,6 +84,7 @@ export default class Home extends Component {
       <Right style={{ flex: 1 }}>
         <Button onPress={this.rightButtonPressed} transparent>
           <Icon name="ios-cart" />
+          <Text style={{ color: Colors.white, paddingLeft: 5 }}>فاکتور</Text>
         </Button>
       </Right>
     );
@@ -89,25 +93,28 @@ export default class Home extends Component {
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
         <Container style={{ backgroundColor: 'red' }}>
           <Navbar left={left} right={right} title="صفحه اصلی" />
-          <View
-            style={{
-              backgroundColor: Colors.black,
-              width: '100%',
-              paddingBottom: 10,
-              borderBottomWidth: 0.5,
-              borderColor: Colors.gold
-            }}
-          >
-            <Image
-              resizeMode="contain"
+          <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
+          <TouchableWithoutFeedback onPress={() => this._sideMenuDrawer.open()}>
+            <View
               style={{
-                height: 100,
+                backgroundColor: Colors.black,
                 width: '100%',
-                margin: 5
+                paddingBottom: 10,
+                borderBottomWidth: 0.5,
+                borderColor: Colors.gold
               }}
-              source={newLogo}
-            />
-          </View>
+            >
+              <Image
+                resizeMode="contain"
+                style={{
+                  height: 100,
+                  width: '100%',
+                  margin: 5
+                }}
+                source={newLogo}
+              />
+            </View>
+          </TouchableWithoutFeedback>
           <Grid style={{ backgroundColor: Colors.statusBarColor }}>{this.renderCategories()}</Grid>
         </Container>
       </SideMenuDrawer>
