@@ -4,7 +4,14 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import { ScrollView, LayoutAnimation, UIManager, Linking, AsyncStorage } from 'react-native';
+import {
+  ScrollView,
+  LayoutAnimation,
+  UIManager,
+  Linking,
+  AsyncStorage,
+  BackAndroid
+} from 'react-native';
 import { View, List, ListItem, Body, Left, Right, Icon, Grid, Col, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 
@@ -209,6 +216,7 @@ export default class SideMenu extends Component {
     AsyncStorage.removeItem('FACTOR');
     AsyncStorage.removeItem('CART');
     AsyncStorage.removeItem('QUANTITIES');
+    AsyncStorage.removeItem('SEARCHPARAMS');
 
     Toast.show({
       text: 'از حساب کاربری خود خارج شدید',
@@ -275,6 +283,14 @@ export default class SideMenu extends Component {
           </Left>
           <Body style={{ marginLeft: -15 }}>
             <Text style={{ fontSize: 16 }}>خروج از حساب کاربری</Text>
+          </Body>
+        </ListItem>
+        <ListItem last icon button onPress={() => BackAndroid.exitApp()}>
+          <Left>
+            <Icon style={{ fontSize: 18 }} name="exit" />
+          </Left>
+          <Body style={{ marginLeft: -15 }}>
+            <Text style={{ fontSize: 16 }}>خروج از برنامه</Text>
           </Body>
         </ListItem>
       </View>

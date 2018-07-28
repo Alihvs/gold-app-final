@@ -4,7 +4,7 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import { StyleSheet, Picker, TextInput, StatusBar } from 'react-native';
+import { StyleSheet, Picker, TextInput, StatusBar, AsyncStorage } from 'react-native';
 import {
   Container,
   Content,
@@ -114,6 +114,63 @@ export default class Search extends Component {
           }));
         });
       });
+  }
+
+  componentWillMount() {
+    AsyncStorage.getItem('SEARCHPARAMS', (err, res) => {
+      if (!res) return;
+
+      this.setState({
+        womanCatagory: JSON.parse(res).womanCatagory,
+        manCatagory: JSON.parse(res).manCatagory,
+        accCatagories: JSON.parse(res).accCatagories,
+        alangoo: JSON.parse(res).alangoo,
+        alangooCNC: JSON.parse(res).alangooCNC,
+        alangooRikhtegi: JSON.parse(res).alangooRikhtegi,
+        zanjir: JSON.parse(res).zanjir,
+        brand: JSON.parse(res).brand,
+        weightFrom: JSON.parse(res).weightFrom,
+        weightTo: JSON.parse(res).weightTo,
+        ojratPercentFrom: JSON.parse(res).ojratPercentFrom,
+        ojratPercentTo: JSON.parse(res).ojratPercentTo,
+        ojratTomanFrom: JSON.parse(res).ojratTomanFrom,
+        ojratTomanTo: JSON.parse(res).ojratTomanTo,
+        onlyAvailable: JSON.parse(res).onlyAvailable,
+        canReorder: JSON.parse(res).canReorder,
+        color: JSON.parse(res).color,
+        neginDar: JSON.parse(res).neginDar,
+        sangDeducted: JSON.parse(res).sangDeducted
+      });
+
+      // console.log(res);
+    });
+  }
+
+  componentWillUnmount() {
+    AsyncStorage.setItem(
+      'SEARCHPARAMS',
+      JSON.stringify({
+        womanCatagory: this.state.womanCatagory,
+        manCatagory: this.state.manCatagory,
+        accCatagories: this.state.accCatagories,
+        alangoo: this.state.alangoo,
+        alangooCNC: this.state.alangooCNC,
+        alangooRikhtegi: this.state.alangooRikhtegi,
+        zanjir: this.state.zanjir,
+        brand: this.state.brand,
+        weightFrom: this.state.weightFrom,
+        weightTo: this.state.weightTo,
+        ojratPercentFrom: this.state.ojratPercentFrom,
+        ojratPercentTo: this.state.ojratPercentTo,
+        ojratTomanFrom: this.state.ojratTomanFrom,
+        ojratTomanTo: this.state.ojratTomanTo,
+        onlyAvailable: this.state.onlyAvailable,
+        canReorder: this.state.canReorder,
+        color: this.state.color,
+        neginDar: this.state.neginDar,
+        sangDeducted: this.state.sangDeducted
+      })
+    );
   }
 
   render() {
@@ -772,6 +829,31 @@ export default class Search extends Component {
                       item => item.acf.hasNeginMoney === this.state.sangDeducted
                     );
                   }
+
+                  AsyncStorage.setItem(
+                    'SEARCHPARAMS',
+                    JSON.stringify({
+                      womanCatagory: this.state.womanCatagory,
+                      manCatagory: this.state.manCatagory,
+                      accCatagories: this.state.accCatagories,
+                      alangoo: this.state.alangoo,
+                      alangooCNC: this.state.alangooCNC,
+                      alangooRikhtegi: this.state.alangooRikhtegi,
+                      zanjir: this.state.zanjir,
+                      brand: this.state.brand,
+                      weightFrom: this.state.weightFrom,
+                      weightTo: this.state.weightTo,
+                      ojratPercentFrom: this.state.ojratPercentFrom,
+                      ojratPercentTo: this.state.ojratPercentTo,
+                      ojratTomanFrom: this.state.ojratTomanFrom,
+                      ojratTomanTo: this.state.ojratTomanTo,
+                      onlyAvailable: this.state.onlyAvailable,
+                      canReorder: this.state.canReorder,
+                      color: this.state.color,
+                      neginDar: this.state.neginDar,
+                      sangDeducted: this.state.sangDeducted
+                    })
+                  );
 
                   Actions.searchResult({ data: itemsToPass, title: this.props.pageTitle });
                 }}

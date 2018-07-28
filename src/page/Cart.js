@@ -47,7 +47,6 @@ export default class Cart extends Component {
       if (!res) this.setState({ quantities: [] });
       else {
         this.setState({ quantities: JSON.parse(res) });
-        console.log(res);
       }
     });
 
@@ -69,7 +68,6 @@ export default class Cart extends Component {
 
   componentWillUnmount() {
     AsyncStorage.setItem('QUANTITIES', JSON.stringify(this.state.quantities));
-    console.log('UNMOUNTING');
   }
 
   renderIndivudualCartItems() {

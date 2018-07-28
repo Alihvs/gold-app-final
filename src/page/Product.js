@@ -72,7 +72,7 @@ export default class Product extends Component {
     const right = (
       <Right style={{ flex: 1 }}>
         <Button onPress={this.rightButtonPressed} transparent>
-          <Icon name="ios-cart" />
+          <Icon name="paper" />
         </Button>
       </Right>
     );

@@ -125,22 +125,18 @@ export default class SearchResult extends Component {
         <Container style={{ backgroundColor: Colors.statusBarColor }}>
           <Navbar left={left} right={right} title="نتایج" />
           <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
-          {this.state.isLoaded ? (
-            <View
-              style={{
-                backgroundColor: '#2d2d2d',
-                padding: 5,
-                paddingRight: 15,
-                height: 30
-              }}
-            >
-              <Text style={[styles.mainText, { textAlign: 'right' }]}>
-                {`${this.state.newItems.length} کالا در دسته ${this.props.title} `}
-              </Text>
-            </View>
-          ) : (
-            <View />
-          )}
+          <View
+            style={{
+              backgroundColor: '#2d2d2d',
+              padding: 5,
+              paddingRight: 15,
+              height: 30
+            }}
+          >
+            <Text style={[styles.mainText, { textAlign: 'right' }]}>
+              {`${this.state.newItems.length} کالا`}
+            </Text>
+          </View>
           <Content padder>
             <FlatList
               data={this.state.newItems}
