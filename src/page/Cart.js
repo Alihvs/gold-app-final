@@ -37,6 +37,7 @@ export default class Cart extends Component {
       token: '',
       customerName: '',
       sentFactor: false,
+      // SentFactorNo: undefined,
       quantities: []
     };
   }
@@ -268,7 +269,15 @@ export default class Cart extends Component {
               size={38}
               style={{ fontSize: 38, color: '#95a5a6', marginBottom: 7 }}
             />
-            <Text style={{ color: '#95a5a6' }}>فاکتور شما خالی است</Text>
+            <Text style={{ color: '#95a5a6', marginBottom: 30, fontWeight: 'bold', fontSize: 15 }}>
+              فاکتور شما خالی است
+            </Text>
+            <TouchableOpacity
+              style={{ borderWidth: 1, padding: 15, borderRadius: 15 }}
+              onPress={() => Actions.factorResult()}
+            >
+              <Text>پیگیری فاکتور های ارسال شده</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           <Content
@@ -462,6 +471,20 @@ export default class Cart extends Component {
     let res = '';
     let counter = 0;
     const items = this.state.cartItems;
+    res += `
+    <table style="width:100%; text-align: right;">
+      <tr>
+        <th>ردیف</th>
+        <th>کد کالا</th>
+        <th>کالا</th>
+        <th>مجموع ملحقات</th>
+        <th>وزن</th>
+        <th>اجرت</th>
+        <th>تعداد</th>
+        <th>وزن نهایی</th>
+        <th>مبلغ</th>
+      </tr>
+    `;
 
     items.map((product, index) => {
       res += `
@@ -499,31 +522,13 @@ export default class Cart extends Component {
   checkout() {
     AsyncStorage.getItem('user', (err, res) => {
       const data = JSON.parse(res);
-      const factorNumber = Math.floor(Math.random() * 100000);
       const customerName = data.displayName;
       const customerPhone = data.username;
       this.setState({
         token: data.token
       });
 
-      const content = `
-      <h2 style="text-align: right;">فاکتور شماره : ${factorNumber}</h2>
-      <table style="width:100%; text-align: right;">
-        <tr>
-          <th>ردیف</th>
-          <th>کد کالا</th>
-          <th>کالا</th>
-          <th>مجموع ملحقات</th>
-          <th>وزن</th>
-          <th>اجرت</th>
-          <th>تعداد</th>
-          <th>وزن نهایی</th>
-          <th>مبلغ</th>
-        </tr>
-        ${this.constructTable()}
-      
-      `;
-
+      //Posting factor to CMS ----------- Start
       fetch('http://app.idamas.ir/wp-json/wp/v2/factors', {
         method: 'post',
         credentials: 'include',
@@ -534,32 +539,38 @@ export default class Cart extends Component {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          title: `فاکتور شماره ${factorNumber} - ${customerName} - ${customerPhone}`,
-          content
+          title: `${customerName} - ${customerPhone}`,
+          content: this.constructTable()
         })
       })
         .then(response => response.json())
         .then(resData => {
           if (resData) {
-            Toast.show({
-              text: 'فاکتور شما با موفقیت ارسال شد',
-              position: 'top',
-              type: 'success',
-              buttonText: '',
-              duration: 2000
-            });
-            this.setState({
-              sentFactor: true
-            });
+            this.setState(
+              {
+                sentFactor: true
+              },
+              () => this.constructTable(resData.id)
+            );
+
             //Set AsyncStorage for the current Factor
 
             AsyncStorage.setItem(
               'FACTOR',
               JSON.stringify({
-                factorNumber
+                customerName
               })
             );
-
+            Toast.show({
+              text:
+                'فاکتور شما ارسال شده و در دست بررسی است. در اولین فرصت ممکن با شما تماس گرفته خواهد شد',
+              position: 'bottom',
+              type: 'success',
+              buttonText: '',
+              duration: 3000
+            });
+            AsyncStorage.removeItem('FACTOR');
+            AsyncStorage.removeItem('CART');
             Actions.factorResult();
           }
         })
@@ -575,6 +586,7 @@ export default class Cart extends Component {
             sentFactor: false
           });
         });
+      //Posting factor to CMS ----------- Finish
     });
   }
 }

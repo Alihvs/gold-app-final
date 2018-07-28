@@ -44,17 +44,17 @@ export default class Home extends Component {
   // }
 
   // componentWillMount = () => {
-  //   BackHandler.addEventListener('hardwareBackPress', () => {
-  //     Alert.alert('', 'خروج از برنامه؟', [
-  //       {
-  //         text: 'خیر',
-  //         onPress: () => console.log('No Pressed'),
-  //         style: 'cancel'
-  //       },
-  //       { text: 'بله', onPress: () => BackAndroid.exitApp() }
-  //     ]);
-  //     return true;
-  //   });
+  // BackHandler.addEventListener('hardwareBackPress', () => {
+  //   Alert.alert('', 'خروج از برنامه؟', [
+  //     {
+  //       text: 'خیر',
+  //       onPress: () => console.log('No Pressed'),
+  //       style: 'cancel'
+  //     },
+  //     { text: 'بله', onPress: () => BackAndroid.exitApp() }
+  //   ]);
+  //   return true;
+  // });
   // };
 
   // backAndroid() {
@@ -122,13 +122,14 @@ export default class Home extends Component {
   }
 
   rightButtonPressed() {
-    AsyncStorage.getItem('FACTOR', (err, res) => {
-      if (res) {
-        Actions.factorResult();
-      } else {
-        Actions.cart();
-      }
-    });
+    Actions.cart();
+    // AsyncStorage.getItem('FACTOR', (err, res) => {
+    //   if (res) {
+    //     Actions.factorResult();
+    //   } else {
+    //     Actions.cart();
+    //   }
+    // });
   }
 
   renderCategories() {

@@ -74,13 +74,14 @@ export default class Category extends Component {
   }
 
   rightButtonPressed() {
-    AsyncStorage.getItem('FACTOR', (err, res) => {
-      if (res) {
-        Actions.factorResult();
-      } else {
-        Actions.cart();
-      }
-    });
+    Actions.cart();
+    // AsyncStorage.getItem('FACTOR', (err, res) => {
+    //   if (res) {
+    //     Actions.factorResult();
+    //   } else {
+
+    //   }
+    // });
   }
 
   renderIndiAddedAttributes(attribs) {
@@ -200,7 +201,7 @@ export default class Category extends Component {
               <Spinner color={Colors.gold} />
             )}
           </Content>
-          <Fab pageTitle={this.props.title} />
+          <Fab pageTitle={this.props.title} data={this.state.newItems} />
         </Container>
       </SideMenuDrawer>
     );

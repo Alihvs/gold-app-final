@@ -18,6 +18,7 @@ export default class SideMenu extends Component {
     super(props);
     this.state = {
       search: '',
+      token: '',
       searchError: false,
       subMenu: false,
       subMenuItems: [],
@@ -26,6 +27,15 @@ export default class SideMenu extends Component {
 
     UIManager.setLayoutAnimationEnabledExperimental &&
       UIManager.setLayoutAnimationEnabledExperimental(true);
+  }
+
+  componentWillMount() {
+    AsyncStorage.getItem('user', (err, res) => {
+      const data = JSON.parse(res);
+      this.setState({
+        token: data.token
+      });
+    });
   }
 
   render() {
@@ -213,20 +223,25 @@ export default class SideMenu extends Component {
   renderSecondaryList() {
     return (
       <View>
-        <ListItem last icon button onPress={() => Actions.profile()}>
-          <Left>
-            <Icon style={{ fontSize: 18 }} name="paper" />
-          </Left>
-          <Body style={{ marginLeft: -15 }}>
-            <Text style={{ fontSize: 16 }}>حساب کاربری</Text>
-          </Body>
-        </ListItem>
         <ListItem last icon button onPress={() => Actions.cart()}>
           <Left>
             <Icon style={{ fontSize: 18 }} name="paper" />
           </Left>
           <Body style={{ marginLeft: -15 }}>
-            <Text style={{ fontSize: 16 }}>فاکتور ها</Text>
+            <Text style={{ fontSize: 16 }}>فاکتور فعال</Text>
+          </Body>
+        </ListItem>
+        <ListItem
+          last
+          icon
+          button
+          onPress={() => Actions.factorResult({ token: this.state.token })}
+        >
+          <Left>
+            <Icon style={{ fontSize: 18 }} name="copy" />
+          </Left>
+          <Body style={{ marginLeft: -15 }}>
+            <Text style={{ fontSize: 16 }}>فاکتور های ارسال شده</Text>
           </Body>
         </ListItem>
 
@@ -243,6 +258,14 @@ export default class SideMenu extends Component {
           </Left>
           <Body style={{ marginLeft: -15 }}>
             <Text style={{ fontSize: 16 }}>علاقه مندی ها</Text>
+          </Body>
+        </ListItem>
+        <ListItem last icon button onPress={() => Actions.profile()}>
+          <Left>
+            <Icon style={{ fontSize: 18 }} name="contact" />
+          </Left>
+          <Body style={{ marginLeft: -15 }}>
+            <Text style={{ fontSize: 16 }}>حساب کاربری</Text>
           </Body>
         </ListItem>
         <ListItem last icon button onPress={this.logOut}>

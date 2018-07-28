@@ -11,6 +11,11 @@ export default class FAB extends Component {
       active: 'true'
     };
   }
+
+  // componentDidMount() {
+  //   console.log(this.props.pageTitle);
+  // }
+
   render() {
     return (
       <Fab

@@ -357,51 +357,40 @@ export default class Product extends Component {
   }
 
   addToCart() {
-    if (this.state.hasFactor) {
-      Toast.show({
-        text:
-          'فاکتور کنونی شما در حال بررسی است، تا مشخص شدن وضعیت این فاکتور نمی توانید آیتم جدیدی اضافه کنید',
-        position: 'top',
-        type: 'danger',
-        buttonText: '',
-        duration: 4500
-      });
-    } else {
-      const product = this.props.product;
-      let success = true;
+    const product = this.props.product;
+    let success = true;
 
-      AsyncStorage.getItem('CART', (err, res) => {
-        if (!res) AsyncStorage.setItem('CART', JSON.stringify([product]));
-        else {
-          const items = JSON.parse(res);
-          if (this.search(items, product)) {
-            success = false;
-          } else {
-            items.push(product);
-            AsyncStorage.setItem('CART', JSON.stringify(items));
-          }
-        }
-        if (success) {
-          Toast.show({
-            text: 'محصول به فاکتور اضافه شد',
-            position: 'bottom',
-            type: 'success',
-            buttonText: '',
-            textStyle: { textAlign: 'center' },
-            duration: 2000
-          });
+    AsyncStorage.getItem('CART', (err, res) => {
+      if (!res) AsyncStorage.setItem('CART', JSON.stringify([product]));
+      else {
+        const items = JSON.parse(res);
+        if (this.search(items, product)) {
+          success = false;
         } else {
-          Toast.show({
-            text: 'این محصول در فاکتور شما وجود دارد',
-            position: 'bottom',
-            type: 'danger',
-            buttonText: '',
-            textStyle: { textAlign: 'center' },
-            duration: 3000
-          });
+          items.push(product);
+          AsyncStorage.setItem('CART', JSON.stringify(items));
         }
-      });
-    }
+      }
+      if (success) {
+        Toast.show({
+          text: 'محصول به فاکتور اضافه شد',
+          position: 'bottom',
+          type: 'success',
+          buttonText: '',
+          textStyle: { textAlign: 'center' },
+          duration: 2000
+        });
+      } else {
+        Toast.show({
+          text: 'این محصول در فاکتور شما وجود دارد',
+          position: 'bottom',
+          type: 'danger',
+          buttonText: '',
+          textStyle: { textAlign: 'center' },
+          duration: 3000
+        });
+      }
+    });
   }
 
   rightButtonPressed() {
