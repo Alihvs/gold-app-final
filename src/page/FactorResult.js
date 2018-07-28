@@ -10,7 +10,8 @@ import {
   BackHandler,
   StatusBar,
   StyleSheet,
-  TouchableHighlight
+  TouchableHighlight,
+  ScrollView
 } from 'react-native';
 import { Container, View, Icon, Button, Left, Toast, Spinner, Switch } from 'native-base';
 import { Col, Grid, Row } from 'react-native-easy-grid';
@@ -60,41 +61,9 @@ export default class Cart extends Component {
           .then(response => response.json())
           .then(newResponse => {
             this.setState({ factors: newResponse, loaded: true });
-            console.log(newResponse);
           });
       }
     });
-
-    // START FETCH
-    // fetch('http://app.idamas.ir/wp-json/wp/v2/factors', {
-    //   method: 'get',
-    //   credentials: 'include',
-    //   withCredentials: true,
-    //   headers: {
-    //     Authorization: `Bearer ${this.props.token}`,
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json'
-    //   }
-    // })
-    //   .then(response => response.json())
-    //   .then(resData => {
-    //     if (resData) {
-    //       this.setState({
-    //         factors: resData
-    //       });
-    //       console.log(resData);
-    //     }
-    //   })
-    //   .catch(() => {
-    //     Toast.show({
-    //       text: 'اتصال خود به شبکه را بررسی کنید',
-    //       position: 'top',
-    //       type: 'danger',
-    //       buttonText: '',
-    //       duration: 3000
-    //     });
-    //   });
-    // FINISH FETCH
   }
 
   render() {
@@ -117,14 +86,14 @@ export default class Cart extends Component {
               flexBasis: '75%'
             }}
           >
-            <Text>شما هیچ فاکتوری ارسال نکرده اید</Text>
+            <Text style={{ color: Colors.white }}>شما هیچ فاکتوری ارسال نکرده اید</Text>
           </View>
         );
       }
       const itemsToReturn = [];
       // Headers
       itemsToReturn.push(
-        <View style={styles.factorsContainer}>
+        <View style={[styles.factorsContainer, { borderColor: Colors.white }]}>
           <Grid style={styles.singleFactor}>
             <Col size={1}>
               <Text style={styles.singleFactorTextHeader}>ردیف</Text>
@@ -153,7 +122,13 @@ export default class Cart extends Component {
         const time = item.date.split('T');
         itemsToReturn.push(
           <TouchableHighlight
-            onPress={() => Actions.singleFactor({ content: item.content.rendered })}
+            onPress={() =>
+              Actions.singleFactor({
+                content: item.content.rendered,
+                id: item.id,
+                status: item.acf.status === null ? 'در دست بررسی' : item.acf.status
+              })
+            }
           >
             <View style={styles.factorsContainer}>
               <Grid style={styles.singleFactor}>
@@ -185,7 +160,9 @@ export default class Cart extends Component {
       <Container style={{ backgroundColor: Colors.statusBarColor }}>
         <Navbar left={left} title="پیگیری فاکتور" />
         <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
-        {!this.state.loaded ? <Spinner color={Colors.gold} /> : renderFactors()}
+        <ScrollView>
+          {!this.state.loaded ? <Spinner color={Colors.gold} /> : renderFactors()}
+        </ScrollView>
       </Container>
     );
   }
@@ -207,12 +184,13 @@ const styles = StyleSheet.create({
   },
   singleFactorText: {
     textAlign: 'center',
-    color: Colors.white
+    color: Colors.white,
+    fontSize: 12
   },
   singleFactorTextHeader: {
     textAlign: 'center',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 13,
     color: Colors.white
   }
 });

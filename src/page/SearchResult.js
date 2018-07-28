@@ -1,11 +1,13 @@
-/**
- * This is the Main file
- **/
-
-// React native and others libraries imports
 import React, { Component } from 'react';
-import { Image, TouchableHighlight, StyleSheet, AsyncStorage } from 'react-native';
-import { Container, Content, View, Left, Right, Button, Icon } from 'native-base';
+import {
+  Image,
+  TouchableHighlight,
+  StyleSheet,
+  AsyncStorage,
+  FlatList,
+  StatusBar
+} from 'react-native';
+import { Container, Content, View, Left, Right, Button, Icon, Spinner } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import { Actions } from 'react-native-router-flux';
@@ -17,30 +19,21 @@ import Fab from '../component/Fab';
 import Navbar from '../component/Navbar';
 import SideMenuDrawer from '../component/SideMenuDrawer';
 
-// const BASE_REQUEST_URL = 'http://app.idamas.ir/wp-json/wp/v2/';
-
-export default class SearchResults extends Component {
+export default class SearchResult extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      isLoaded: false,
       newItems: []
     };
   }
 
   componentDidMount() {
-    this.setState({
-      newItems: this.props.data
-    });
+    this.setState({ newItems: this.props.data });
   }
 
   rightButtonPressed() {
-    AsyncStorage.getItem('FACTOR', (err, res) => {
-      if (res) {
-        Actions.factorResult();
-      } else {
-        Actions.cart();
-      }
-    });
+    Actions.cart();
   }
 
   renderIndiAddedAttributes(attribs) {
@@ -60,113 +53,54 @@ export default class SearchResults extends Component {
     return res;
   }
 
-  renderProducts() {
-    const items = [];
-    const stateItems = this.state.newItems;
-
-    items.push(
+  renderIndividualItem(item) {
+    return (
       <View
+        key={item.id}
         style={{
-          backgroundColor: '#2d2d2d',
-          padding: 5,
-          paddingRight: 15,
-          height: 30
+          borderBottomWidth: 0.5,
+          borderBottomColor: Colors.gold,
+          padding: 10
         }}
       >
-        <Text style={[styles.mainText, { textAlign: 'right' }]}>
-          {`${this.state.newItems.length} کالا در دسته ${this.props.title} `}
-        </Text>
+        <TouchableHighlight onPress={() => Actions.product({ product: item })}>
+          <View>
+            <Grid style={{}}>
+              <Col
+                size={1}
+                style={{
+                  paddingTop: 31
+                }}
+              >
+                <Grid style={{}}>{this.renderIndiAddedAttributes(item.acf.added_attributes)}</Grid>
+              </Col>
+              <Col size={1.5} style={{ paddingRight: 25 }}>
+                <Text style={styles.mainText}>{`${item.acf.type} ${item.acf.brand} ${
+                  item.acf.ojrat_percent
+                } %`}</Text>
+                <Text style={styles.subText}>{`کد کالا: ${item.title.rendered}`}</Text>
+                <Text style={styles.subText}>{`وزن: ${item.acf.weight} گرم`}</Text>
+                <Text style={styles.subText}>{`رنگ: ${item.acf.color}`}</Text>
+                <Text style={styles.subText}>{`سایز: ${item.acf.size}`}</Text>
+              </Col>
+              <Col size={1}>
+                <Image
+                  source={{
+                    uri: item.acf.images[0].image.sizes.thumbnail
+                  }}
+                  style={{
+                    height: '100%',
+                    width: '100%',
+
+                    alignSelf: 'flex-end'
+                  }}
+                />
+              </Col>
+            </Grid>
+          </View>
+        </TouchableHighlight>
       </View>
     );
-
-    for (let i = 0; i < stateItems.length; i++) {
-      // Variables to pass
-      const brand = stateItems[i].acf.brand;
-      const type = stateItems[i].acf.type;
-      const weight = stateItems[i].acf.weight;
-      const ojratPercent = stateItems[i].acf.ojrat_percent;
-      const ojratToman = stateItems[i].acf.ojrat_toman;
-      const color = stateItems[i].acf.color;
-      const size = stateItems[i].acf.size;
-      const availability = stateItems[i].acf.availability;
-      const canReorder = stateItems[i].acf.canReorder;
-      const negindar = stateItems[i].acf.negindar;
-      const addedAttributes = stateItems[i].acf.added_attributes;
-      const title = stateItems[i].title.rendered;
-      const image = stateItems[i].acf.images[0].image.url;
-      const images = stateItems[i].acf.images;
-
-      const prevImage = image;
-
-      items.push(
-        <View
-          key={stateItems[i].id}
-          style={{
-            borderBottomWidth: 0.5,
-            borderBottomColor: Colors.gold,
-            padding: 10
-          }}
-        >
-          <TouchableHighlight
-            onPress={() =>
-              Actions.product({
-                product: {
-                  brand,
-                  type,
-                  weight,
-                  ojratPercent,
-                  ojratToman,
-                  color,
-                  size,
-                  availability,
-                  negindar,
-                  addedAttributes,
-                  image,
-                  images,
-                  title,
-                  canReorder
-                }
-              })
-            }
-          >
-            <View>
-              <Grid style={{}}>
-                <Col
-                  size={1}
-                  style={{
-                    // backgroundColor: "green",
-                    paddingTop: 31
-                  }}
-                >
-                  <Grid style={{}}>{this.renderIndiAddedAttributes(addedAttributes)}</Grid>
-                </Col>
-                <Col size={1.5} style={{ paddingRight: 25 }}>
-                  <Text style={styles.mainText}>{`${type} ${brand} ${ojratPercent} %`}</Text>
-                  <Text style={styles.subText}>{`کد کالا: ${title}`}</Text>
-                  <Text style={styles.subText}>{`وزن: ${weight} گرم`}</Text>
-                  <Text style={styles.subText}>{`رنگ: ${color}`}</Text>
-                  <Text style={styles.subText}>{`سایز: ${size}`}</Text>
-                </Col>
-                <Col size={1}>
-                  <Image
-                    source={{
-                      uri: prevImage
-                    }}
-                    style={{
-                      height: '100%',
-                      width: '100%',
-
-                      alignSelf: 'flex-end'
-                    }}
-                  />
-                </Col>
-              </Grid>
-            </View>
-          </TouchableHighlight>
-        </View>
-      );
-    }
-    return items;
   }
 
   render() {
@@ -180,7 +114,7 @@ export default class SearchResults extends Component {
     const right = (
       <Right style={{ flex: 1 }}>
         <Button onPress={this.rightButtonPressed} transparent>
-          <Icon name="ios-cart" />
+          <Icon name="paper" />
           <Text style={{ color: Colors.white, paddingLeft: 5 }}>فاکتور</Text>
         </Button>
       </Right>
@@ -189,8 +123,31 @@ export default class SearchResults extends Component {
     return (
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
         <Container style={{ backgroundColor: Colors.statusBarColor }}>
-          <Navbar left={left} right={right} title="نتایج جستجو" />
-          <Content padder>{this.renderProducts()}</Content>
+          <Navbar left={left} right={right} title="نتایج" />
+          <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
+          {this.state.isLoaded ? (
+            <View
+              style={{
+                backgroundColor: '#2d2d2d',
+                padding: 5,
+                paddingRight: 15,
+                height: 30
+              }}
+            >
+              <Text style={[styles.mainText, { textAlign: 'right' }]}>
+                {`${this.state.newItems.length} کالا در دسته ${this.props.title} `}
+              </Text>
+            </View>
+          ) : (
+            <View />
+          )}
+          <Content padder>
+            <FlatList
+              data={this.state.newItems}
+              renderItem={({ item }) => this.renderIndividualItem(item)}
+              ListFooterComponent={<View style={{ height: 50 }} />}
+            />
+          </Content>
           <Fab pageTitle={this.props.title} data={this.state.newItems} />
         </Container>
       </SideMenuDrawer>

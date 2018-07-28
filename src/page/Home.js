@@ -37,40 +37,6 @@ export default class Home extends Component {
     };
   }
 
-  // componentDidMount() {
-  //   this.backHandler = BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
-  //   BackHandler.addEventListener('hardwareBackPress', () => this.backAndroid());
-  //   console.log(this.props);
-  // }
-
-  // componentWillMount = () => {
-  // BackHandler.addEventListener('hardwareBackPress', () => {
-  //   Alert.alert('', 'خروج از برنامه؟', [
-  //     {
-  //       text: 'خیر',
-  //       onPress: () => console.log('No Pressed'),
-  //       style: 'cancel'
-  //     },
-  //     { text: 'بله', onPress: () => BackAndroid.exitApp() }
-  //   ]);
-  //   return true;
-  // });
-  // };
-
-  // backAndroid() {
-  //   if (this.props.name === 'home') {
-  //     Alert.alert('', 'خروج از برنامه؟', [
-  //       {
-  //         text: 'خیر',
-  //         onPress: () => console.log('No Pressed'),
-  //         style: 'cancel'
-  //       },
-  //       { text: 'بله', onPress: () => BackAndroid.exitApp() }
-  //     ]);
-  //     return true;
-  //   }
-  // }
-
   render() {
     const left = (
       <Left style={{ flex: 1 }}>
@@ -83,7 +49,7 @@ export default class Home extends Component {
     const right = (
       <Right style={{ flex: 1 }}>
         <Button onPress={this.rightButtonPressed} transparent>
-          <Icon name="ios-cart" />
+          <Icon name="paper" />
           <Text style={{ color: Colors.white, paddingLeft: 5 }}>فاکتور</Text>
         </Button>
       </Right>
@@ -91,7 +57,7 @@ export default class Home extends Component {
 
     return (
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
-        <Container style={{ backgroundColor: 'red' }}>
+        <Container>
           <Navbar left={left} right={right} title="صفحه اصلی" />
           <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
           <TouchableWithoutFeedback onPress={() => this._sideMenuDrawer.open()}>

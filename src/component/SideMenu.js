@@ -208,6 +208,7 @@ export default class SideMenu extends Component {
     AsyncStorage.removeItem('user');
     AsyncStorage.removeItem('FACTOR');
     AsyncStorage.removeItem('CART');
+    AsyncStorage.removeItem('QUANTITIES');
 
     Toast.show({
       text: 'از حساب کاربری خود خارج شدید',

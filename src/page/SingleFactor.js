@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
-import {
-  Alert,
-  AsyncStorage,
-  BackHandler,
-  StatusBar,
-  StyleSheet,
-  TouchableHighlight
-} from 'react-native';
-import { Container, View, Icon, Button, Left, Toast, Spinner, Switch } from 'native-base';
+import { StatusBar, ScrollView, Dimensions, WebView } from 'react-native';
+import { Container, View, Icon, Button, Left } from 'native-base';
 import { Col, Grid, Row } from 'react-native-easy-grid';
 import { Actions } from 'react-native-router-flux';
 
@@ -20,16 +13,35 @@ class SingleFactor extends Component {
   render() {
     const left = (
       <Left style={{ flex: 1 }}>
-        <Button transparent onPress={() => Actions.home()}>
+        <Button transparent onPress={() => Actions.pop()}>
           <Icon name="ios-close" size={38} style={{ fontSize: 38 }} />
         </Button>
       </Left>
     );
     return (
-      <Container style={{ backgroundColor: Colors.statusBarColor }}>
-        <Navbar left={left} title="پیگیری فاکتور" />
+      <Container style={{ backgroundColor: Colors.white }}>
+        <Navbar left={left} title={`فاکتور ${this.props.id}`} />
         <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
-        <Text>{this.props.content}</Text>
+        <View
+          style={{
+            justifyContent: 'center',
+            alignItems: 'center',
+            flex: 0,
+            padding: 20,
+            borderBottomWidth: 1
+          }}
+        >
+          <Text
+            style={{
+              color: Colors.black,
+              fontSize: 20
+            }}
+          >{`وضعیت فاکتور: ${this.props.status}`}</Text>
+        </View>
+        <WebView
+          source={{ html: `${this.props.content}` }}
+          style={{ marginTop: 20, backgroundColor: Colors.white }}
+        />
       </Container>
     );
   }

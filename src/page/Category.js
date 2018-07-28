@@ -75,13 +75,6 @@ export default class Category extends Component {
 
   rightButtonPressed() {
     Actions.cart();
-    // AsyncStorage.getItem('FACTOR', (err, res) => {
-    //   if (res) {
-    //     Actions.factorResult();
-    //   } else {
-
-    //   }
-    // });
   }
 
   renderIndiAddedAttributes(attribs) {
@@ -163,7 +156,7 @@ export default class Category extends Component {
     const right = (
       <Right style={{ flex: 1 }}>
         <Button onPress={this.rightButtonPressed} transparent>
-          <Icon name="ios-cart" />
+          <Icon name="paper" />
           <Text style={{ color: Colors.white, paddingLeft: 5 }}>فاکتور</Text>
         </Button>
       </Right>

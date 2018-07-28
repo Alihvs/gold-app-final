@@ -640,6 +640,10 @@ export default class Search extends Component {
 
           <Content>
             <View style={styles.container}>
+              {Available}
+              {CanReorder}
+            </View>
+            <View style={styles.container}>
               {/* Rendering Catagories based on main catagory */}
               {this.props.pageTitle === 'زنانه' ? WomanCatagories : <View />}
               {this.props.pageTitle === 'مردانه' ? ManCatagories : <View />}
@@ -666,8 +670,7 @@ export default class Search extends Component {
               {OjratPercent}
               {OjratToman}
               {Color}
-              {Available}
-              {CanReorder}
+
               {NeginDar}
               {this.state.neginDar ? SangDeducted : <View />}
             </View>
@@ -770,7 +773,6 @@ export default class Search extends Component {
                     );
                   }
 
-                  // console.log(itemsToPass);
                   Actions.searchResult({ data: itemsToPass, title: this.props.pageTitle });
                 }}
               >
