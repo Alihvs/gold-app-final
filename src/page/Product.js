@@ -81,9 +81,7 @@ export default class Product extends Component {
         <Navbar
           left={left}
           right={right}
-          title={`${this.props.product.acf.type} ${this.props.product.acf.brand} ${
-            this.props.product.acf.ojrat_percent
-          }`}
+          title={`${this.props.product.acf.type} ${this.props.product.acf.brand}`}
         />
         <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
 
@@ -127,6 +125,32 @@ export default class Product extends Component {
             }}
           >
             <Content padder>
+              <Card transparent style={{ alignItems: 'flex-end' }}>
+                {/* Availability */}
+                <CardItem bordered style={styles.cardItem}>
+                  <Col>
+                    <Text style={styles.goldentext}>
+                      {this.props.product.acf.availability ? (
+                        <Text style={{ color: '#00ad4b' }}>این آیتم موجود است</Text>
+                      ) : (
+                        <Text style={{ color: '#aa204c' }}>این آیتم موجود نیست</Text>
+                      )}
+                    </Text>
+                  </Col>
+                </CardItem>
+                {/* Sefaresh Mojadad */}
+                <CardItem bordered style={styles.cardItem}>
+                  <Col>
+                    <Text style={{ textAlign: 'right' }}>
+                      {this.props.product.acf.canReorder ? (
+                        <Text style={{ color: '#00ad4b' }}>قابلیت سفارش مجدد دارد</Text>
+                      ) : (
+                        <Text style={{ color: '#aa204c' }}>قابلیت سفارش مجدد ندارد</Text>
+                      )}
+                    </Text>
+                  </Col>
+                </CardItem>
+              </Card>
               <NBText style={[styles.goldentext, { fontWeight: 'bold' }]}>مشخصات عمومی</NBText>
 
               <Card transparent style={{ alignItems: 'flex-end' }}>
@@ -151,9 +175,15 @@ export default class Product extends Component {
                 {/* ojrat_percent */}
                 <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={styles.goldentext}>
-                      {`${this.props.product.acf.ojrat_percent} درصد`}
-                    </Text>
+                    {/* <Text style={styles.goldentext}> */}
+
+                    {this.props.product.acf.ojrat_percent === '0' ? (
+                      <Text style={styles.goldentext}>ندارد</Text>
+                    ) : (
+                      <Text style={styles.goldentext}>{`${
+                        this.props.product.acf.ojrat_percent
+                      } درصد`}</Text>
+                    )}
                   </Col>
                   <Col size={40}>
                     <Text style={styles.goldentext}>اجرت به درصد</Text>
@@ -162,9 +192,13 @@ export default class Product extends Component {
                 {/* ojrat_toman */}
                 <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    <Text style={styles.goldentext}>
-                      {`${this.props.product.acf.ojrat_toman} تومان`}
-                    </Text>
+                    {this.props.product.acf.ojrat_toman === '0' ? (
+                      <Text style={styles.goldentext}>ندارد</Text>
+                    ) : (
+                      <Text style={styles.goldentext}>{`${
+                        this.props.product.acf.ojrat_toman
+                      } تومان`}</Text>
+                    )}
                   </Col>
                   <Col size={40}>
                     <Text style={styles.goldentext}>اجرت به تومان</Text>
@@ -188,38 +222,12 @@ export default class Product extends Component {
                     <Text style={styles.goldentext}>سایز</Text>
                   </Col>
                 </CardItem>
-                {/* Availability */}
               </Card>
-              <NBText style={{ paddingTop: 10, color: Colors.gold, fontWeight: 'bold' }}>
-                ملحقات کالا
-              </NBText>
 
               {/* Added Attributes */}
               <Card transparent style={styles.cardItem}>
                 {this.renderAddedAttrs()}
-                <CardItem bordered style={styles.cardItem}>
-                  <Col>
-                    <Text style={styles.goldentext}>
-                      {this.props.product.acf.availability ? (
-                        <Text style={{ color: '#00ad4b' }}>این آیتم موجود است</Text>
-                      ) : (
-                        <Text style={{ color: '#aa204c' }}>این آیتم موجود نیست</Text>
-                      )}
-                    </Text>
-                  </Col>
-                </CardItem>
-                {/* Sefaresh Mojadad */}
-                <CardItem bordered style={styles.cardItem}>
-                  <Col>
-                    <Text style={{ textAlign: 'right' }}>
-                      {this.props.product.acf.canReorder ? (
-                        <Text style={{ color: '#00ad4b' }}>قابلیت سفارش مجدد دارد</Text>
-                      ) : (
-                        <Text style={{ color: '#aa204c' }}>قابلیت سفارش مجدد ندارد</Text>
-                      )}
-                    </Text>
-                  </Col>
-                </CardItem>
+
                 {/* Description */}
                 {this.props.product.acf.description ? (
                   <View>
@@ -249,7 +257,8 @@ export default class Product extends Component {
                         padding: 0,
                         margin: 0,
                         // borderLeftWidth: 1,
-                        borderColor: 'white'
+                        borderColor: 'white',
+                        flexDirection: 'column'
                       }}
                     >
                       <Icon
@@ -259,6 +268,7 @@ export default class Product extends Component {
                         }}
                         name={'ios-heart'}
                       />
+                      <Text style={{ color: Colors.gold }}>علاقه مندی ها</Text>
                     </Button>
                   </Col>
 
@@ -303,37 +313,42 @@ export default class Product extends Component {
   }
 
   renderAddedAttrs() {
-    const res = [];
-    const addedAttrs = this.props.product.acf.added_attributes;
-    console.log(addedAttrs);
-
-    if (addedAttrs.length === 0) {
-      return <Text style={styles.goldentext}>ندارد</Text>;
-    }
-
-    addedAttrs.map((item, i) => {
+    if (this.props.product.acf.added_attributes) {
+      const res = [];
+      const addedAttrs = this.props.product.acf.added_attributes;
       res.push(
-        <CardItem bordered key={i} style={styles.cardItem}>
-          <Col size={60}>
-            <Text style={styles.goldentext}> {`${item.value} تومان`}</Text>
-          </Col>
-          <Col size={40}>
-            <Text style={styles.goldentext}>{item.item_name}</Text>
-          </Col>
-        </CardItem>
+        <NBText style={{ paddingTop: 10, color: Colors.gold, fontWeight: 'bold' }}>
+          ملحقات کالا
+        </NBText>
       );
-    });
-    return res;
+
+      if (addedAttrs.length === 0) {
+        return <Text style={styles.goldentext}>ندارد</Text>;
+      }
+
+      addedAttrs.map((item, i) => {
+        res.push(
+          <CardItem bordered key={i} style={styles.cardItem}>
+            <Col size={60}>
+              <Text style={styles.goldentext}> {`${item.value} تومان`}</Text>
+            </Col>
+            <Col size={40}>
+              <Text style={styles.goldentext}>{item.item_name}</Text>
+            </Col>
+          </CardItem>
+        );
+      });
+      return res;
+    }
   }
 
   renderImages() {
     const images = [];
-    // console.log(this.props.product.images);
     this.props.product.acf.images.map((img, i) => {
       images.push(
         <TouchableWithoutFeedback key={i} onPress={() => this.openGallery(i)}>
           <Image
-            source={{ uri: img.image.url }}
+            source={{ uri: img.image.sizes.medium_large }}
             style={{ width: Dimensions.get('window').width, height: 350 }}
             resizeMode="cover"
           />

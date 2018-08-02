@@ -26,6 +26,10 @@ export default class Category extends Component {
     super(props);
     this.state = {
       isLoaded: false,
+      isRefreshing: false,
+      totalNumberOfPosts: 0,
+      currentPage: 1,
+      totalPages: 1,
       newItems: []
     };
   }
@@ -54,7 +58,8 @@ export default class Category extends Component {
         requestCatagory = 'women';
       }
     }
-    const REQUEST_URL = BASE_REQUEST_URL + requestCatagory;
+
+    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=5&&page=1`;
     fetch(REQUEST_URL, {
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -62,14 +67,24 @@ export default class Category extends Component {
         'Access-Control-Allow-Credentials': 'true'
       }
     })
-      .then(response => response.json())
-      .then(data => {
-        data.map(recivedData => {
-          this.setState(prevState => ({
-            newItems: [...prevState.newItems, recivedData],
-            isLoaded: true
-          }));
+      .then(response => {
+        this.setState({
+          totalNumberOfPosts: response.headers.map['x-wp-total'][0],
+          totalPages: response.headers.map['x-wp-totalpages'][0]
         });
+        return response.json();
+      })
+      .then(data => {
+        if (data.length > 0) {
+          data.map(recivedData => {
+            this.setState(prevState => ({
+              newItems: [...prevState.newItems, recivedData],
+              isLoaded: true
+            }));
+          });
+        } else {
+          this.setState({ isLoaded: true });
+        }
       });
   }
 
@@ -78,20 +93,23 @@ export default class Category extends Component {
   }
 
   renderIndiAddedAttributes(attribs) {
-    const res = [];
-    attribs.map((attr, i) => {
-      res.push(
-        <Row key={i} style={{ height: 16 }}>
-          <Col>
-            <Text style={styles.subText}>{attr.value}</Text>
-          </Col>
-          <Col>
-            <Text style={styles.subText}>{attr.item_name}</Text>
-          </Col>
-        </Row>
-      );
-    });
-    return res;
+    if (attribs) {
+      const res = [];
+      attribs.map((attr, i) => {
+        res.push(
+          <Row key={i} style={{ height: 16 }}>
+            <Col>
+              <Text style={styles.subText}>{attr.value}</Text>
+            </Col>
+            <Col>
+              <Text style={styles.subText}>{attr.item_name}</Text>
+            </Col>
+          </Row>
+        );
+      });
+      return res;
+    }
+    return <View />;
   }
 
   renderIndividualItem(item) {
@@ -177,27 +195,134 @@ export default class Category extends Component {
               }}
             >
               <Text style={[styles.mainText, { textAlign: 'right' }]}>
-                {`${this.state.newItems.length} کالا در دسته ${this.props.title} `}
+                {`${this.state.totalNumberOfPosts} کالا در دسته ${this.props.title} `}
               </Text>
             </View>
           ) : (
             <View />
           )}
-          <Content padder>
-            {this.state.isLoaded ? (
-              <FlatList
-                data={this.state.newItems}
-                renderItem={({ item }) => this.renderIndividualItem(item)}
-                ListFooterComponent={<View style={{ height: 50 }} />}
-              />
-            ) : (
-              <Spinner color={Colors.gold} />
-            )}
-          </Content>
+          {/* <Content padder> */}
+          {this.state.isLoaded ? (
+            <FlatList
+              data={this.state.newItems}
+              renderItem={({ item }) => this.renderIndividualItem(item)}
+              ListFooterComponent={<View style={{ height: 50 }} />}
+              onRefresh={this.refreshData.bind(this)}
+              refreshing={this.state.isRefreshing}
+              onEndReached={this.loadMore.bind(this)}
+              onEndReachedThreshold={0.25}
+              initialNumToRender={5}
+            />
+          ) : (
+            <Spinner color={Colors.gold} />
+          )}
+          {/* </Content> */}
           <Fab pageTitle={this.props.title} data={this.state.newItems} />
         </Container>
       </SideMenuDrawer>
     );
+  }
+
+  refreshData() {
+    this.setState({ currentPage: 1 });
+    this.setState({ isRefreshing: true });
+    let requestCatagory = null;
+    // Constructing the url
+    switch (this.props.title) {
+      case 'زنانه': {
+        requestCatagory = 'women';
+        break;
+      }
+      case 'مردانه': {
+        requestCatagory = 'men';
+        break;
+      }
+      case 'بچه گانه': {
+        requestCatagory = 'kid';
+        break;
+      }
+      case 'اکسسوری': {
+        requestCatagory = 'acc';
+        break;
+      }
+      default: {
+        requestCatagory = 'women';
+      }
+    }
+    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=5&&page=1`;
+    fetch(REQUEST_URL, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ newItems: [] });
+        if (data.length > 0) {
+          data.map(recivedData => {
+            this.setState(prevState => ({
+              newItems: [...prevState.newItems, recivedData],
+              isRefreshing: false
+            }));
+          });
+        } else {
+          this.setState({ isRefreshing: false });
+        }
+      });
+  }
+
+  loadMore() {
+    if (this.state.totalPages <= this.state.currentPage) return;
+    this.setState({ isRefreshing: true });
+    this.setState({ currentPage: this.state.currentPage + 1 });
+    const page = this.state.currentPage + 1;
+    let requestCatagory = null;
+    // Constructing the url
+    switch (this.props.title) {
+      case 'زنانه': {
+        requestCatagory = 'women';
+        break;
+      }
+      case 'مردانه': {
+        requestCatagory = 'men';
+        break;
+      }
+      case 'بچه گانه': {
+        requestCatagory = 'kid';
+        break;
+      }
+      case 'اکسسوری': {
+        requestCatagory = 'acc';
+        break;
+      }
+      default: {
+        requestCatagory = 'women';
+      }
+    }
+    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=5&&page=${page}`;
+    fetch(REQUEST_URL, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        // this.setState({ newItems: [] });
+        if (data.length > 0) {
+          data.map(recivedData => {
+            this.setState(prevState => ({
+              newItems: [...prevState.newItems, recivedData],
+              isRefreshing: false
+            }));
+          });
+        } else {
+          this.setState({ isRefreshing: false });
+        }
+      });
   }
 }
 

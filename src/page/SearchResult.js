@@ -37,20 +37,23 @@ export default class SearchResult extends Component {
   }
 
   renderIndiAddedAttributes(attribs) {
-    const res = [];
-    attribs.map((attr, i) => {
-      res.push(
-        <Row key={i} style={{ height: 16 }}>
-          <Col>
-            <Text style={styles.subText}>{attr.value}</Text>
-          </Col>
-          <Col>
-            <Text style={styles.subText}>{attr.item_name}</Text>
-          </Col>
-        </Row>
-      );
-    });
-    return res;
+    if (attribs) {
+      const res = [];
+      attribs.map((attr, i) => {
+        res.push(
+          <Row key={i} style={{ height: 16 }}>
+            <Col>
+              <Text style={styles.subText}>{attr.value}</Text>
+            </Col>
+            <Col>
+              <Text style={styles.subText}>{attr.item_name}</Text>
+            </Col>
+          </Row>
+        );
+      });
+      return res;
+    }
+    return <View />;
   }
 
   renderIndividualItem(item) {

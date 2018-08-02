@@ -28,7 +28,8 @@ export default class Cart extends Component {
     this.state = {
       factors: [],
       working: true,
-      loaded: false
+      loaded: false,
+      catagory: 'all'
     };
   }
 
@@ -90,6 +91,7 @@ export default class Cart extends Component {
           </View>
         );
       }
+
       const itemsToReturn = [];
       // Headers
       itemsToReturn.push(
@@ -160,6 +162,20 @@ export default class Cart extends Component {
       <Container style={{ backgroundColor: Colors.statusBarColor }}>
         <Navbar left={left} title="پیگیری فاکتور" />
         <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
+        <View style={{ flex: 0, flexDirection: 'row-reverse' }}>
+          <Button style={styles.button} bordered transparent>
+            <Text style={styles.buttonText}>همه</Text>
+          </Button>
+          <Button style={styles.button} bordered transparent>
+            <Text style={styles.buttonText}>ارسال شده</Text>
+          </Button>
+          <Button style={styles.button} bordered transparent>
+            <Text style={styles.buttonText}>در دست بررسی</Text>
+          </Button>
+          <Button style={styles.button} bordered transparent>
+            <Text style={styles.buttonText}>پایان یافته</Text>
+          </Button>
+        </View>
         <ScrollView>
           {!this.state.loaded ? <Spinner color={Colors.gold} /> : renderFactors()}
         </ScrollView>
@@ -191,6 +207,17 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontWeight: 'bold',
     fontSize: 13,
+    color: Colors.white
+  },
+  button: {
+    flex: 1,
+    backgroundColor: Colors.statusBarColor,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 0,
+    borderColor: Colors.white
+  },
+  buttonText: {
     color: Colors.white
   }
 });

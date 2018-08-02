@@ -5,7 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  StatusBar
+  StatusBar,
+  TextInput
 } from 'react-native';
 import {
   Container,
@@ -101,7 +102,7 @@ export default class Cart extends Component {
           <Body style={{ paddingRight: 20 }}>
             <Text style={{ fontSize: 10 }}>{`کد ${item.title.rendered} - ${item.acf.type} ${
               item.acf.weight
-            } گرمی ${item.brand}`}</Text>
+            } گرمی ${item.acf.brand}`}</Text>
             <Text style={{ fontSize: 10 }}>{`رنگ: ${item.acf.color} - سایز: ${
               item.acf.size
             }`}</Text>
@@ -117,14 +118,18 @@ export default class Cart extends Component {
 
   renderAddedAttributes(item) {
     const toRender = [];
-    item.acf.added_attributes.map((attr, i) => {
+    if (!item.acf.added_attributes) {
+      toRender.push(<Text style={myStyles.tableText}>ندارد</Text>);
+    } else {
+      item.acf.added_attributes.map((attr, i) => {
+        toRender.push(
+          <Text style={myStyles.tableText} key={i}>{`${attr.item_name}: ${attr.value}`}</Text>
+        );
+      });
       toRender.push(
-        <Text style={myStyles.tableText} key={i}>{`${attr.item_name}: ${attr.value}`}</Text>
+        <Text style={[myStyles.tableText, {}]}>{`مجموع: ${this.sumAddedAttributes(item)}`}</Text>
       );
-    });
-    toRender.push(
-      <Text style={[myStyles.tableText, {}]}>{`مجموع: ${this.sumAddedAttributes(item)}`}</Text>
-    );
+    }
     return toRender;
   }
 
@@ -223,21 +228,29 @@ export default class Cart extends Component {
                   style={{ alignItems: 'center', marginRight: -10 }}
                   onPress={() => {
                     //Decreaase quantity
-                    this.decreaseQuantity(item, i);
+                    this.decreaseQuantityByOne(item, i);
                   }}
                 >
                   <Icon name="remove" />
                 </TouchableOpacity>
               </Col>
-              <Col style={{ alignItems: 'center' }}>
-                <Text style={{ fontSize: 14 }}>{this.state.quantities[i]}</Text>
+              <Col size={2.3} style={{ alignItems: 'center' }}>
+                {/* <Text style={{ fontSize: 14 }}>{this.state.quantities[i]}</Text> */}
+                <TextInput
+                  keyboardType="numeric"
+                  onChangeText={value => this.setQuantityTo(value, i)}
+                  onEndEditing={value => this.preventInputZero(value, i)}
+                  value={String(this.state.quantities[i])}
+                  maxLength={4}
+                  style={{ textAlign: 'center', width: 60 }}
+                />
               </Col>
               <Col>
                 <TouchableOpacity
                   style={{ alignItems: 'center' }}
                   onPress={() => {
                     //Increaase quantity
-                    this.increaseQuantity(item, i);
+                    this.increaseQuantityByOne(item, i);
                   }}
                 >
                   <Icon name="add" />
@@ -418,16 +431,35 @@ export default class Cart extends Component {
     );
   }
 
-  increaseQuantity(item, index) {
+  setQuantityTo(value, index) {
+    // let finalVal = value;
+    const obj = this.state.quantities;
+    // if (value < 1) finalVal = 1;
+    obj[index] = Number(value);
+    // console.log(Number(value));
+    this.setState({ quantities: obj });
+  }
+
+  preventInputZero(value, index) {
+    if (value < 1) {
+      // console.log('Less than one');
+      Alert.alert('تعداد نمی تواند کمتر از 1 باشد');
+      const obj = this.state.quantities;
+      obj[index] = 1;
+      this.setState({ quantities: obj });
+    }
+  }
+
+  increaseQuantityByOne(item, index) {
     const obj = this.state.quantities;
     obj[index]++;
     this.setState({ quantities: obj });
   }
 
-  decreaseQuantity(item, index) {
+  decreaseQuantityByOne(item, index) {
     const obj = this.state.quantities;
-    if (obj[index] <= 1) {
-      Alert.alert('تعداد نمی تواند کمتر از 1 باشد');
+    if (obj[index] <= 0) {
+      // Alert.alert('تعداد نمی تواند کمتر از 1 باشد');
       return;
     }
     obj[index]--;
@@ -473,6 +505,7 @@ export default class Cart extends Component {
   }
 
   sumAddedAttributes(item) {
+    if (!item.acf.added_attributes) return 0;
     let sum = 0;
     item.acf.added_attributes.map(item => {
       sum += Number(item.value);
@@ -549,6 +582,17 @@ export default class Cart extends Component {
   }
 
   checkout() {
+    if (!this.state.quantities.every(item => item > 0)) {
+      Alert.alert('', 'تعداد آیتم ها نمی تواند کمتر از 1 باشد', [
+        {
+          text: 'بستن',
+          onPress: () => console.log('No Pressed'),
+          style: 'cancel'
+        }
+      ]);
+      return;
+    }
+
     this.setState({
       sentFactor: true
     });

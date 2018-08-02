@@ -36,6 +36,7 @@ export default class Search extends Component {
     super(props);
     this.state = {
       isLoading: false,
+      totalNumberOfPosts: 0,
       newItems: [],
       // ---------Woman Catagories --------
       womanCatagory: 'all',
@@ -105,14 +106,24 @@ export default class Search extends Component {
         'Access-Control-Allow-Credentials': 'true'
       }
     })
-      .then(response => response.json())
-      .then(data => {
-        data.map(recivedData => {
-          this.setState(prevState => ({
-            newItems: [...prevState.newItems, recivedData],
-            isLoading: false
-          }));
+      .then(response => {
+        this.setState({
+          totalNumberOfPosts: response.headers.map['x-wp-total'][0]
         });
+        return response.json();
+      })
+      .then(data => {
+        if (data.length > 0) {
+          data.map(recivedData => {
+            console.table(recivedData);
+            this.setState(prevState => ({
+              newItems: [...prevState.newItems, recivedData],
+              isLoading: false
+            }));
+          });
+        } else {
+          this.setState({ isLoading: false });
+        }
       });
   }
 
@@ -205,7 +216,7 @@ export default class Search extends Component {
               style={{ height: 30 }}
               onValueChange={(itemValue, itemIndex) => this.setState({ womanCatagory: itemValue })}
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="سرویس" value="سرویس" />
               <Picker.Item label="نیم ست" value="نیم ست" />
               <Picker.Item label="دستبند" value="دستبند" />
@@ -236,7 +247,7 @@ export default class Search extends Component {
               style={{ height: 30 }}
               onValueChange={(itemValue, itemIndex) => this.setState({ manCatagory: itemValue })}
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="انگشتر" value="انگشتر" />
               <Picker.Item label="زنجیر" value="زنجیر" />
               <Picker.Item label="دستبند" value="دستبند" />
@@ -263,7 +274,7 @@ export default class Search extends Component {
               style={{ height: 30 }}
               onValueChange={(itemValue, itemIndex) => this.setState({ accCatagories: itemValue })}
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="پابند" value="پابند" />
               <Picker.Item label="تاج" value="تاج" />
               <Picker.Item label="بازو بند" value="بازو بند" />
@@ -298,7 +309,7 @@ export default class Search extends Component {
               style={{ height: 30 }}
               onValueChange={(itemValue, itemIndex) => this.setState({ alangoo: itemValue })}
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="سی ان سی" value="سی ان سی" />
               <Picker.Item label="ریختگی" value="ریختگی" />
             </Picker>
@@ -323,7 +334,7 @@ export default class Search extends Component {
               style={{ height: 30 }}
               onValueChange={(itemValue, itemIndex) => this.setState({ alangooCNC: itemValue })}
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="تک پوش" value="تک پوش" />
               <Picker.Item label="دامله" value="دامله" />
               <Picker.Item label="گوی" value="گوی" />
@@ -354,7 +365,7 @@ export default class Search extends Component {
                 this.setState({ alangooRikhtegi: itemValue })
               }
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="رنگی" value="رنگی" />
               <Picker.Item label="میناکاری" value="میناکاری" />
             </Picker>
@@ -381,7 +392,7 @@ export default class Search extends Component {
               style={{ height: 30 }}
               onValueChange={(itemValue, itemIndex) => this.setState({ zanjir: itemValue })}
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="ابریشمی" value="ابریشمی" />
               <Picker.Item label="متوسط" value="متوسط" />
               <Picker.Item label="سنگین" value="سنگین" />
@@ -410,7 +421,7 @@ export default class Search extends Component {
               style={{ height: 30 }}
               onValueChange={(itemValue, itemIndex) => this.setState({ brand: itemValue })}
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="فلامنگو" value="فلامنگو" />
               <Picker.Item label="ونزو" value="ونزو" />
               <Picker.Item label="ونیزی" value="ونیزی" />
@@ -435,9 +446,9 @@ export default class Search extends Component {
               <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
-          <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
+          <Col size={3} style={{ marginRight: -44, flexDirection: 'row' }}>
             <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={styles.text}>گرم</Text>
+              <Text style={[styles.text, { marginRight: 10 }]}>گرم</Text>
             </Col>
             <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
               <TextInput
@@ -484,9 +495,9 @@ export default class Search extends Component {
               <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
-          <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
+          <Col size={3} style={{ marginRight: -44, flexDirection: 'row' }}>
             <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={styles.text}>درصد</Text>
+              <Text style={[styles.text, { marginRight: 10 }]}>درصد</Text>
             </Col>
             <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
               <TextInput
@@ -531,16 +542,16 @@ export default class Search extends Component {
               <Icon style={{ color: Colors.white }} name="close" />
             </Button>
           </Col>
-          <Col size={1.5} style={{ marginRight: -44, flexDirection: 'row' }}>
+          <Col size={3} style={{ marginRight: -44, flexDirection: 'row' }}>
             <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={styles.text}>تومان</Text>
+              <Text style={[styles.text, { marginRight: 10 }]}>تومان</Text>
             </Col>
             <Col style={{ alignItems: 'center', justifyContent: 'center' }}>
               <TextInput
                 keyboardType="numeric"
                 onChangeText={text => this.setState({ ojratTomanTo: text })}
                 value={this.state.ojratTomanTo}
-                maxLength={5}
+                maxLength={6}
                 style={styles.textInput}
               />
             </Col>
@@ -552,7 +563,7 @@ export default class Search extends Component {
                 keyboardType="numeric"
                 onChangeText={text => this.setState({ ojratTomanFrom: text })}
                 value={this.state.ojratTomanFrom}
-                maxLength={5}
+                maxLength={6}
                 style={styles.textInput}
               />
             </Col>
@@ -578,7 +589,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.onlyAvailable}
-              color={Colors.white}
+              color={Colors.black}
               onPress={() => this.setState({ onlyAvailable: !this.state.onlyAvailable })}
             />
           </Col>
@@ -600,7 +611,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.canReorder}
-              color={Colors.white}
+              color={Colors.black}
               onPress={() => this.setState({ canReorder: !this.state.canReorder })}
             />
           </Col>
@@ -625,7 +636,7 @@ export default class Search extends Component {
               style={{ height: 30 }}
               onValueChange={(itemValue, itemIndex) => this.setState({ color: itemValue })}
             >
-              <Picker.Item label="" value="all" />
+              <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="زرد" value="زرد" />
               <Picker.Item label="سفید" value="سفید" />
               <Picker.Item label="رزگلد" value="رزگلد" />
@@ -652,7 +663,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.neginDar}
-              color={Colors.white}
+              color={Colors.black}
               onPress={() => this.setState({ neginDar: !this.state.neginDar })}
             />
           </Col>
@@ -674,7 +685,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.sangDeducted}
-              color={Colors.white}
+              color={Colors.black}
               onPress={() => this.setState({ sangDeducted: !this.state.sangDeducted })}
             />
           </Col>
@@ -691,7 +702,7 @@ export default class Search extends Component {
           <Navbar
             left={left}
             right={right}
-            title={`${this.props.pageTitle} (${this.state.newItems.length} کالا)`}
+            title={`${this.props.pageTitle} (${this.state.totalNumberOfPosts} کالا)`}
           />
           <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
 
@@ -904,12 +915,16 @@ export default class Search extends Component {
       })
         .then(response => response.json())
         .then(data => {
-          data.map(recivedData => {
-            this.setState(prevState => ({
-              newItems: [...prevState.newItems, recivedData],
-              isLoading: false
-            }));
-          });
+          if (data.length > 0) {
+            data.map(recivedData => {
+              this.setState(prevState => ({
+                newItems: [...prevState.newItems, recivedData],
+                isLoading: false
+              }));
+            });
+          } else {
+            this.setState({ isLoading: false });
+          }
         });
     }
   }
@@ -955,6 +970,6 @@ const styles = StyleSheet.create({
   },
   textInput: {
     textAlign: 'center',
-    width: 60
+    width: 90
   }
 });
