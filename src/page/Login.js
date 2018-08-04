@@ -20,6 +20,7 @@ export default class Login extends Component {
       validating: false,
       username: '',
       password: '',
+      phone: '',
       hasError: false,
       errorText: ''
     };
@@ -32,6 +33,7 @@ export default class Login extends Component {
         JSON.stringify({
           id: userData.id,
           isLoggedIn: true,
+          password: this.state.password,
           token: userData.token,
           username: this.state.username,
           email: userData.user_email,
@@ -104,22 +106,9 @@ export default class Login extends Component {
                       })
                         .then(response => response.json())
                         .then(data => {
+                          // console.log(data);
                           if (data.token) {
                             this.saveToStorage(data);
-                            // console.table(data);
-                            // MY THING
-                            // fetch(`http://app.idamas.ir/wp-json/wp/v2/users/${data.id}`, {
-                            //   headers: {
-                            //     Authorization: `Bearer ${data.token}`,
-                            //     credentials: 'include',
-                            //     withCredentials: true,
-                            //     Accept: 'application/json',
-                            //     'Content-Type': 'application/json'
-                            //   }
-                            // })
-                            //   .then(response => response.json())
-                            //   .then(newResponse => console.log(newResponse));
-                            // MY THING END
                             Actions.home();
                           } else {
                             this.setState({
@@ -129,10 +118,20 @@ export default class Login extends Component {
                               text: 'مشخصات وارده شده اشتباه است',
                               position: 'bottom',
                               type: 'danger',
-                              buttonText: '',
-                              duration: 2000
+                              textStyle: { textAlign: 'center' },
+                              duration: 3000
                             });
                           }
+                        })
+                        .catch(() => {
+                          Toast.show({
+                            text: 'اتصال خود به شبکه را بررسی کنید',
+                            position: 'bottom',
+                            type: 'warning',
+                            textStyle: { textAlign: 'center' },
+                            duration: 3000
+                          });
+                          this.setState({ validating: false });
                         });
                     } else {
                       this.setState({
@@ -141,9 +140,9 @@ export default class Login extends Component {
                       Toast.show({
                         text: 'لطفاً اطلاعات وارد شده را کنترل کنید',
                         position: 'top',
-                        type: 'danger',
-                        buttonText: '',
-                        duration: 2000
+                        type: 'warning',
+                        textStyle: { textAlign: 'center' },
+                        duration: 3000
                       });
                     }
                   }}

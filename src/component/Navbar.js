@@ -40,6 +40,6 @@ const styles = {
   },
   title: {
     fontFamily: 'Roboto',
-    fontWeight: '100'
+    fontSize: 15
   }
 };

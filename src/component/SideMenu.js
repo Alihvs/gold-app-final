@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { View, List, ListItem, Body, Left, Right, Icon, Grid, Col, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import call from 'react-native-phone-call';
 
 // Our custom files and classes import
 import SideMenuSecondLevel from './SideMenuSecondLevel';
@@ -53,7 +54,7 @@ export default class SideMenu extends Component {
     if (!this.state.subMenu) {
       return (
         <View>
-          <View style={{ paddingLeft: 15, paddingRight: 15, paddingTop: 30 }} />
+          <View style={{ paddingLeft: 15, paddingRight: 15, paddingTop: 10 }} />
           <View style={{ paddingRight: 15 }}>
             <List>
               <ListItem icon key={0} button onPress={() => Actions.home()}>
@@ -68,12 +69,12 @@ export default class SideMenu extends Component {
             </List>
           </View>
           <View style={styles.line} />
-          <View style={{ paddingRight: 15, paddingTop: 10 }}>
+          <View style={{ paddingRight: 15 }}>
             <List>{this.renderSecondaryList()}</List>
           </View>
 
-          <View style={styles.line} />
-          <View style={{ paddingRight: 15, paddingLeft: 15 }}>
+          {/* <View style={styles.line} /> */}
+          {/* <View style={{ paddingRight: 15, paddingLeft: 15 }}>
             <Text style={{ marginBottom: 25 }}>ما را دنبال کنید</Text>
             <Grid>
               <Col style={{ alignItems: 'center' }}>
@@ -132,7 +133,7 @@ export default class SideMenu extends Component {
                 />
               </Col>
             </Grid>
-          </View>
+          </View> */}
         </View>
       );
     }
@@ -230,6 +231,11 @@ export default class SideMenu extends Component {
   }
 
   renderSecondaryList() {
+    const args = {
+      number: '02155620995', // String value with the number to call
+      prompt: false // Optional boolean property. Determines if the user should be prompt prior to the call
+    };
+
     return (
       <View>
         <ListItem last icon button onPress={() => Actions.cart()}>
@@ -253,7 +259,6 @@ export default class SideMenu extends Component {
             <Text style={{ fontSize: 16 }}>فاکتور های ارسال شده</Text>
           </Body>
         </ListItem>
-
         <ListItem
           last
           icon
@@ -267,6 +272,14 @@ export default class SideMenu extends Component {
           </Left>
           <Body style={{ marginLeft: -15 }}>
             <Text style={{ fontSize: 16 }}>علاقه مندی ها</Text>
+          </Body>
+        </ListItem>
+        <ListItem last icon button onPress={() => call(args).catch(console.error)}>
+          <Left>
+            <Icon style={{ fontSize: 18 }} name="call" />
+          </Left>
+          <Body style={{ marginLeft: -15 }}>
+            <Text style={{ fontSize: 16 }}>تماس با ما</Text>
           </Body>
         </ListItem>
         <ListItem last icon button onPress={() => Actions.profile()}>
@@ -295,27 +308,6 @@ export default class SideMenu extends Component {
         </ListItem>
       </View>
     );
-
-    // let secondaryItems = [];
-    // menusSecondaryItems.map((item, i) => {
-    //   secondaryItems.push(
-    //     <ListItem
-    //       last
-    //       icon
-    //       key={item.id}
-    //       button={true}
-    //       onPress={Actions[item.key]}
-    //     >
-    //       <Left>
-    //         <Icon style={{ fontSize: 18 }} name={item.icon} />
-    //       </Left>
-    //       <Body style={{ marginLeft: -15 }}>
-    //         <Text style={{ fontSize: 16 }}>{item.title}</Text>
-    //       </Body>
-    //     </ListItem>
-    //   );
-    // });
-    // return secondaryItems;
   }
 }
 
@@ -351,19 +343,3 @@ var menuItems = [
     title: 'اکسسوری'
   }
 ];
-
-// const menusSecondaryItems = [
-//   {
-//     id: 19,
-//     title: "علاقه مندی ها",
-//     icon: "heart",
-//     key: "wishlist"
-//   },
-//   {
-//     id: 190,
-//     title: "خروج",
-//     icon: "ios-person",
-//     key: "logout",
-//     click: this.logOut
-//   }
-// ];

@@ -1,8 +1,3 @@
-/**
- * This is the Home page
- **/
-
-// React native and others libraries imports
 import React, { Component } from 'react';
 import {
   Image,
@@ -14,7 +9,8 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   Text,
-  StatusBar
+  StatusBar,
+  Dimensions
 } from 'react-native';
 import { Container, View, Button, Left, Right, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
@@ -73,9 +69,11 @@ export default class Home extends Component {
               <Image
                 resizeMode="contain"
                 style={{
-                  height: 100,
-                  width: '100%',
-                  margin: 5
+                  // height: 100,
+                  width: (Dimensions.get('window').width * 90) / 100,
+                  margin: 5,
+                  // justifyContent: 'center',
+                  alignSelf: 'center'
                 }}
                 source={newLogo}
               />
@@ -89,13 +87,6 @@ export default class Home extends Component {
 
   rightButtonPressed() {
     Actions.cart();
-    // AsyncStorage.getItem('FACTOR', (err, res) => {
-    //   if (res) {
-    //     Actions.factorResult();
-    //   } else {
-    //     Actions.cart();
-    //   }
-    // });
   }
 
   renderCategories() {

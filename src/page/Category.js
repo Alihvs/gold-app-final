@@ -5,7 +5,8 @@ import {
   StyleSheet,
   AsyncStorage,
   FlatList,
-  StatusBar
+  StatusBar,
+  Dimensions
 } from 'react-native';
 import { Container, Content, View, Left, Right, Button, Icon, Spinner } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
@@ -28,6 +29,7 @@ export default class Category extends Component {
       isLoaded: false,
       isRefreshing: false,
       totalNumberOfPosts: 0,
+      perPage: 5,
       currentPage: 1,
       totalPages: 1,
       newItems: []
@@ -35,6 +37,7 @@ export default class Category extends Component {
   }
 
   componentDidMount() {
+    this.setState({ perPage: Math.floor(Dimensions.get('window').height / 120) + 1 });
     let requestCatagory = null;
     // Constructing the url
     switch (this.props.title) {
@@ -59,7 +62,9 @@ export default class Category extends Component {
       }
     }
 
-    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=5&&page=1`;
+    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=${Math.floor(
+      Dimensions.get('window').height / 120
+    )}&&page=1`;
     fetch(REQUEST_URL, {
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -113,6 +118,8 @@ export default class Category extends Component {
   }
 
   renderIndividualItem(item) {
+    const itemPercentString = item.acf.ojrat_percent === '0' ? '' : `- ${item.acf.ojrat_percent} %`;
+    const itemTitle = `${item.acf.type} ${item.acf.brand} ${itemPercentString}`;
     return (
       <View
         key={item.id}
@@ -128,16 +135,13 @@ export default class Category extends Component {
               <Col
                 size={1}
                 style={{
-                  // backgroundColor: "green",
                   paddingTop: 31
                 }}
               >
                 <Grid style={{}}>{this.renderIndiAddedAttributes(item.acf.added_attributes)}</Grid>
               </Col>
               <Col size={1.5} style={{ paddingRight: 25 }}>
-                <Text style={styles.mainText}>{`${item.acf.type} ${item.acf.brand} ${
-                  item.acf.ojrat_percent
-                } %`}</Text>
+                <Text style={styles.mainText}>{itemTitle}</Text>
                 <Text style={styles.subText}>{`کد کالا: ${item.title.rendered}`}</Text>
                 <Text style={styles.subText}>{`وزن: ${item.acf.weight} گرم`}</Text>
                 <Text style={styles.subText}>{`رنگ: ${item.acf.color}`}</Text>
@@ -191,10 +195,12 @@ export default class Category extends Component {
                 backgroundColor: '#2d2d2d',
                 padding: 5,
                 paddingRight: 15,
-                height: 30
+                height: 30,
+                borderBottomColor: Colors.white,
+                borderBottomWidth: 0.2
               }}
             >
-              <Text style={[styles.mainText, { textAlign: 'right' }]}>
+              <Text style={[styles.mainText, { textAlign: 'right', height: 30 }]}>
                 {`${this.state.totalNumberOfPosts} کالا در دسته ${this.props.title} `}
               </Text>
             </View>
@@ -249,7 +255,9 @@ export default class Category extends Component {
         requestCatagory = 'women';
       }
     }
-    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=5&&page=1`;
+    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=${
+      this.state.perPage
+    }&&page=1`;
     fetch(REQUEST_URL, {
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -301,7 +309,9 @@ export default class Category extends Component {
         requestCatagory = 'women';
       }
     }
-    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=5&&page=${page}`;
+    const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=${
+      this.state.perPage
+    }&&page=${page}`;
     fetch(REQUEST_URL, {
       headers: {
         'Access-Control-Allow-Origin': '*',

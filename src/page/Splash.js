@@ -1,13 +1,6 @@
 import React, { Component } from 'react';
-import {
-  StyleSheet,
-  View,
-  Image,
-  // TouchableWithoutFeedback,
-  StatusBar,
-  AsyncStorage
-} from 'react-native';
-import { Spinner } from 'native-base';
+import { StyleSheet, View, Image, StatusBar, AsyncStorage } from 'react-native';
+import { Spinner, Button, Text, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import logo from '../assets/logo.png';
 import Colors from '../Colors';
@@ -16,27 +9,65 @@ export default class Login extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoggedIn: false
+      isLoggedIn: false,
+      userData: []
     };
   }
 
   componentDidMount() {
-    AsyncStorage.getItem('user', (err, res) => {
+    this.loadUserData();
+  }
+
+  async loadUserData() {
+    await AsyncStorage.getItem('user', (err, res) => {
       if (res) {
-        // Actions.home();
-        this.setState({
-          isLoggedIn: true
-        });
+        this.setState(
+          {
+            isLoggedIn: true
+          },
+          this.login(JSON.parse(res))
+        );
       }
     });
+  }
 
-    setTimeout(() => {
-      if (this.state.isLoggedIn) {
-        Actions.home();
-      } else {
-        Actions.login();
-      }
-    }, 2000);
+  login(data) {
+    fetch('http://app.idamas.ir/wp-json/jwt-auth/v1/token', {
+      method: 'post',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        username: data.username,
+        password: data.password
+      })
+    })
+      .then(response => response.json())
+      .then(recivedData => {
+        if (recivedData.token) {
+          Actions.home();
+        } else {
+          Toast.show({
+            text: 'اطلاعات حساب کاربری شما اشتباه است',
+            position: 'bottom',
+            type: 'warning',
+            textStyle: { textAlign: 'center' },
+            duration: 2000
+          });
+          Actions.login();
+        }
+      })
+      .catch(() => {
+        Toast.show({
+          text: 'اتصال خود به شبکه را بررسی کنید',
+          position: 'bottom',
+          type: 'warning',
+          textStyle: { textAlign: 'center' },
+          duration: 3000
+        });
+        this.setState({ isLoggedIn: false });
+      });
   }
 
   render() {
@@ -46,7 +77,15 @@ export default class Login extends Component {
         <View style={styles.logoContainer}>
           <Image style={styles.logo} source={logo} />
         </View>
-        <Spinner color={Colors.gold} style={styles.spinner} />
+        <View style={styles.itemsContainer}>
+          {this.state.isLoggedIn ? (
+            <Spinner color={Colors.gold} />
+          ) : (
+            <Button full bordered transparent style={styles.button} onPress={() => Actions.login()}>
+              <Text style={{ color: Colors.gold }}>شروع</Text>
+            </Button>
+          )}
+        </View>
       </View>
     );
   }
@@ -67,7 +106,13 @@ const styles = StyleSheet.create({
     width: 250,
     height: 70
   },
-  spinner: {
+  itemsContainer: {
     paddingBottom: '35%'
+  },
+  button: {
+    borderWidth: 1,
+    borderColor: Colors.gold,
+    borderRadius: 7,
+    marginHorizontal: '30%'
   }
 });

@@ -14,6 +14,7 @@
     "react-native-drawer": "^2.3.0",
     "react-native-easy-grid": "^0.1.17",
     "react-native-image-gallery": "^1.1.0",
+    "react-native-phone-call": "^1.0.7",
     "react-native-picker-select": "^4.0.0",
     "react-native-router-flux": "^4.0.0-beta.9",
     "react-native-slider": "^0.11.0",
