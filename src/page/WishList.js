@@ -7,7 +7,7 @@ import {
   FlatList,
   StatusBar
 } from 'react-native';
-import { Container, Content, View, Left, Right, Button, Icon, Spinner } from 'native-base';
+import { Container, Content, View, Left, Right, Button, Icon } from 'native-base';
 import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import { Actions } from 'react-native-router-flux';
@@ -15,7 +15,6 @@ import { Actions } from 'react-native-router-flux';
 // Our custom files and classes import
 import Colors from '../Colors';
 import Text from '../component/Text';
-import Fab from '../component/Fab';
 import Navbar from '../component/Navbar';
 import SideMenuDrawer from '../component/SideMenuDrawer';
 
@@ -155,7 +154,6 @@ export default class WishList extends Component {
               ListFooterComponent={<View style={{ height: 50 }} />}
             />
           </Content>
-          <Fab pageTitle={this.props.title} data={this.state.newItems} />
         </Container>
       </SideMenuDrawer>
     );
@@ -164,7 +162,6 @@ export default class WishList extends Component {
 
 const styles = StyleSheet.create({
   mainText: {
-    // paddingBottom: 5,
     color: Colors.white,
     fontSize: 13,
     paddingBottom: 15

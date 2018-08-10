@@ -15,9 +15,10 @@ import {
   Button,
   Toast,
   CheckBox,
-  Spinner
+  Spinner,
+  Fab
 } from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
+import { Col, Grid } from 'react-native-easy-grid';
 import { Actions } from 'react-native-router-flux';
 // import Slider from "react-native-slider";
 
@@ -27,7 +28,7 @@ import Navbar from '../component/Navbar';
 import SideMenuDrawer from '../component/SideMenuDrawer';
 import Colors from '../Colors';
 
-const BASE_REQUEST_URL = 'http://app.idamas.ir/wp-json/wp/v2/';
+//const BASE_REQUEST_URL = 'http://app.idamas.ir/wp-json/wp/v2/';
 
 //Newley added libraries
 
@@ -73,61 +74,8 @@ export default class Search extends Component {
     };
   }
 
-  componentDidMount() {
-    let requestCatagory = null;
-    this.setState({ isLoading: true });
-    // Constructing the url
-    switch (this.props.pageTitle) {
-      case 'زنانه': {
-        requestCatagory = 'women';
-        break;
-      }
-      case 'مردانه': {
-        requestCatagory = 'men';
-        break;
-      }
-      case 'بچه گانه': {
-        requestCatagory = 'kid';
-        break;
-      }
-      case 'اکسسوری': {
-        requestCatagory = 'acc';
-        break;
-      }
-      default: {
-        requestCatagory = 'women';
-      }
-    }
-    const REQUEST_URL = BASE_REQUEST_URL + requestCatagory;
-    fetch(REQUEST_URL, {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
-        'Access-Control-Allow-Credentials': 'true'
-      }
-    })
-      .then(response => {
-        this.setState({
-          totalNumberOfPosts: response.headers.map['x-wp-total'][0]
-        });
-        return response.json();
-      })
-      .then(data => {
-        if (data.length > 0) {
-          data.map(recivedData => {
-            console.table(recivedData);
-            this.setState(prevState => ({
-              newItems: [...prevState.newItems, recivedData],
-              isLoading: false
-            }));
-          });
-        } else {
-          this.setState({ isLoading: false });
-        }
-      });
-  }
-
   componentWillMount() {
+    //Preserving the search params
     AsyncStorage.getItem('SEARCHPARAMS', (err, res) => {
       if (!res) return;
 
@@ -152,8 +100,6 @@ export default class Search extends Component {
         neginDar: JSON.parse(res).neginDar,
         sangDeducted: JSON.parse(res).sangDeducted
       });
-
-      // console.log(res);
     });
   }
 
@@ -194,9 +140,9 @@ export default class Search extends Component {
     );
     const right = (
       <Right style={{ flex: 1 }}>
-        <Button onPress={this.refreshData.bind(this)} transparent>
+        {/* <Button onPress={this.refreshData.bind(this)} transparent>
           {this.state.isLoading ? <Spinner color="white" /> : <Icon name="refresh" />}
-        </Button>
+        </Button> */}
       </Right>
     );
 
@@ -211,10 +157,11 @@ export default class Search extends Component {
             </Button>
           </Col>
           <Col size={2}>
+
             <Picker
               selectedValue={this.state.womanCatagory}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ womanCatagory: itemValue })}
+              style={styles.picker}
+              onValueChange={(itemValue) => this.setState({ womanCatagory: itemValue })}
             >
               <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="سرویس" value="سرویس" />
@@ -226,6 +173,7 @@ export default class Search extends Component {
               <Picker.Item label="انگشتر" value="انگشتر" />
               <Picker.Item label="گوشواره تک" value="گوشواره تک" />
             </Picker>
+
           </Col>
           <Col>
             <Text style={styles.text}>دسته بندی</Text>
@@ -244,8 +192,8 @@ export default class Search extends Component {
           <Col size={2}>
             <Picker
               selectedValue={this.state.manCatagory}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ manCatagory: itemValue })}
+              style={styles.picker}
+              onValueChange={(itemValue) => this.setState({ manCatagory: itemValue })}
             >
               <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="انگشتر" value="انگشتر" />
@@ -271,8 +219,8 @@ export default class Search extends Component {
           <Col size={2}>
             <Picker
               selectedValue={this.state.accCatagories}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ accCatagories: itemValue })}
+              style={styles.picker}
+              onValueChange={(itemValue) => this.setState({ accCatagories: itemValue })}
             >
               <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="پابند" value="پابند" />
@@ -306,8 +254,8 @@ export default class Search extends Component {
           <Col size={2}>
             <Picker
               selectedValue={this.state.alangoo}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ alangoo: itemValue })}
+              style={styles.picker}
+              onValueChange={(itemValue) => this.setState({ alangoo: itemValue })}
             >
               <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="سی ان سی" value="سی ان سی" />
@@ -331,8 +279,8 @@ export default class Search extends Component {
           <Col size={2}>
             <Picker
               selectedValue={this.state.alangooCNC}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ alangooCNC: itemValue })}
+              style={styles.picker}
+              onValueChange={(itemValue) => this.setState({ alangooCNC: itemValue })}
             >
               <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="تک پوش" value="تک پوش" />
@@ -360,8 +308,8 @@ export default class Search extends Component {
           <Col size={2}>
             <Picker
               selectedValue={this.state.alangooRikhtegi}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) =>
+              style={styles.picker}
+              onValueChange={(itemValue) =>
                 this.setState({ alangooRikhtegi: itemValue })
               }
             >
@@ -389,8 +337,8 @@ export default class Search extends Component {
           <Col size={2}>
             <Picker
               selectedValue={this.state.zanjir}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ zanjir: itemValue })}
+              style={styles.picker}
+              onValueChange={(itemValue) => this.setState({ zanjir: itemValue })}
             >
               <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="ابریشمی" value="ابریشمی" />
@@ -418,8 +366,8 @@ export default class Search extends Component {
           <Col size={2}>
             <Picker
               selectedValue={this.state.brand}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ brand: itemValue })}
+              style={styles.picker}
+              onValueChange={(itemValue) => this.setState({ brand: itemValue })}
             >
               <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="فلامنگو" value="فلامنگو" />
@@ -589,7 +537,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.onlyAvailable}
-              color={Colors.black}
+              color={Colors.white}
               onPress={() => this.setState({ onlyAvailable: !this.state.onlyAvailable })}
             />
           </Col>
@@ -611,7 +559,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.canReorder}
-              color={Colors.black}
+              color={Colors.white}
               onPress={() => this.setState({ canReorder: !this.state.canReorder })}
             />
           </Col>
@@ -633,8 +581,8 @@ export default class Search extends Component {
           <Col size={2}>
             <Picker
               selectedValue={this.state.color}
-              style={{ height: 30 }}
-              onValueChange={(itemValue, itemIndex) => this.setState({ color: itemValue })}
+              style={styles.picker}
+              onValueChange={(itemValue) => this.setState({ color: itemValue })}
             >
               <Picker.Item label="همه موارد" value="all" />
               <Picker.Item label="زرد" value="زرد" />
@@ -663,7 +611,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.neginDar}
-              color={Colors.black}
+              color={Colors.white}
               onPress={() => this.setState({ neginDar: !this.state.neginDar })}
             />
           </Col>
@@ -685,7 +633,7 @@ export default class Search extends Component {
           <Col size={2}>
             <CheckBox
               checked={this.state.sangDeducted}
-              color={Colors.black}
+              color={Colors.white}
               onPress={() => this.setState({ sangDeducted: !this.state.sangDeducted })}
             />
           </Col>
@@ -702,10 +650,11 @@ export default class Search extends Component {
           <Navbar
             left={left}
             right={right}
-            title={`${this.props.pageTitle} (${this.state.totalNumberOfPosts} کالا)`}
+            title={this.props.pageTitle}
           />
           <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
-
+          { this.state.isLoading ? (<Spinner color={Colors.gold} />) : (
+            
           <Content>
             <View style={styles.container}>
               {Available}
@@ -732,206 +681,118 @@ export default class Search extends Component {
               {/* زنجیر */}
               {this.state.womanCatagory === 'زنجیر' ? Zanjir : <View />}
             </View>
-            <View style={styles.container}>
+            <View style={[styles.container, {marginBottom: 50 }]}>
               {Brand}
               {Weight}
               {OjratPercent}
               {OjratToman}
               {Color}
-
               {NeginDar}
               {this.state.neginDar ? SangDeducted : <View />}
             </View>
-            {this.state.isLoading ? (
-              <View />
-            ) : (
-              <Button
-                full
-                transparent
-                bordered
-                style={{
-                  borderColor: Colors.gold,
-                  marginHorizontal: 10,
-                  marginBottom: 5,
-                  width: '93%',
-                  alignSelf: 'center',
-                  borderRadius: 8
-                }}
-                onPress={() => {
-                  let itemsToPass = this.state.newItems;
-                  //Helper Variables for numbers
-                  //========Weight===========================
-                  let weightFrom = this.state.weightFrom;
-                  let weightTo = this.state.weightTo;
-                  if (!this.state.weightFrom) weightFrom = 0;
-                  if (!this.state.weightTo) weightTo = 999;
-                  //========ojrat percent====================
-                  let ojratPercentFrom = this.state.ojratPercentFrom;
-                  let ojratPercentTo = this.state.ojratPercentTo;
-                  if (!this.state.ojratPercentFrom) ojratPercentFrom = 0;
-                  if (!this.state.ojratPercentTo) ojratPercentTo = 99;
-                  //========ojrat percent====================
-                  let ojratTomanFrom = this.state.ojratTomanFrom;
-                  let ojratTomanTo = this.state.ojratTomanTo;
-                  if (!this.state.ojratTomanFrom) ojratTomanFrom = 0;
-                  if (!this.state.ojratTomanTo) ojratTomanTo = 999999;
-                  //=============================================
-                  //======================Validations======================================
-                  if (Number(this.state.weightTo) <= Number(this.state.weightFrom)) {
-                    this.showToast('وزن اولیه نمی تواند از وزن نهایی بیشتر باشد');
-                    return;
-                  }
-                  if (Number(this.state.ojratPercentTo) <= Number(this.state.ojratPercentFrom)) {
-                    this.showToast('اجرت اولیه نمی تواند از اجرت نهایی بیشتر باشد');
-                    return;
-                  }
-                  if (Number(this.state.ojratTomanTo) <= Number(this.state.ojratTomanFrom)) {
-                    this.showToast('اجرت اولیه نمی تواند از اجرت نهایی بیشتر باشد');
-                    return;
-                  }
-                  // ======================================================================
-
-                  if (this.state.womanCatagory !== 'all') {
-                    itemsToPass = itemsToPass.filter(
-                      item => item.acf.type === this.state.womanCatagory
-                    );
-                  }
-
-                  if (this.state.brand !== 'all') {
-                    itemsToPass = itemsToPass.filter(item => item.acf.brand === this.state.brand);
-                  }
-
-                  itemsToPass = itemsToPass.filter(item =>
-                    this.inRange(item.acf.weight, weightFrom, weightTo)
-                  );
-
-                  itemsToPass = itemsToPass.filter(item =>
-                    this.inRange(item.acf.ojrat_percent, ojratPercentFrom, ojratPercentTo)
-                  );
-
-                  itemsToPass = itemsToPass.filter(item =>
-                    this.inRange(item.acf.ojrat_toman, ojratTomanFrom, ojratTomanTo)
-                  );
-
-                  if (this.state.color !== 'all') {
-                    itemsToPass = itemsToPass.filter(item => item.acf.color === this.state.color);
-                  }
-
-                  if (this.state.onlyAvailable) {
-                    itemsToPass = itemsToPass.filter(
-                      item => item.acf.availability === this.state.onlyAvailable
-                    );
-                  }
-
-                  if (this.state.canReorder) {
-                    itemsToPass = itemsToPass.filter(
-                      item => item.acf.canReorder === this.state.canReorder
-                    );
-                  }
-
-                  if (this.state.neginDar) {
-                    itemsToPass = itemsToPass.filter(
-                      item => item.acf.negindar === this.state.neginDar
-                    );
-                  }
-
-                  if (this.state.sangDeducted) {
-                    itemsToPass = itemsToPass.filter(
-                      item => item.acf.hasNeginMoney === this.state.sangDeducted
-                    );
-                  }
-
-                  AsyncStorage.setItem(
-                    'SEARCHPARAMS',
-                    JSON.stringify({
-                      womanCatagory: this.state.womanCatagory,
-                      manCatagory: this.state.manCatagory,
-                      accCatagories: this.state.accCatagories,
-                      alangoo: this.state.alangoo,
-                      alangooCNC: this.state.alangooCNC,
-                      alangooRikhtegi: this.state.alangooRikhtegi,
-                      zanjir: this.state.zanjir,
-                      brand: this.state.brand,
-                      weightFrom: this.state.weightFrom,
-                      weightTo: this.state.weightTo,
-                      ojratPercentFrom: this.state.ojratPercentFrom,
-                      ojratPercentTo: this.state.ojratPercentTo,
-                      ojratTomanFrom: this.state.ojratTomanFrom,
-                      ojratTomanTo: this.state.ojratTomanTo,
-                      onlyAvailable: this.state.onlyAvailable,
-                      canReorder: this.state.canReorder,
-                      color: this.state.color,
-                      neginDar: this.state.neginDar,
-                      sangDeducted: this.state.sangDeducted
-                    })
-                  );
-
-                  Actions.searchResult({ data: itemsToPass, title: this.props.pageTitle });
-                }}
-              >
-                <Text style={{ color: '#fff' }}>جستجو</Text>
-              </Button>
-            )}
           </Content>
+          )}
+           <Fab
+            active={this.state.active}
+            direction="up"
+            containerStyle={{ }}
+            style={{ backgroundColor: Colors.gold }}
+            position="bottomLeft"
+            onPress={() => {
+              //======================Validations======================================
+              if (Number(this.state.weightTo) <= Number(this.state.weightFrom)) {
+                this.showToast('وزن اولیه نمی تواند از وزن نهایی بیشتر باشد');
+                return;
+              }
+              if (Number(this.state.ojratPercentTo) <= Number(this.state.ojratPercentFrom)) {
+                this.showToast('اجرت اولیه نمی تواند از اجرت نهایی بیشتر باشد');
+                return;
+              }
+              if (Number(this.state.ojratTomanTo) <= Number(this.state.ojratTomanFrom)) {
+                this.showToast('اجرت اولیه نمی تواند از اجرت نهایی بیشتر باشد');
+                return;
+              }
+              //Go to the search results page with the URL
+              Actions.searchResult({ url: this.constructTheURL(), title: this.props.pageTitle });
+              //To preserve search states
+              AsyncStorage.setItem(
+                'SEARCHPARAMS',
+                JSON.stringify({
+                  womanCatagory: this.state.womanCatagory,
+                  manCatagory: this.state.manCatagory,
+                  accCatagories: this.state.accCatagories,
+                  alangoo: this.state.alangoo,
+                  alangooCNC: this.state.alangooCNC,
+                  alangooRikhtegi: this.state.alangooRikhtegi,
+                  zanjir: this.state.zanjir,
+                  brand: this.state.brand,
+                  weightFrom: this.state.weightFrom,
+                  weightTo: this.state.weightTo,
+                  ojratPercentFrom: this.state.ojratPercentFrom,
+                  ojratPercentTo: this.state.ojratPercentTo,
+                  ojratTomanFrom: this.state.ojratTomanFrom,
+                  ojratTomanTo: this.state.ojratTomanTo,
+                  onlyAvailable: this.state.onlyAvailable,
+                  canReorder: this.state.canReorder,
+                  color: this.state.color,
+                  neginDar: this.state.neginDar,
+                  sangDeducted: this.state.sangDeducted
+                })
+              );
+            }}>
+            {/* }}> */}
+            <Icon name="checkmark" style={{ color: Colors.black }} />   
+          </Fab>
         </Container>
       </SideMenuDrawer>
     );
   }
 
-  refreshData() {
-    this.setState({ newItems: [] });
-    if (!this.state.isLoading) {
+  constructTheURL() {
+    console.log(this.props.pageTitle);
       let requestCatagory = null;
-      this.setState({ isLoading: true });
-      // Constructing the url
-      switch (this.props.title) {
-        case 'زنانه': {
-          requestCatagory = 'women';
-          break;
-        }
-        case 'مردانه': {
-          requestCatagory = 'men';
-          break;
-        }
-        case 'بچه گانه': {
-          requestCatagory = 'kid';
-          break;
-        }
-        case 'اکسسوری': {
-          requestCatagory = 'acc';
-          break;
-        }
-        default: {
-          requestCatagory = 'women';
-        }
+    // Constructing the url
+    switch (this.props.pageTitle) {
+      case 'زنانه': {
+        requestCatagory = 'woman';
+        break;
       }
-      const REQUEST_URL = BASE_REQUEST_URL + requestCatagory;
-      fetch(REQUEST_URL, {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
-          'Access-Control-Allow-Credentials': 'true'
-        }
-      })
-        .then(response => response.json())
-        .then(data => {
-          if (data.length > 0) {
-            data.map(recivedData => {
-              this.setState(prevState => ({
-                newItems: [...prevState.newItems, recivedData],
-                isLoading: false
-              }));
-            });
-          } else {
-            this.setState({ isLoading: false });
-          }
-        });
+      case 'مردانه': {
+        requestCatagory = 'men';
+        break;
+      }
+      case 'بچه گانه': {
+        requestCatagory = 'kid';
+        break;
+      }
+      case 'اکسسوری': {
+        requestCatagory = 'acc';
+        break;
+      }
+      default: {
+        requestCatagory = 'woman';
+      }
     }
+    let url = `http://app.idamas.ir/wp-json/namespace/v1/search?cata=${requestCatagory}`;
+    if (this.state.womanCatagory !== 'all') url += `&type=${this.state.womanCatagory}`;
+    if (this.state.brand !== 'all') url += `&brand=${this.state.brand}`;
+    if (this.state.color !== 'all') url += `&color=${this.state.color}`;
+    if (this.state.onlyAvailable === true) url += `&availability=true`;
+    if (this.state.canReorder === true) url += `&canReorder=true`;
+    if (this.state.weightFrom !== undefined) url += `&weight_from=${this.state.weightFrom}`;
+    if (this.state.weightTo !== undefined) url += `&weight_to=${this.state.weightTo}`;
+    if (this.state.ojratPercentFrom !== undefined) url += `&ojrat_percent_from=${this.state.ojratPercentFrom}`;
+    if (this.state.ojratPercentTo !== undefined) url += `&ojrat_percent_to=${this.state.ojratPercentTo}`;
+    if (this.state.ojratTomanFrom !== undefined) url += `&ojrat_toman_from=${this.state.ojratTomanFrom}`;
+    if (this.state.ojratTomanTo !== undefined) url += `&ojrat_toman_to=${this.state.ojratTomanTo}`;
+    if (this.state.neginDar === true) url += `&negindar=true`;
+    if (this.state.sangDeducted === true) url += `&sangDeducted=true`;
+    return url;
   }
 
-  inRange(x, min, max) {
-    return (x - min) * (x - max) <= 0;
-  }
+  // inRange(x, min, max) {
+  //   return (x - min) * (x - max) <= 0;
+  // }
 
   showToast(text) {
     Toast.show({
@@ -946,30 +807,29 @@ export default class Search extends Component {
 
 const styles = StyleSheet.create({
   text: {
-    color: Colors.white,
+    color: Colors.gold,
     fontWeight: 'bold',
     fontSize: 14
   },
   container: {
     borderWidth: 1,
-    backgroundColor: Colors.grey,
+    backgroundColor: Colors.black,
     margin: 10,
     borderRadius: 6
   },
   searchItem: {
     borderBottomWidth: 1,
-    borderColor: Colors.black,
+    borderColor: Colors.white,
     margin: 10,
     height: 40
   },
-  picker: {
-    flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center',
-    paddingHorizontal: 10
-  },
   textInput: {
     textAlign: 'center',
-    width: 90
+    width: 90,
+    color: Colors.white
+  },
+  picker: {
+    height: 30,
+    color: Colors.white
   }
 });

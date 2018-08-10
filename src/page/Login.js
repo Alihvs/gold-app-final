@@ -1,14 +1,8 @@
-/**
- * This is the Login Page
- **/
-
-// React native and others libraries imports
 import React, { Component } from 'react';
-import { Container, View, Button, Icon, Item, Input, Toast, Spinner } from 'native-base';
+import { Container, View, Button, Item, Input, Toast, Spinner } from 'native-base';
 import { AsyncStorage, Keyboard, TouchableWithoutFeedback } from 'react-native';
 import { Actions } from 'react-native-router-flux';
 
-// Our custom files and classes import
 import Colors from '../Colors';
 import Text from '../component/Text';
 
@@ -19,10 +13,7 @@ export default class Login extends Component {
       jwt: '',
       validating: false,
       username: '',
-      password: '',
-      phone: '',
-      hasError: false,
-      errorText: ''
+      password: ''
     };
   }
 
@@ -64,7 +55,7 @@ export default class Login extends Component {
                 onChangeText={text => this.setState({ username: text })}
                 placeholderTextColor={Colors.grey}
                 style={{ textAlign: 'center', color: Colors.gold }}
-                blurOnSubmit={false}
+                autoFocus
               />
             </Item>
             <Item>
@@ -73,17 +64,9 @@ export default class Login extends Component {
                 onChangeText={text => this.setState({ password: text })}
                 secureTextEntry
                 placeholderTextColor={Colors.grey}
-                ref={input => {
-                  this.secondTextInput = input;
-                }}
                 style={{ textAlign: 'center', color: Colors.gold }}
               />
             </Item>
-            {this.state.hasError ? (
-              <Text style={{ color: '#c0392b', textAlign: 'center', marginTop: 10 }}>
-                {this.state.errorText}
-              </Text>
-            ) : null}
             <View style={{ alignItems: 'center' }}>
               {!this.state.validating ? (
                 <Button
@@ -125,7 +108,7 @@ export default class Login extends Component {
                         })
                         .catch(() => {
                           Toast.show({
-                            text: 'اتصال خود به شبکه را بررسی کنید',
+                            text: 'اتصال خود به اینترنت را بررسی کنید',
                             position: 'bottom',
                             type: 'warning',
                             textStyle: { textAlign: 'center' },

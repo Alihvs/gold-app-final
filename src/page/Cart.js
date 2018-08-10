@@ -83,7 +83,7 @@ export default class Cart extends Component {
               transparent
               onPress={() => {
                 Alert.alert(
-                  `پاک کردن ${item.title.rendered}`,
+                  `پاک کردن ${!item.title.rendered === undefined ? item.title.rendered : ''}`,
                   'آیا اطمینان دارید که می خواهید این محصول را از فاکتور خرید حذف کنید؟',
                   [
                     {
@@ -100,9 +100,9 @@ export default class Cart extends Component {
             </Button>
           </Left>
           <Body style={{ paddingRight: 20 }}>
-            <Text style={{ fontSize: 10 }}>{`کد ${item.title.rendered} - ${item.acf.type} ${
-              item.acf.weight
-            } گرمی ${item.acf.brand}`}</Text>
+            <Text style={{ fontSize: 10 }}>{`کد ${
+              !item.title.rendered === undefined ? item.title.rendered : ''
+            } - ${item.acf.type} ${item.acf.weight} گرمی ${item.acf.brand}`}</Text>
             <Text style={{ fontSize: 10 }}>{`رنگ: ${item.acf.color} - سایز: ${
               item.acf.size
             }`}</Text>
@@ -148,10 +148,10 @@ export default class Cart extends Component {
           <Text style={myStyles.tableText}>ردیف</Text>
         </Row>
         <Row style={myStyles.tableRow}>
-          <Text style={myStyles.tableText}>کد کالا</Text>
+          <Text style={myStyles.tableText}>کالا</Text>
         </Row>
         <Row style={myStyles.tableRow}>
-          <Text style={myStyles.tableText}>کالا</Text>
+          <Text style={myStyles.tableText}>شرح</Text>
         </Row>
         <Row
           style={{ paddingVertical: 5, alignItems: 'center', borderBottomWidth: 1, flexGrow: 1.5 }}
@@ -192,7 +192,9 @@ export default class Cart extends Component {
             <Text style={[myStyles.tableText, { fontSize: 14 }]}>{i + 1}</Text>
           </Row>
           <Row style={myStyles.tableRow}>
-            <Text style={myStyles.tableText}>{item.title.rendered}</Text>
+            <Text style={myStyles.tableText}>
+              {item.title.rendered ? item.title.rendered : '-'}
+            </Text>
           </Row>
           <Row style={myStyles.tableRow}>
             <Text style={myStyles.tableText}>{`${item.acf.type} ${item.acf.ojrat_percent} ٪`}</Text>
@@ -285,7 +287,7 @@ export default class Cart extends Component {
     return (
       <Container style={{ backgroundColor: '#fdfdfd' }}>
         <Navbar left={left} title="فاکتور" />
-        <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
+        <StatusBar backgroundColor={Colors.black} />
 
         {this.state.cartItems.length <= 0 ? (
           <View
@@ -436,13 +438,11 @@ export default class Cart extends Component {
     const obj = this.state.quantities;
     // if (value < 1) finalVal = 1;
     obj[index] = Number(value);
-    // console.log(Number(value));
     this.setState({ quantities: obj });
   }
 
   preventInputZero(value, index) {
     if (value < 1) {
-      // console.log('Less than one');
       Alert.alert('تعداد نمی تواند کمتر از 1 باشد');
       const obj = this.state.quantities;
       obj[index] = 1;
@@ -551,7 +551,7 @@ export default class Cart extends Component {
       res += `
       <tr>
         <td style="height:60px">${++counter}</td>
-        <td style="height:60px">${product.title.rendered}</td>
+        <td style="height:60px">${product.title.rendered ? product.title.rendered : ' '}</td>
         <td style="height:60px">${product.acf.type} ${product.acf.ojrat_percent} درصد</td>
         <td style="height:60px">${this.sumAddedAttributes(product)}</td>
         <td style="height:60px">${product.acf.weight}</td>
@@ -654,7 +654,7 @@ export default class Cart extends Component {
         })
         .catch(() => {
           Toast.show({
-            text: 'اتصال خود به شبکه را بررسی کنید',
+            text: 'اتصال خود به اینترنت را بررسی کنید',
             position: 'top',
             type: 'danger',
             buttonText: '',
@@ -687,59 +687,3 @@ const myStyles = StyleSheet.create({
     height: 30
   }
 });
-
-// const styles = {
-//   title: {
-//     fontFamily: "Roboto",
-//     fontWeight: "100"
-//   }
-// };
-
-// removeItemPressed(item) {
-//   Alert.alert(
-//     "پاک کردن " + item.title,
-//     "آیا اطمینان دارید که می خواهید این محصول را از فاکتور خرید حذف کنید؟",
-//     [
-//       {
-//         text: "خیر",
-//         onPress: () => console.log("No Pressed"),
-//         style: "cancel"
-//       },
-//       { text: "بله", onPress: () => this.removeItem(item) }
-//     ]
-//   );
-// }
-
-// removeAllPressed() {
-//   this.setState({ cartItems: [] });
-//   AsyncStorage.setItem("CART", JSON.stringify([]));
-// Alert.alert(
-//   "خالی کردن فاکتور",
-//   "آیا اطمینان دارید که می خواهید فاکتور خرید خود را خالی کنید؟",
-//   [
-//     {
-//       text: "خیر",
-//       onPress: () => console.log("No Pressed"),
-//       style: "cancel"
-//     },
-//     {
-//       text: "بله",
-//       onPress: () => {
-//         // this.setState({ cartItems: [] });
-//         // AsyncStorage.setItem("CART", JSON.stringify([]));
-//         // alert(1);
-
-//       }
-//     }
-//   ]
-// );
-// }
-
-// removeAll() {
-//   this.setState({ cartItems: [] });
-//   AsyncStorage.setItem("CART", JSON.stringify([]));
-// }
-
-// itemClicked(item) {
-//   Actions.product({ product: item });
-// }

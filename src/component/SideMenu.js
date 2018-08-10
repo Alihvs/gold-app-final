@@ -4,20 +4,13 @@
 
 // React native and others libraries imports
 import React, { Component } from 'react';
-import {
-  ScrollView,
-  LayoutAnimation,
-  UIManager,
-  Linking,
-  AsyncStorage,
-  BackAndroid
-} from 'react-native';
+import { ScrollView, LayoutAnimation, UIManager, AsyncStorage, BackAndroid } from 'react-native';
 import { View, List, ListItem, Body, Left, Right, Icon, Grid, Col, Toast } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import call from 'react-native-phone-call';
 
 // Our custom files and classes import
-import SideMenuSecondLevel from './SideMenuSecondLevel';
+// import SideMenuSecondLevel from './SideMenuSecondLevel';
 import Text from './Text';
 // import Login from "../page/Login";
 
@@ -72,78 +65,9 @@ export default class SideMenu extends Component {
           <View style={{ paddingRight: 15 }}>
             <List>{this.renderSecondaryList()}</List>
           </View>
-
-          {/* <View style={styles.line} /> */}
-          {/* <View style={{ paddingRight: 15, paddingLeft: 15 }}>
-            <Text style={{ marginBottom: 25 }}>ما را دنبال کنید</Text>
-            <Grid>
-              <Col style={{ alignItems: 'center' }}>
-                <Icon
-                  style={{ fontSize: 18 }}
-                  name="logo-facebook"
-                  onPress={() =>
-                    Linking.openURL('http://www.facebook.com/').catch(err =>
-                      console.error('An error occurred', err)
-                    )
-                  }
-                />
-              </Col>
-              <Col style={{ alignItems: 'center' }}>
-                <Icon
-                  style={{ fontSize: 18 }}
-                  name="logo-instagram"
-                  onPress={() =>
-                    Linking.openURL('http://www.instagram.com/').catch(err =>
-                      console.error('An error occurred', err)
-                    )
-                  }
-                />
-              </Col>
-              <Col style={{ alignItems: 'center' }}>
-                <Icon
-                  style={{ fontSize: 18 }}
-                  name="logo-twitter"
-                  onPress={() =>
-                    Linking.openURL('http://www.twitter.com/').catch(err =>
-                      console.error('An error occurred', err)
-                    )
-                  }
-                />
-              </Col>
-              <Col style={{ alignItems: 'center' }}>
-                <Icon
-                  style={{ fontSize: 18 }}
-                  name="logo-youtube"
-                  onPress={() =>
-                    Linking.openURL('http://www.youtube.com/').catch(err =>
-                      console.error('An error occurred', err)
-                    )
-                  }
-                />
-              </Col>
-              <Col style={{ alignItems: 'center' }}>
-                <Icon
-                  style={{ fontSize: 18 }}
-                  name="logo-snapchat"
-                  onPress={() =>
-                    Linking.openURL('http://www.snapchat.com/').catch(err =>
-                      console.error('An error occurred', err)
-                    )
-                  }
-                />
-              </Col>
-            </Grid>
-          </View> */}
         </View>
       );
     }
-    return (
-      <SideMenuSecondLevel
-        back={this.back.bind(this)}
-        title={this.state.clickedItem}
-        menu={this.state.subMenuItems}
-      />
-    );
   }
 
   renderMenuItems() {

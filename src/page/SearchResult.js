@@ -1,109 +1,91 @@
 import React, { Component } from 'react';
-import {
-  Image,
-  TouchableHighlight,
-  StyleSheet,
-  AsyncStorage,
-  FlatList,
-  StatusBar
-} from 'react-native';
-import { Container, Content, View, Left, Right, Button, Icon, Spinner } from 'native-base';
-import { Col, Row, Grid } from 'react-native-easy-grid';
+import { StyleSheet, FlatList, StatusBar, Dimensions } from 'react-native';
+import { Container, View, Left, Right, Button, Icon, Spinner } from 'native-base';
+// import { Col, Row, Grid } from 'react-native-easy-grid';
 
 import { Actions } from 'react-native-router-flux';
 
 // Our custom files and classes import
+import { SingleItemRender } from '../component/Functions';
 import Colors from '../Colors';
 import Text from '../component/Text';
 import Fab from '../component/Fab';
 import Navbar from '../component/Navbar';
 import SideMenuDrawer from '../component/SideMenuDrawer';
 
-export default class SearchResult extends Component {
+export default class Category extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isLoaded: false,
+      isRefreshing: false,
+      totalNumberOfPosts: 0,
+      perPage: 5,
+      currentPage: 1,
+      totalPages: 1,
       newItems: []
     };
   }
 
+  componentWillMount() {
+    this.setState({ perPage: Math.floor(Dimensions.get('window').height / 120) + 1 });
+  }
+
   componentDidMount() {
-    this.setState({ newItems: this.props.data });
+    // let requestCatagory = null;
+    // Constructing the url
+    // switch (this.props.title) {
+    //   case 'زنانه': {
+    //     requestCatagory = 'women';
+    //     break;
+    //   }
+    //   case 'مردانه': {
+    //     requestCatagory = 'men';
+    //     break;
+    //   }
+    //   case 'بچه گانه': {
+    //     requestCatagory = 'kid';
+    //     break;
+    //   }
+    //   case 'اکسسوری': {
+    //     requestCatagory = 'acc';
+    //     break;
+    //   }
+    //   default: {
+    //     requestCatagory = 'women';
+    //   }
+    // }
+
+    fetch(`${this.props.url}&posts_per_page=${this.state.perPage}&page=${this.state.currentPage}`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    })
+      .then(response => {
+        this.setState({
+          totalNumberOfPosts: response.headers.map['x-wp-total'][0],
+          totalPages: response.headers.map['x-wp-totalpages'][0]
+        });
+        return response.json();
+      })
+      .then(data => {
+        if (data.length > 0) {
+          data.map(recivedData => {
+            this.setState(prevState => ({
+              newItems: [...prevState.newItems, recivedData]
+            }));
+          });
+          this.setState({ isLoaded: true });
+        } else {
+          this.setState({ isLoaded: true });
+        }
+      });
   }
 
   rightButtonPressed() {
     Actions.cart();
-  }
-
-  renderIndiAddedAttributes(attribs) {
-    if (attribs) {
-      const res = [];
-      attribs.map((attr, i) => {
-        res.push(
-          <Row key={i} style={{ height: 16 }}>
-            <Col>
-              <Text style={styles.subText}>{attr.value}</Text>
-            </Col>
-            <Col>
-              <Text style={styles.subText}>{attr.item_name}</Text>
-            </Col>
-          </Row>
-        );
-      });
-      return res;
-    }
-    return <View />;
-  }
-
-  renderIndividualItem(item) {
-    return (
-      <View
-        key={item.id}
-        style={{
-          borderBottomWidth: 0.5,
-          borderBottomColor: Colors.gold,
-          padding: 10
-        }}
-      >
-        <TouchableHighlight onPress={() => Actions.product({ product: item })}>
-          <View>
-            <Grid style={{}}>
-              <Col
-                size={1}
-                style={{
-                  paddingTop: 31
-                }}
-              >
-                <Grid style={{}}>{this.renderIndiAddedAttributes(item.acf.added_attributes)}</Grid>
-              </Col>
-              <Col size={1.5} style={{ paddingRight: 25 }}>
-                <Text style={styles.mainText}>{`${item.acf.type} ${item.acf.brand} ${
-                  item.acf.ojrat_percent
-                } %`}</Text>
-                <Text style={styles.subText}>{`کد کالا: ${item.title.rendered}`}</Text>
-                <Text style={styles.subText}>{`وزن: ${item.acf.weight} گرم`}</Text>
-                <Text style={styles.subText}>{`رنگ: ${item.acf.color}`}</Text>
-                <Text style={styles.subText}>{`سایز: ${item.acf.size}`}</Text>
-              </Col>
-              <Col size={1}>
-                <Image
-                  source={{
-                    uri: item.acf.images[0].image.sizes.thumbnail
-                  }}
-                  style={{
-                    height: '100%',
-                    width: '100%',
-
-                    alignSelf: 'flex-end'
-                  }}
-                />
-              </Col>
-            </Grid>
-          </View>
-        </TouchableHighlight>
-      </View>
-    );
   }
 
   render() {
@@ -122,35 +104,156 @@ export default class SearchResult extends Component {
         </Button>
       </Right>
     );
-
+    // let counter = 1;
     return (
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
         <Container style={{ backgroundColor: Colors.statusBarColor }}>
-          <Navbar left={left} right={right} title="نتایج" />
+          <Navbar left={left} right={right} title="نتایج جستجو" />
           <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
-          <View
-            style={{
-              backgroundColor: '#2d2d2d',
-              padding: 5,
-              paddingRight: 15,
-              height: 30
-            }}
-          >
-            <Text style={[styles.mainText, { textAlign: 'right' }]}>
-              {`${this.state.newItems.length} کالا`}
-            </Text>
-          </View>
-          <Content padder>
+          {this.state.isLoaded ? (
+            <View
+              style={{
+                backgroundColor: '#2d2d2d',
+                padding: 5,
+                paddingRight: 15,
+                height: 30,
+                borderBottomColor: Colors.white,
+                borderBottomWidth: 0.2
+              }}
+            >
+              <Text style={[styles.mainText, { textAlign: 'right', height: 30 }]}>
+                {`${this.state.totalNumberOfPosts} کالا یافت شد `}
+              </Text>
+            </View>
+          ) : (
+            <View />
+          )}
+          {/* <Content padder> */}
+          {this.state.isLoaded ? (
             <FlatList
               data={this.state.newItems}
-              renderItem={({ item }) => this.renderIndividualItem(item)}
+              renderItem={({ item, index }) => SingleItemRender(item, index)}
               ListFooterComponent={<View style={{ height: 50 }} />}
+              onRefresh={this.refreshData.bind(this)}
+              refreshing={this.state.isRefreshing}
+              onEndReached={this.loadMore.bind(this)}
+              onEndReachedThreshold={0.001}
+              initialNumToRender={Math.floor(Dimensions.get('window').height / 120)}
             />
-          </Content>
+          ) : (
+            <Spinner color={Colors.gold} />
+          )}
+          {/* </Content> */}
           <Fab pageTitle={this.props.title} data={this.state.newItems} />
         </Container>
       </SideMenuDrawer>
     );
+  }
+
+  refreshData() {
+    this.setState({ currentPage: 1 });
+    this.setState({ isRefreshing: true });
+    // let requestCatagory = null;
+    // Constructing the url
+    // switch (this.props.title) {
+    //   case 'زنانه': {
+    //     requestCatagory = 'women';
+    //     break;
+    //   }
+    //   case 'مردانه': {
+    //     requestCatagory = 'men';
+    //     break;
+    //   }
+    //   case 'بچه گانه': {
+    //     requestCatagory = 'kid';
+    //     break;
+    //   }
+    //   case 'اکسسوری': {
+    //     requestCatagory = 'acc';
+    //     break;
+    //   }
+    //   default: {
+    //     requestCatagory = 'women';
+    //   }
+    // }
+    // const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=${
+    //   this.state.perPage
+    // }&&page=1`;
+    fetch(`${this.props.url}&posts_per_page=${this.state.perPage}&page=1`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        this.setState({ newItems: [] });
+        if (data.length > 0) {
+          data.map(recivedData => {
+            this.setState(prevState => ({
+              newItems: [...prevState.newItems, recivedData],
+              isRefreshing: false
+            }));
+          });
+        } else {
+          this.setState({ isRefreshing: false });
+        }
+      });
+  }
+
+  loadMore() {
+    // if (this.state.totalPages <= this.state.currentPage) return;
+    this.setState({ isRefreshing: true });
+    this.setState({ currentPage: this.state.currentPage + 1 });
+    const page = this.state.currentPage + 1;
+    // let requestCatagory = null;
+    // Constructing the url
+    // switch (this.props.title) {
+    //   case 'زنانه': {
+    //     requestCatagory = 'women';
+    //     break;
+    //   }
+    //   case 'مردانه': {
+    //     requestCatagory = 'men';
+    //     break;
+    //   }
+    //   case 'بچه گانه': {
+    //     requestCatagory = 'kid';
+    //     break;
+    //   }
+    //   case 'اکسسوری': {
+    //     requestCatagory = 'acc';
+    //     break;
+    //   }
+    //   default: {
+    //     requestCatagory = 'women';
+    //   }
+    // }
+    // const REQUEST_URL = `${BASE_REQUEST_URL + requestCatagory}?per_page=${
+    //   this.state.perPage
+    // }&&page=${page}`;
+    fetch(`${this.props.url}&posts_per_page=${this.state.perPage}&page=${page}`, {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, GET, OPTIONS, PUT, DELETE',
+        'Access-Control-Allow-Credentials': 'true'
+      }
+    })
+      .then(response => response.json())
+      .then(data => {
+        // this.setState({ newItems: [] });
+        if (data.length > 0) {
+          data.map(recivedData => {
+            this.setState(prevState => ({
+              newItems: [...prevState.newItems, recivedData],
+              isRefreshing: false
+            }));
+          });
+        } else {
+          this.setState({ isRefreshing: false });
+        }
+      });
   }
 }
 

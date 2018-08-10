@@ -1,8 +1,3 @@
-/**
- * This is the Main file
- **/
-
-// React native and others libraries imports
 import React, { Component } from 'react';
 import {
   Image,
@@ -35,7 +30,6 @@ import Colors from '../Colors';
 import Text from '../component/Text';
 
 import Navbar from '../component/Navbar';
-import { default as ProductComponent } from '../component/Product';
 
 export default class Product extends Component {
   constructor(props) {
@@ -175,8 +169,6 @@ export default class Product extends Component {
                 {/* ojrat_percent */}
                 <CardItem bordered style={styles.cardItem}>
                   <Col size={60}>
-                    {/* <Text style={styles.goldentext}> */}
-
                     {this.props.product.acf.ojrat_percent === '0' ? (
                       <Text style={styles.goldentext}>ندارد</Text>
                     ) : (
@@ -256,7 +248,6 @@ export default class Product extends Component {
                         backgroundColor: 'transparent',
                         padding: 0,
                         margin: 0,
-                        // borderLeftWidth: 1,
                         borderColor: 'white',
                         flexDirection: 'column'
                       }}
@@ -364,7 +355,7 @@ export default class Product extends Component {
   }
 
   openGallery(pos) {
-    const images = this.props.product.acf.images.map(img => img.image.url);
+    const images = this.props.product.acf.images.map(img => img.image.sizes.medium_large);
     Actions.imageGallery({
       images,
       position: pos

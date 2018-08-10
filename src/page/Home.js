@@ -1,11 +1,6 @@
 import React, { Component } from 'react';
 import {
   Image,
-  AsyncStorage,
-  BackHandler,
-  BackAndroid,
-  Alert,
-  Platform,
   TouchableOpacity,
   TouchableWithoutFeedback,
   Text,
@@ -14,15 +9,12 @@ import {
 } from 'react-native';
 import { Container, View, Button, Left, Right, Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import { Row, Grid } from 'react-native-easy-grid';
 
-// Our custom files and classes import
-// import Text from '../component/Text';
 import Navbar from '../component/Navbar';
-// import SideMenu from '../component/SideMenu';
 import SideMenuDrawer from '../component/SideMenuDrawer';
 import Colors from '../Colors';
 import newLogo from '../assets/logo.png';
-import { Row, Grid } from 'react-native-easy-grid';
 
 export default class Home extends Component {
   constructor(props) {
@@ -55,31 +47,33 @@ export default class Home extends Component {
       <SideMenuDrawer ref={ref => (this._sideMenuDrawer = ref)}>
         <Container>
           <Navbar left={left} right={right} title="صفحه اصلی" />
-          <StatusBar backgroundColor={Colors.black} barStyle="light-content" />
+          <StatusBar backgroundColor={Colors.black} />
           <TouchableWithoutFeedback onPress={() => this._sideMenuDrawer.open()}>
             <View
               style={{
                 backgroundColor: Colors.black,
-                width: '100%',
-                paddingBottom: 10,
-                borderBottomWidth: 0.5,
-                borderColor: Colors.gold
+                paddingBottom: 10
               }}
             >
               <Image
                 resizeMode="contain"
                 style={{
-                  // height: 100,
+                  height: (Dimensions.get('window').height * 16) / 100,
                   width: (Dimensions.get('window').width * 90) / 100,
                   margin: 5,
-                  // justifyContent: 'center',
                   alignSelf: 'center'
                 }}
                 source={newLogo}
               />
             </View>
           </TouchableWithoutFeedback>
-          <Grid style={{ backgroundColor: Colors.statusBarColor }}>{this.renderCategories()}</Grid>
+          <Grid
+            style={{
+              backgroundColor: Colors.statusBarColor
+            }}
+          >
+            {this.renderCategories()}
+          </Grid>
         </Container>
       </SideMenuDrawer>
     );
@@ -102,10 +96,9 @@ export default class Home extends Component {
             <View
               style={{
                 borderWidth: 1,
-                borderColor: '#ecc643',
+                borderColor: Colors.gold,
                 flex: 1,
-                margin: 10,
-                backgroundColor: '#000',
+                backgroundColor: Colors.black,
                 flexDirection: 'row-reverse',
                 alignItems: 'center',
                 justifyContent: 'center'
@@ -114,7 +107,7 @@ export default class Home extends Component {
               <Text
                 style={{
                   color: Colors.gold,
-                  fontSize: 32
+                  fontSize: Math.floor(Dimensions.get('window').width / 12)
                 }}
               >
                 {item.title}

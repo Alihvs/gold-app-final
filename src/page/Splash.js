@@ -60,7 +60,7 @@ export default class Login extends Component {
       })
       .catch(() => {
         Toast.show({
-          text: 'اتصال خود به شبکه را بررسی کنید',
+          text: 'اتصال خود به اینترنت را بررسی کنید',
           position: 'bottom',
           type: 'warning',
           textStyle: { textAlign: 'center' },
